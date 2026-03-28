@@ -9,7 +9,7 @@ import ScrollProgress from './components/common/ScrollProgress';
 import CustomCursor from './components/common/CustomCursor';
 import ScrollToTop from './components/common/ScrollToTop';
 import Footer from './components/common/Footer';
-import Preloader from './components/common/Preloader';
+import Preloader from './components/common/PreLoader';
 import CommandPalette from './components/common/CommandPalette';
 
 // Sayfalar
