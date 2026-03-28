@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { FaGithub, FaServer, FaNetworkWired, FaCodeBranch, FaBook, FaPaperPlane, FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { GitHubCalendar } from 'react-github-calendar';
 import SEO from '../../components/common/SEO';
 
 // Bileşen Importları
