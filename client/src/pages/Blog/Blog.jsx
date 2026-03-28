@@ -1,41 +1,37 @@
 // client/src/pages/Blog/Blog.jsx
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
+import { useBlogs } from '../../hooks/queries/useBlogs';
 import { Link } from 'react-router-dom'; // Link bileşeni eklendi
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     FaSearch, FaClock, FaHashtag, FaArrowRight, FaRegNewspaper, FaFire,
     FaHeart, FaRegComment, FaBookmark, FaTag, FaTwitter, FaLinkedin, FaGithub
 } from 'react-icons/fa';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
+import ErrorMessage from '../../components/common/ErrorMessage';
+import SEO from '../../components/common/SEO';
+import { useTranslation } from 'react-i18next';
 
 const Blog = () => {
+    const { t } = useTranslation();
+    
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1 }
+        }
+    };
+    
     // --- STATE YÖNETİMİ ---
-    const [posts, setPosts] = useState([]); // Veritabanından gelen yazılar
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
+    const { data: posts = [], isLoading: loading, error: queryError } = useBlogs();
     const [activeCat, setActiveCat] = useState('Tümü');
     const [searchTerm, setSearchTerm] = useState('');
 
     const categories = ['Tümü', 'Teknoloji', 'Kariyer', 'Data', 'YBS', 'Kişisel Gelişim'];
     const popularTags = ['React', 'Node.js', 'YBS', 'Freelance', 'Data Science', 'Python'];
 
-    // --- 1. VERİLERİ BACKEND'DEN ÇEK ---
-    useEffect(() => {
-        const fetchBlogs = async () => {
-            try {
-                const res = await axios.get('http://localhost:5000/api/blogs');
-                setPosts(res.data);
-                setLoading(false);
-            } catch (err) {
-                console.error("Blog verisi çekilemedi:", err);
-                setError("Yazılar yüklenirken bir sorun oluştu.");
-                setLoading(false);
-            }
-        };
-
-        fetchBlogs();
-    }, []);
+    const error = queryError ? (queryError.friendlyMessage || queryError.message || 'Blog yazıları yüklenemedi.') : null;
 
     // --- 2. FİLTRELEME MANTIĞI ---
     const filteredPosts = posts.filter(post => {
@@ -55,6 +51,7 @@ const Blog = () => {
 
     return (
         <div className="min-h-screen bg-[#0B1120] pt-28 pb-20 px-6 font-sans text-gray-300">
+            <SEO title={t('blog.title')} description={t('blog.subtitle')} />
             <div className="max-w-7xl mx-auto">
 
                 {/* HEADER */}
@@ -63,8 +60,8 @@ const Blog = () => {
                         <FaRegNewspaper /> DEV_BLOG_V1
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-                        Teknik Notlar & <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">Dijital Günlük.</span>
+                        {t('blog.title')} <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">{t('blog.subtitle')}</span>
                     </h1>
                 </div>
 
@@ -92,9 +89,9 @@ const Blog = () => {
                         <Link to={`/blog/${featuredPost._id}`} className="grid grid-cols-1 md:grid-cols-2 h-full md:h-[450px]">
                             <div className="relative h-64 md:h-full overflow-hidden">
                                 <div className="absolute top-4 left-4 z-10">
-                            <span className="px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full flex items-center gap-1 shadow-lg animate-pulse">
-                                <FaFire /> HOT TOPIC
-                            </span>
+                                    <span className="px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full flex items-center gap-1 shadow-lg animate-pulse">
+                                        <FaFire /> HOT TOPIC
+                                    </span>
                                 </div>
                                 {/* Resim Yoksa Placeholder */}
                                 {featuredPost.image ? (
@@ -139,26 +136,25 @@ const Blog = () => {
                         <div className="flex flex-wrap gap-4 mb-8 items-center justify-between bg-[#1f2937]/50 p-2 rounded-xl border border-slate-800">
                             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
                                 {categories.map(cat => (
-                                    <button key={cat} onClick={() => setActiveCat(cat)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeCat === cat ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/20' : 'text-gray-400 hover:text-white hover:bg-slate-700'}`}>{cat}</button>
+                                    <button key={cat} onClick={() => setActiveCat(cat)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeCat === cat ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/20' : 'text-gray-400 hover:text-white hover:bg-slate-700'}`}>{cat === 'Tümü' ? t('blog.all_categories') : cat}</button>
                                 ))}
                             </div>
                             <div className="relative w-full md:w-48">
                                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                                <input type="text" placeholder="Ara..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-black/20 border border-slate-700 rounded-lg text-gray-200 text-sm focus:outline-none focus:border-pink-500" />
+                                <input type="text" placeholder={t('blog.search')} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-black/20 border border-slate-700 rounded-lg text-gray-200 text-sm focus:outline-none focus:border-pink-500" />
                             </div>
                         </div>
 
                         {/* Yazılar Grid */}
-                        <div className="space-y-8">
+                        <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-8">
                             {!loading && filteredPosts.length === 0 ? (
                                 <div className="text-center py-20 border border-dashed border-slate-800 rounded-2xl">
-                                    <h3 className="text-xl font-bold text-white">Henüz yazı yok.</h3>
-                                    <p className="text-gray-500">Admin panelinden yeni içerik ekleyebilirsiniz.</p>
+                                    <h3 className="text-xl font-bold text-white">{t('blog.no_posts')}</h3>
                                 </div>
                             ) : (
                                 <AnimatePresence>
                                     {filteredPosts.map((post) => (
-                                        <motion.div layout key={post._id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="group">
+                                        <motion.div layout key={post._id} variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }} exit={{ opacity: 0, scale: 0.9 }} className="group">
                                             {/* LİNK BİLEŞENİ: Tüm kartı kapsar */}
                                             <Link to={`/blog/${post._id}`} className="bg-[#111827] border border-slate-800 rounded-2xl p-6 hover:border-pink-500/30 transition-all flex flex-col md:flex-row gap-6 h-full">
                                                 <div className="w-full md:w-48 h-48 rounded-xl overflow-hidden shrink-0 bg-slate-800">
@@ -183,10 +179,10 @@ const Blog = () => {
                                                     <div className="flex items-center justify-between text-xs text-gray-500 border-t border-slate-800 pt-4 mt-auto">
                                                         <div className="flex gap-4">
                                                             <span>{formatDate(post.createdAt)}</span>
-                                                            <span className="flex items-center gap-1"><FaClock /> {post.readTime}</span>
+                                                            <span className="flex items-center gap-1"><FaClock /> {post.readTime} {t('blog.min_read')}</span>
                                                         </div>
                                                         <div className="flex gap-3">
-                                                            <span className="flex items-center gap-1 text-blue-400 font-bold group-hover:translate-x-1 transition-transform">İncele <FaArrowRight /></span>
+                                                            <span className="flex items-center gap-1 text-blue-400 font-bold group-hover:translate-x-1 transition-transform">{t('blog.read_more')} <FaArrowRight /></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -195,7 +191,7 @@ const Blog = () => {
                                     ))}
                                 </AnimatePresence>
                             )}
-                        </div>
+                        </motion.div>
                     </div>
 
                     {/* SAĞ: SIDEBAR (4 Birim) - Sticky */}
@@ -220,20 +216,20 @@ const Blog = () => {
 
                         {/* Popüler Etiketler */}
                         <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6">
-                            <h4 className="text-white font-bold mb-4 flex items-center gap-2"><FaTag className="text-pink-500"/> Popüler Etiketler</h4>
+                            <h4 className="text-white font-bold mb-4 flex items-center gap-2"><FaTag className="text-pink-500" /> Popüler Etiketler</h4>
                             <div className="flex flex-wrap gap-2">
                                 {popularTags.map(tag => (
                                     <span key={tag} className="text-xs text-gray-400 bg-slate-800 border border-slate-700 px-3 py-1 rounded-full hover:border-pink-500 hover:text-white cursor-pointer transition-all">
-                                #{tag}
-                            </span>
+                                        #{tag}
+                                    </span>
                                 ))}
                             </div>
                         </div>
 
                         {/* Mini Bülten */}
                         <div className="bg-gradient-to-br from-pink-900/20 to-purple-900/20 border border-pink-500/30 rounded-2xl p-6">
-                            <h4 className="text-white font-bold mb-2">Bültene Katıl</h4>
-                            <p className="text-xs text-gray-400 mb-4">Her hafta yeni yazılar e-postana gelsin.</p>
+                            <h4 className="text-white font-bold mb-2">{t('blog.newsletter_title')}</h4>
+                            <p className="text-xs text-gray-400 mb-4">{t('blog.newsletter_desc')}</p>
                             <input type="email" placeholder="Email adresi" className="w-full bg-black/30 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white mb-2 focus:border-pink-500 outline-none" />
                             <button className="w-full py-2 bg-pink-600 hover:bg-pink-500 text-white text-sm font-bold rounded-lg transition-colors">Abone Ol</button>
                         </div>
@@ -252,7 +248,7 @@ const Blog = () => {
                         <h2 className="text-3xl font-bold text-white mb-4">Topluluğa Katıl</h2>
                         <p className="text-gray-400 mb-8">YBS dünyasından en güncel haberler için bültene katılın.</p>
                         <form className="flex flex-col sm:flex-row gap-4" onSubmit={(e) => e.preventDefault()}>
-                            <input type="email" placeholder="E-posta adresiniz" className="flex-1 px-6 py-4 bg-black/30 border border-slate-600 rounded-xl text-white focus:border-pink-500 outline-none backdrop-blur-sm"/>
+                            <input type="email" placeholder="E-posta adresiniz" className="flex-1 px-6 py-4 bg-black/30 border border-slate-600 rounded-xl text-white focus:border-pink-500 outline-none backdrop-blur-sm" />
                             <button className="px-8 py-4 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-pink-600/25">Abone Ol</button>
                         </form>
                     </div>

@@ -1,16 +1,27 @@
 import { useState, useEffect, useMemo } from 'react';
-import axios from 'axios';
+import { useProjects } from '../../hooks/queries/useProjects';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch, FaCode, FaClock, FaLayerGroup, FaStar, FaArrowRight, FaChartPie, FaThLarge, FaList } from 'react-icons/fa';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Link } from 'react-router-dom';
 import ProjectCard from '../../components/project/ProjectCard';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
+import ErrorMessage from '../../components/common/ErrorMessage';
+import SEO from '../../components/common/SEO';
+import { useTranslation } from 'react-i18next';
 
 const Projects = () => {
-    const [projects, setProjects] = useState([]);
+    const { t } = useTranslation();
+    const { data: projects = [], isLoading: loading, error: queryError } = useProjects();
+    
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1 }
+        }
+    };
     const [filteredProjects, setFilteredProjects] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
 
     // Filtre ve Görünüm State'leri
     const [searchTerm, setSearchTerm] = useState('');
@@ -19,22 +30,7 @@ const Projects = () => {
 
     const categories = ['All', 'React', 'Node.js', 'Python', 'Data Analysis', 'Mobile', '.NET'];
 
-    // API'den Veri Çekme
-    useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const res = await axios.get('http://localhost:5000/api/projects');
-                setProjects(res.data);
-                setFilteredProjects(res.data);
-                setLoading(false);
-            } catch (err) {
-                console.error("Hata:", err);
-                setError('Veri çekilemedi. Backend bağlantısını kontrol et.');
-                setLoading(false);
-            }
-        };
-        fetchProjects();
-    }, []);
+    const error = queryError ? (queryError.friendlyMessage || queryError.message || 'Projeler yüklenemedi.') : null;
 
     // Filtreleme Mantığı
     useEffect(() => {
@@ -74,24 +70,25 @@ const Projects = () => {
 
     // --- 2. VİTRİN PROJESİ (En karmaşık olan) ---
     const featuredProject = useMemo(() => {
-        if(!projects.length) return null;
+        if (!projects.length) return null;
         return projects.reduce((prev, current) => (prev.metrics?.complexity > current.metrics?.complexity) ? prev : current);
     }, [projects]);
 
     return (
         <div className="min-h-screen bg-[#0B1120] pt-28 pb-20 px-6 overflow-x-hidden">
+            <SEO title={t('projects.title')} description={t('projects.subtitle')} keywords="projeler, react, node.js, full stack" />
             <div className="max-w-7xl mx-auto">
 
                 {/* HEADER */}
                 <div className="text-center mb-16">
                     <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 border border-purple-500/30 rounded-full bg-purple-500/10 text-purple-400 text-xs font-mono">
-                        <FaCode className="animate-pulse"/> PORTFOLIO_V2_BUILD
+                        <FaCode className="animate-pulse" /> PORTFOLIO_V2_BUILD
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-                        Dijital <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-600">İmzam.</span>
+                        {t('projects.title')}
                     </h1>
                     <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-                        Problemleri algoritmalarla, fikirleri kodlarla çözüyorum. İşte teorinin pratiğe dönüştüğü laboratuvarım.
+                        {t('projects.subtitle')}
                     </p>
                 </div>
 
@@ -102,27 +99,27 @@ const Projects = () => {
                             <div className="bg-[#111827] border border-slate-800 p-6 rounded-2xl flex flex-col items-center text-center hover:border-blue-500/30 transition-colors group">
                                 <div className="w-12 h-12 bg-blue-500/10 rounded-full flex items-center justify-center text-blue-400 text-2xl mb-3 group-hover:scale-110 transition-transform"><FaClock /></div>
                                 <h3 className="text-3xl font-bold text-white">{stats.totalHours}+</h3>
-                                <p className="text-xs text-gray-400 uppercase mt-1">Geliştirme Saati</p>
+                                <p className="text-xs text-gray-400 uppercase mt-1">{t('projects.total_hours')}</p>
                             </div>
                             <div className="bg-[#111827] border border-slate-800 p-6 rounded-2xl flex flex-col items-center text-center hover:border-purple-500/30 transition-colors group">
                                 <div className="w-12 h-12 bg-purple-500/10 rounded-full flex items-center justify-center text-purple-400 text-2xl mb-3 group-hover:scale-110 transition-transform"><FaCode /></div>
                                 <h3 className="text-3xl font-bold text-white">{(stats.totalLines / 1000).toFixed(1)}k+</h3>
-                                <p className="text-xs text-gray-400 uppercase mt-1">Satır Kod</p>
+                                <p className="text-xs text-gray-400 uppercase mt-1">{t('projects.total_lines')}</p>
                             </div>
                             <div className="bg-[#111827] border border-slate-800 p-6 rounded-2xl flex flex-col items-center text-center hover:border-green-500/30 transition-colors group">
                                 <div className="w-12 h-12 bg-green-500/10 rounded-full flex items-center justify-center text-green-400 text-2xl mb-3 group-hover:scale-110 transition-transform"><FaLayerGroup /></div>
                                 <h3 className="text-3xl font-bold text-white">{stats.avgComplexity}/10</h3>
-                                <p className="text-xs text-gray-400 uppercase mt-1">Ort. Karmaşıklık</p>
+                                <p className="text-xs text-gray-400 uppercase mt-1">{t('projects.avg_complexity')}</p>
                             </div>
                         </div>
 
                         <div className="bg-[#111827] border border-slate-800 p-6 rounded-2xl flex flex-col">
-                            <h4 className="text-sm text-gray-400 font-bold uppercase mb-4 flex items-center gap-2"><FaChartPie /> Teknoloji Dağılımı</h4>
+                            <h4 className="text-sm text-gray-400 font-bold uppercase mb-4 flex items-center gap-2"><FaChartPie /> {t('projects.tech_distribution')}</h4>
                             <div className="flex-1 w-full h-32">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={stats.chartData}>
                                         <XAxis dataKey="name" hide />
-                                        <Tooltip cursor={{fill: 'transparent'}} contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
+                                        <Tooltip cursor={{ fill: 'transparent' }} contentStyle={{ backgroundColor: '#1f2937', border: 'none', borderRadius: '8px', color: '#fff' }} />
                                         <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                                             {stats.chartData.map((entry, index) => (
                                                 <Cell key={`cell-${index}`} fill={['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'][index % 5]} />
@@ -210,7 +207,7 @@ const Projects = () => {
                         {/* Search */}
                         <div className="relative w-full md:w-64">
                             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                            <input type="text" placeholder="Proje ara..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-[#1f2937] border border-slate-700 rounded-lg text-gray-200 focus:outline-none focus:border-blue-500 transition-all" />
+                            <input type="text" placeholder={t('projects.search')} value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-[#1f2937] border border-slate-700 rounded-lg text-gray-200 focus:outline-none focus:border-blue-500 transition-all" />
                         </div>
                         {/* View Toggle */}
                         <div className="flex bg-[#1f2937] rounded-lg p-1 border border-slate-700 shrink-0">
@@ -226,7 +223,7 @@ const Projects = () => {
                 ) : error ? (
                     <div className="text-center py-12 bg-red-500/10 border border-red-500/20 rounded-2xl"><p className="text-red-400">{error}</p></div>
                 ) : (
-                    <motion.div layout className={`grid gap-8 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
+                    <motion.div variants={containerVariants} initial="hidden" animate="show" layout className={`grid gap-8 ${viewMode === 'grid' ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}>
                         <AnimatePresence>
                             {filteredProjects.map((project) => (
                                 <ProjectCard key={project._id} project={project} />
@@ -238,8 +235,7 @@ const Projects = () => {
                 {!loading && !error && filteredProjects.length === 0 && (
                     <div className="text-center py-20 border border-dashed border-slate-800 rounded-2xl">
                         <div className="text-4xl mb-4 text-gray-600">📭</div>
-                        <h3 className="text-xl font-bold text-white mb-2">Proje Bulunamadı</h3>
-                        <p className="text-gray-500">Arama kriterlerini değiştirerek tekrar deneyin.</p>
+                        <h3 className="text-xl font-bold text-white mb-2">{t('projects.no_results')}</h3>
                     </div>
                 )}
             </div>

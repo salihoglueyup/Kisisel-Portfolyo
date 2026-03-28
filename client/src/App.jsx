@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 // Bileşenler
 import Navbar from './components/common/Navbar';
@@ -9,6 +10,7 @@ import CustomCursor from './components/common/CustomCursor';
 import ScrollToTop from './components/common/ScrollToTop';
 import Footer from './components/common/Footer';
 import Preloader from './components/common/Preloader';
+import CommandPalette from './components/common/CommandPalette';
 
 // Sayfalar
 import Home from './pages/Home/Home';
@@ -23,6 +25,7 @@ import BlogDetails from './pages/Blog/BlogDetails';
 import NotFound from './pages/NotFound';
 import Login from './pages/Admin/Login';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
 // Animasyon Sarmalayıcısı
 const PageWrapper = ({ children }) => {
@@ -51,7 +54,7 @@ const AnimatedRoutes = () => {
                 <Route path="/blog" element={<PageWrapper><Blog /></PageWrapper>} />
                 <Route path="/blog/:id" element={<PageWrapper><BlogDetails /></PageWrapper>} />
                 <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
-                <Route path="/admin/add-project" element={<PageWrapper><AddProject /></PageWrapper>} />
+
                 {/* --- ADMIN ROTALARI --- */}
 
                 {/* Login Sayfası (Herkese Açık) */}
@@ -91,6 +94,14 @@ function App() {
 
     return (
         <div className="min-h-screen bg-[#0B1120] text-gray-100 font-sans selection:bg-blue-500 selection:text-white cursor-none md:cursor-auto">
+            <Toaster 
+                position="top-right" 
+                toastOptions={{ 
+                    style: { background: '#1e293b', color: '#fff', border: '1px solid #334155' },
+                    success: { iconTheme: { primary: '#22c55e', secondary: '#fff' } },
+                    error: { iconTheme: { primary: '#ef4444', secondary: '#fff' } }
+                }} 
+            />
 
             <AnimatePresence>
                 {loading && <Preloader onComplete={() => setLoading(false)} />}
@@ -101,9 +112,12 @@ function App() {
 
             <Router>
                 <ScrollToTop />
+                <CommandPalette />
                 <Navbar />
                 <div className="pt-20">
-                    <AnimatedRoutes />
+                    <ErrorBoundary>
+                        <AnimatedRoutes />
+                    </ErrorBoundary>
                 </div>
                 <Footer />
             </Router>

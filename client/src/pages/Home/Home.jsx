@@ -1,7 +1,10 @@
 import { TypeAnimation } from 'react-type-animation';
 import { motion } from 'framer-motion';
 import { FaGithub, FaServer, FaNetworkWired, FaCodeBranch, FaBook, FaPaperPlane, FaArrowRight } from 'react-icons/fa';
-import { GitHubCalendar } from 'react-github-calendar'; // Deneme amaçlı
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { GitHubCalendar } from 'react-github-calendar';
+import SEO from '../../components/common/SEO';
 
 // Bileşen Importları
 import TechTicker from '../../components/common/TechTicker';
@@ -28,6 +31,7 @@ const DashboardCard = ({ title, icon, children, className = "" }) => (
 );
 
 const Home = () => {
+    const { t } = useTranslation();
 
     const insights = [
         { title: "Node.js ile mikroservisler", tag: "Architecture", color: "text-blue-400" },
@@ -37,6 +41,7 @@ const Home = () => {
 
     return (
         <div className="min-h-screen w-full overflow-x-hidden bg-[#0B1120]">
+            <SEO title={t('navbar.home')} description="Eyüp Zeki Salihoğlu - Full Stack Developer. MERN Stack, veri analizi ve modern web çözümleri." />
 
             {/* 1. HERO BÖLÜMÜ */}
             <section className="relative min-h-[85vh] flex flex-col justify-center items-center px-6 pt-20 pb-10">
@@ -60,26 +65,26 @@ const Home = () => {
                         </div>
 
                         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                            Veriyi <br/>
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Kodlayan</span><br/>
-                            Zihin.
+                            {t('home.hero_line1')} <br/>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">{t('home.hero_line2')}</span><br/>
+                            {t('home.hero_line3')}
                         </h1>
 
                         <div className="text-xl text-gray-400 mb-8 font-mono h-8">
                             <TypeAnimation
-                                sequence={['Yönetim Bilişim Sistemleri.', 1500, 'Full Stack Development.', 1500]}
+                                sequence={[t('home.typing1'), 1500, t('home.typing2'), 1500]}
                                 speed={50}
                                 repeat={Infinity}
                             />
                         </div>
 
                         <div className="flex gap-4">
-                            <button className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
-                                Projeler
-                            </button>
-                            <button className="px-8 py-3 border border-slate-700 text-gray-300 rounded-lg font-medium hover:bg-slate-800 transition-all flex items-center gap-2">
+                            <Link to="/projects" className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
+                                {t('home.btn_projects')}
+                            </Link>
+                            <a href="https://github.com/salihoglueyup" target="_blank" rel="noopener noreferrer" className="px-8 py-3 border border-slate-700 text-gray-300 rounded-lg font-medium hover:bg-slate-800 transition-all flex items-center gap-2">
                                 <FaGithub /> GitHub
-                            </button>
+                            </a>
                         </div>
                     </motion.div>
 
@@ -107,8 +112,8 @@ const Home = () => {
             {/* 3. KOMUTA MERKEZİ (GRID DÜZENİ) */}
             <section className="py-16 px-6 max-w-7xl mx-auto">
                 <div className="mb-8">
-                    <h2 className="text-2xl font-bold text-white">Komuta Merkezi</h2>
-                    <p className="text-gray-400 text-sm mt-1">Canlı sistem verileri ve geliştirme durumu.</p>
+                    <h2 className="text-2xl font-bold text-white">{t('home.command_center')}</h2>
+                    <p className="text-gray-400 text-sm mt-1">{t('home.command_desc')}</p>
                 </div>
 
                 <div className="flex flex-col gap-6">
@@ -174,18 +179,18 @@ const Home = () => {
                             <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -z-10"></div>
 
                             <FaPaperPlane className="text-4xl text-blue-400 mx-auto mb-4" />
-                            <h3 className="text-2xl font-bold text-white mb-2">Birlikte Harika İşler Çıkaralım</h3>
+                            <h3 className="text-2xl font-bold text-white mb-2">{t('home.cta_title')}</h3>
                             <p className="text-gray-400 max-w-xl mx-auto mb-8">
-                                Yönetim Bilişim Sistemleri vizyonu ve Full Stack teknik yeteneklerimle projelerinize değer katmaya hazırım.
+                                {t('home.cta_desc')}
                             </p>
 
                             <div className="flex justify-center gap-4">
-                                <button className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium transition-all shadow-lg shadow-blue-600/20">
-                                    Hemen İletişime Geç
-                                </button>
-                                <button className="px-8 py-3 bg-slate-800 hover:bg-slate-700 text-gray-300 rounded-full font-medium transition-all border border-slate-700">
-                                    linkedin.com/in/ben
-                                </button>
+                                <Link to="/contact" className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium transition-all shadow-lg shadow-blue-600/20">
+                                    {t('home.cta_contact')}
+                                </Link>
+                                <a href="https://linkedin.com/in/eyupzekisalihoglu" target="_blank" rel="noopener noreferrer" className="px-8 py-3 bg-slate-800 hover:bg-slate-700 text-gray-300 rounded-full font-medium transition-all border border-slate-700 flex items-center gap-2">
+                                    {t('home.cta_linkedin')}
+                                </a>
                             </div>
                         </div>
                     </div>

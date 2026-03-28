@@ -9,12 +9,15 @@ const ProjectCard = ({ project }) => {
         return 'bg-green-500';
     };
 
+    const itemVariants = {
+        hidden: { opacity: 0, y: 30, scale: 0.95 },
+        show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, type: 'spring' } }
+    };
+
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
+            variants={itemVariants}
             whileHover={{ y: -5 }}
             className="bg-[#111827] border border-slate-800 rounded-xl overflow-hidden flex flex-col h-full hover:border-blue-500/50 transition-all group relative shadow-lg shadow-black/20"
         >
@@ -22,7 +25,7 @@ const ProjectCard = ({ project }) => {
 
             <div className="h-48 bg-slate-800 relative overflow-hidden">
                 {project.image && project.image !== 'no-image.jpg' ? (
-                    <img src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={project.image} alt={project.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-blue-900/40 to-slate-900 flex items-center justify-center">
                         <FaCode className="text-6xl text-slate-700/50" />

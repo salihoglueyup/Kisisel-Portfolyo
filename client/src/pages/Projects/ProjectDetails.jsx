@@ -1,7 +1,7 @@
 // client/src/pages/Projects/ProjectDetails.jsx
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../api';
 import { motion } from 'framer-motion';
 import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCode, FaDatabase, FaServer, FaLayerGroup, FaCalendarAlt } from 'react-icons/fa';
 
@@ -14,7 +14,7 @@ const ProjectDetails = () => {
     useEffect(() => {
         const fetchProject = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/projects/${id}`);
+                const res = await api.get(`/projects/${id}`);
                 setProject(res.data);
                 setLoading(false);
             } catch (error) {
@@ -49,8 +49,8 @@ const ProjectDetails = () => {
                         <div className="flex flex-wrap gap-2 mb-4">
                             {project.tags.map(tag => (
                                 <span key={tag} className="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs font-bold border border-blue-500/20">
-                          {tag}
-                      </span>
+                                    {tag}
+                                </span>
                             ))}
                         </div>
                         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">{project.title}</h1>
@@ -96,7 +96,7 @@ const ProjectDetails = () => {
                         <span className="text-xs text-gray-500 uppercase tracking-wider">Satır Kod</span>
                     </div>
                     <div className="text-center">
-                        <span className="block text-3xl font-bold text-white mb-1 flex justify-center items-center gap-2"><FaCalendarAlt className="text-sm text-blue-500"/> 2025</span>
+                        <span className="block text-3xl font-bold text-white mb-1 flex justify-center items-center gap-2"><FaCalendarAlt className="text-sm text-blue-500" /> 2025</span>
                         <span className="text-xs text-gray-500 uppercase tracking-wider">Yıl</span>
                     </div>
                 </div>
@@ -112,9 +112,8 @@ const ProjectDetails = () => {
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
-                                    className={`pb-4 px-4 text-sm font-bold uppercase tracking-wider transition-all relative ${
-                                        activeTab === tab ? 'text-blue-400' : 'text-gray-500 hover:text-gray-300'
-                                    }`}
+                                    className={`pb-4 px-4 text-sm font-bold uppercase tracking-wider transition-all relative ${activeTab === tab ? 'text-blue-400' : 'text-gray-500 hover:text-gray-300'
+                                        }`}
                                 >
                                     {tab === 'overview' && 'Genel Bakış'}
                                     {tab === 'technical' && 'Teknik Mimari'}
@@ -132,7 +131,7 @@ const ProjectDetails = () => {
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                                     <h3 className="text-xl font-bold text-white">Proje Hakkında</h3>
                                     <p className="leading-relaxed">
-                                        {project.description} <br/><br/>
+                                        {project.description} <br /><br />
                                         Bu proje, modern web geliştirme standartlarına uygun olarak tasarlanmıştır.
                                         Kullanıcı deneyimini (UX) ön planda tutarken, arka planda güvenli ve ölçeklenebilir bir yapı kurulmuştur.
                                     </p>
@@ -153,19 +152,19 @@ const ProjectDetails = () => {
                                     <h3 className="text-xl font-bold text-white">Teknik Altyapı</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="p-4 border border-slate-800 rounded-xl">
-                                            <div className="flex items-center gap-3 mb-3 text-blue-400"><FaCode size={24}/> <span className="font-bold">Frontend</span></div>
+                                            <div className="flex items-center gap-3 mb-3 text-blue-400"><FaCode size={24} /> <span className="font-bold">Frontend</span></div>
                                             <p className="text-sm">React.js, Tailwind CSS, Framer Motion kullanılarak dinamik ve hızlı bir arayüz oluşturuldu.</p>
                                         </div>
                                         <div className="p-4 border border-slate-800 rounded-xl">
-                                            <div className="flex items-center gap-3 mb-3 text-green-400"><FaServer size={24}/> <span className="font-bold">Backend</span></div>
+                                            <div className="flex items-center gap-3 mb-3 text-green-400"><FaServer size={24} /> <span className="font-bold">Backend</span></div>
                                             <p className="text-sm">Node.js ve Express.js ile REST API mimarisi kuruldu. JWT ile güvenlik sağlandı.</p>
                                         </div>
                                         <div className="p-4 border border-slate-800 rounded-xl">
-                                            <div className="flex items-center gap-3 mb-3 text-yellow-400"><FaDatabase size={24}/> <span className="font-bold">Database</span></div>
+                                            <div className="flex items-center gap-3 mb-3 text-yellow-400"><FaDatabase size={24} /> <span className="font-bold">Database</span></div>
                                             <p className="text-sm">MongoDB kullanılarak esnek ve performanslı NoSQL veri yapısı oluşturuldu.</p>
                                         </div>
                                         <div className="p-4 border border-slate-800 rounded-xl">
-                                            <div className="flex items-center gap-3 mb-3 text-purple-400"><FaLayerGroup size={24}/> <span className="font-bold">DevOps</span></div>
+                                            <div className="flex items-center gap-3 mb-3 text-purple-400"><FaLayerGroup size={24} /> <span className="font-bold">DevOps</span></div>
                                             <p className="text-sm">Git versiyon kontrolü ve Vercel/Render üzerinde deployment süreçleri yönetildi.</p>
                                         </div>
                                     </div>

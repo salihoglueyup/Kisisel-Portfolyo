@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 import {
     FaPaperPlane, FaEnvelope, FaMapMarkerAlt, FaGithub, FaLinkedin,
     FaClock, FaCheckCircle, FaCalendarAlt, FaUserTie, FaTimes,
@@ -8,6 +11,15 @@ import {
     FaSlack, FaTrello, FaVideo, FaFileInvoice, FaShieldAlt, FaQuestionCircle
 } from 'react-icons/fa';
 import { SiJira, SiNotion, SiZoom } from 'react-icons/si';
+import SEO from '../../components/common/SEO';
+import { useTranslation } from 'react-i18next';
+
+const contactSchema = z.object({
+  name: z.string().min(2, "İsim en az 2 karakter olmalıdır"),
+  email: z.string().email("Geçerli bir e-posta adresi giriniz"),
+  subject: z.string().min(1, "Lütfen bir konu seçiniz"),
+  message: z.string().min(10, "Mesajınız en az 10 karakter olmalıdır"),
+});
 
 // --- MODAL (TOPLANTI) ---
 const MeetingModal = ({ isOpen, onClose }) => {
@@ -68,7 +80,7 @@ const CostEstimator = () => {
                 </div>
                 <div className="flex flex-wrap gap-2">
                     {Object.keys(features).map(f => (
-                        <button key={f} onClick={() => setFeatures({...features, [f]: !features[f]})} className={`text-xs px-3 py-1 rounded-full border ${features[f] ? 'bg-green-500/20 border-green-500 text-green-400' : 'bg-slate-800 border-slate-700 text-gray-500'}`}>
+                        <button key={f} onClick={() => setFeatures({ ...features, [f]: !features[f] })} className={`text-xs px-3 py-1 rounded-full border ${features[f] ? 'bg-green-500/20 border-green-500 text-green-400' : 'bg-slate-800 border-slate-700 text-gray-500'}`}>
                             {f === 'admin' ? '+ Admin' : f === 'seo' ? '+ SEO' : '+ Tasarım'}
                         </button>
                     ))}
@@ -83,31 +95,48 @@ const CostEstimator = () => {
 };
 
 const Contact = () => {
-    const [formData, setFormData] = useState({ name: '', email: '', subject: 'Proje Teklifi', message: '' });
+    const { t } = useTranslation();
     const [status, setStatus] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'}));
+    const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
+
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        watch,
+        reset,
+        formState: { errors, isSubmitting }
+    } = useForm({
+        resolver: zodResolver(contactSchema),
+        defaultValues: {
+            name: '',
+            email: '',
+            subject: 'Proje Teklifi',
+            message: ''
+        }
+    });
+
+    const watchSubject = watch('subject');
 
     useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'})), 60000);
+        const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })), 60000);
         return () => clearInterval(timer);
     }, []);
 
-    const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const onSubmit = async (data) => {
         setStatus('loading');
         try {
-            await axios.post('http://localhost:5000/api/messages', formData);
+            await api.post('/messages', data);
             setStatus('success');
-            setFormData({ name: '', email: '', subject: 'Proje Teklifi', message: '' });
+            reset();
             setTimeout(() => setStatus(null), 5000);
         } catch (error) { setStatus('error'); }
     };
 
     return (
         <div className="min-h-screen bg-[#0B1120] pt-28 pb-20 px-6 font-sans overflow-x-hidden">
+            <SEO title={t('contact.title')} description="Eyüp Zeki Salihoğlu ile iletişime geçin. Proje teklifleri, freelance çalışma ve iş birlikleri için." />
             <AnimatePresence>
                 <MeetingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
             </AnimatePresence>
@@ -118,14 +147,14 @@ const Contact = () => {
                 <div className="text-center mb-16">
                     <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="inline-block px-3 py-1 mb-4 border border-green-500/30 rounded-full bg-green-500/10 text-green-400 text-xs font-mono">
                         <span className="w-2 h-2 inline-block bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                        STATUS: AVAILABLE FOR WORK
+                        {t('contact.status_available')}
                     </motion.div>
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-                        Bir Sonraki Projeni <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">Birlikte Tasarlayalım.</span>
+                        {t('contact.hero_title_1')} <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">{t('contact.hero_title_2')}</span>
                     </h1>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                        Kod, Kahve ve Strateji. Fikrinizi hayata geçirmek için gereken her şey burada.
+                        {t('contact.hero_desc')}
                     </p>
                 </div>
 
@@ -137,7 +166,7 @@ const Contact = () => {
                         {/* 1. İletişim Kartı */}
                         <div className="bg-[#111827] border border-slate-800 rounded-2xl p-8 shadow-2xl relative overflow-hidden group">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl -z-10"></div>
-                            <h3 className="text-xl font-bold text-white mb-6">İletişim Kanalları</h3>
+                            <h3 className="text-xl font-bold text-white mb-6">{t('contact.channels')}</h3>
                             <div className="space-y-6">
                                 <div className="flex items-center gap-4 group/item">
                                     <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 text-xl"><FaEnvelope /></div>
@@ -210,25 +239,45 @@ const Contact = () => {
                     <motion.div className="lg:col-span-7" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }}>
                         <div className="bg-[#111827] border border-slate-800 rounded-2xl p-8 lg:p-10 relative shadow-2xl">
                             <div className="flex justify-between items-center mb-8">
-                                <h3 className="text-2xl font-bold text-white">Mesaj Gönder</h3>
+                                <h3 className="text-2xl font-bold text-white">{t('contact.form_title')}</h3>
                                 <FaPaperPlane className="text-slate-700 text-2xl rotate-12" />
                             </div>
 
                             {status === 'success' ? (
                                 <div className="flex flex-col items-center justify-center py-24 text-center bg-slate-900/50 rounded-xl border border-slate-700 border-dashed">
                                     <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mb-6"><FaCheckCircle className="text-4xl text-green-500 animate-bounce" /></div>
-                                    <h4 className="text-2xl font-bold text-white">Mesajın İletildi!</h4>
-                                    <p className="text-gray-400 mt-2 max-w-xs mx-auto">Teşekkürler. En kısa sürede dönüş yapacağım.</p>
+                                    <h4 className="text-2xl font-bold text-white">{t('contact.success_title')}</h4>
+                                    <p className="text-gray-400 mt-2 max-w-xs mx-auto">{t('contact.success_desc')}</p>
                                 </div>
                             ) : (
-                                <form onSubmit={handleSubmit} className="space-y-6">
+                                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2"><label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">İsim Soyisim</label><input type="text" name="name" required value={formData.name} onChange={handleChange} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder="Adınız" /></div>
-                                        <div className="space-y-2"><label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">E-posta</label><input type="email" name="email" required value={formData.email} onChange={handleChange} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder="ornek@email.com" /></div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.name')}</label>
+                                            <input type="text" {...register('name')} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder={t('contact.name')} />
+                                            {errors.name && <p className="text-red-400 text-xs mt-1 ml-1">{errors.name.message}</p>}
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.email')}</label>
+                                            <input type="email" {...register('email')} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder="ornek@email.com" />
+                                            {errors.email && <p className="text-red-400 text-xs mt-1 ml-1">{errors.email.message}</p>}
+                                        </div>
                                     </div>
-                                    <div className="space-y-2"><label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Konu</label><div className="grid grid-cols-2 sm:grid-cols-4 gap-2">{['Proje Teklifi', 'Freelance', 'İş Fırsatı', 'Diğer'].map(opt => (<button type="button" key={opt} onClick={() => setFormData({...formData, subject: opt})} className={`py-2 text-xs font-bold rounded-lg border transition-all ${formData.subject === opt ? 'bg-blue-600 border-blue-500 text-white' : 'bg-[#1f2937] border-slate-700 text-gray-400 hover:border-gray-500'}`}>{opt}</button>))}</div></div>
-                                    <div className="space-y-2"><label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Mesajınız</label><textarea name="message" rows="6" required value={formData.message} onChange={handleChange} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:bg-slate-900 outline-none transition-all resize-none" placeholder="Projenizden veya fikrinizden bahsedin..."></textarea></div>
-                                    <button type="submit" disabled={status === 'loading'} className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-1">{status === 'loading' ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : <><FaPaperPlane /> Mesajı Gönder</>}</button>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.subject')}</label>
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                            {[t('contact.subject_offer'), t('contact.subject_freelance'), t('contact.subject_job'), t('contact.subject_other')].map(opt => (
+                                                <button type="button" key={opt} onClick={() => setValue('subject', opt)} className={`py-2 text-xs font-bold rounded-lg border transition-all ${watchSubject === opt ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-[#1f2937] border-slate-700 text-gray-400 hover:border-gray-500'}`}>{opt}</button>
+                                            ))}
+                                        </div>
+                                        {errors.subject && <p className="text-red-400 text-xs mt-1 ml-1">{errors.subject.message}</p>}
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.message')}</label>
+                                        <textarea rows="6" {...register('message')} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all resize-none" placeholder={t('contact.form_placeholder')}></textarea>
+                                        {errors.message && <p className="text-red-400 text-xs mt-1 ml-1">{errors.message.message}</p>}
+                                    </div>
+                                    <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-1">{isSubmitting ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : <><FaPaperPlane /> {t('contact.send')}</>}</button>
                                 </form>
                             )}
                         </div>
@@ -238,8 +287,8 @@ const Contact = () => {
                                 <div className="absolute inset-0 opacity-20"><div className="w-full h-full bg-[radial-gradient(circle,_#3b82f6_1px,_transparent_1px)] bg-[size:20px_20px]"></div></div>
                                 <div className="relative z-10 text-center">
                                     <div className="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-2 animate-pulse"><FaGlobeAmericas size={24} /></div>
-                                    <h4 className="text-white font-bold">Global Hizmet</h4>
-                                    <p className="text-xs text-gray-500">İstanbul merkezli, dünya çapında vizyon.</p>
+                                    <h4 className="text-white font-bold">{t('contact.global_service')}</h4>
+                                    <p className="text-xs text-gray-500">{t('contact.global_desc')}</p>
                                 </div>
                             </div>
                             <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 flex flex-col justify-center relative">
@@ -256,7 +305,7 @@ const Contact = () => {
 
                 {/* --- YENİ ALT BÖLÜM: DESTEK VE BİLGİ MERKEZİ --- */}
                 <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-t border-slate-800 pt-16">
-                    <h2 className="text-3xl font-bold text-white mb-10 text-center">Profesyonel Hizmet Standartları</h2>
+                    <h2 className="text-3xl font-bold text-white mb-10 text-center">{t('contact.standards_title')}</h2>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
@@ -264,34 +313,34 @@ const Contact = () => {
                         <div className="bg-[#111827] border border-slate-800 rounded-2xl overflow-hidden">
                             <div className="p-6 border-b border-slate-800 bg-slate-900/50 flex items-center gap-3">
                                 <FaShieldAlt className="text-green-500" />
-                                <h3 className="font-bold text-white">SLA (Hizmet Seviyesi Anlaşması)</h3>
+                                <h3 className="font-bold text-white">{t('contact.sla_title')}</h3>
                             </div>
                             <div className="p-6">
-                                <p className="text-sm text-gray-400 mb-6">Müşteri taleplerine dönüş ve çözüm sürelerim aşağıdaki standartlara tabidir.</p>
+                                <p className="text-sm text-gray-400 mb-6">{t('contact.sla_desc')}</p>
                                 <table className="w-full text-sm text-left text-gray-400">
                                     <thead className="text-xs text-gray-500 uppercase bg-slate-800/50">
-                                    <tr>
-                                        <th className="px-6 py-3 rounded-l-lg">Öncelik</th>
-                                        <th className="px-6 py-3">İlk Yanıt</th>
-                                        <th className="px-6 py-3 rounded-r-lg">Çözüm Hedefi</th>
-                                    </tr>
+                                        <tr>
+                                            <th className="px-6 py-3 rounded-l-lg">Öncelik</th>
+                                            <th className="px-6 py-3">İlk Yanıt</th>
+                                            <th className="px-6 py-3 rounded-r-lg">Çözüm Hedefi</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-                                    <tr className="border-b border-slate-800 hover:bg-slate-800/30">
-                                        <td className="px-6 py-4 font-bold text-red-400 flex items-center gap-2"><div className="w-2 h-2 bg-red-500 rounded-full"></div> Kritik</td>
-                                        <td className="px-6 py-4">1 Saat</td>
-                                        <td className="px-6 py-4">4 Saat</td>
-                                    </tr>
-                                    <tr className="border-b border-slate-800 hover:bg-slate-800/30">
-                                        <td className="px-6 py-4 font-bold text-yellow-400 flex items-center gap-2"><div className="w-2 h-2 bg-yellow-500 rounded-full"></div> Yüksek</td>
-                                        <td className="px-6 py-4">4 Saat</td>
-                                        <td className="px-6 py-4">24 Saat</td>
-                                    </tr>
-                                    <tr className="hover:bg-slate-800/30">
-                                        <td className="px-6 py-4 font-bold text-blue-400 flex items-center gap-2"><div className="w-2 h-2 bg-blue-500 rounded-full"></div> Normal</td>
-                                        <td className="px-6 py-4">24 Saat</td>
-                                        <td className="px-6 py-4">3 İş Günü</td>
-                                    </tr>
+                                        <tr className="border-b border-slate-800 hover:bg-slate-800/30">
+                                            <td className="px-6 py-4 font-bold text-red-400 flex items-center gap-2"><div className="w-2 h-2 bg-red-500 rounded-full"></div> Kritik</td>
+                                            <td className="px-6 py-4">1 Saat</td>
+                                            <td className="px-6 py-4">4 Saat</td>
+                                        </tr>
+                                        <tr className="border-b border-slate-800 hover:bg-slate-800/30">
+                                            <td className="px-6 py-4 font-bold text-yellow-400 flex items-center gap-2"><div className="w-2 h-2 bg-yellow-500 rounded-full"></div> Yüksek</td>
+                                            <td className="px-6 py-4">4 Saat</td>
+                                            <td className="px-6 py-4">24 Saat</td>
+                                        </tr>
+                                        <tr className="hover:bg-slate-800/30">
+                                            <td className="px-6 py-4 font-bold text-blue-400 flex items-center gap-2"><div className="w-2 h-2 bg-blue-500 rounded-full"></div> Normal</td>
+                                            <td className="px-6 py-4">24 Saat</td>
+                                            <td className="px-6 py-4">3 İş Günü</td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -301,7 +350,7 @@ const Contact = () => {
                         <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6">
                             <div className="flex items-center gap-3 mb-6">
                                 <FaQuestionCircle className="text-blue-500" />
-                                <h3 className="font-bold text-white text-lg">Sıkça Sorulan Sorular</h3>
+                                <h3 className="font-bold text-white text-lg">{t('contact.faq_title')}</h3>
                             </div>
                             <div className="space-y-4">
                                 <details className="group p-4 border border-slate-800 rounded-xl bg-slate-900/30 open:bg-slate-900/80 transition-all">

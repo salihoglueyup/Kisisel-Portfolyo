@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { FaGithub, FaLinkedin, FaTwitter, FaHeart, FaArrowUp } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+    const { t } = useTranslation();
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -22,19 +24,18 @@ const Footer = () => {
                             Yönetim Bilişim Sistemleri vizyonuyla geliştirilmiş, veri odaklı ve modern web çözümleri.
                         </p>
                         <div className="flex gap-4">
-                            <a href="#" className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-gray-400 hover:text-white hover:bg-slate-800 transition-all"><FaGithub /></a>
-                            <a href="#" className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-gray-400 hover:text-blue-400 hover:bg-slate-800 transition-all"><FaLinkedin /></a>
-                            <a href="#" className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-gray-400 hover:text-blue-300 hover:bg-slate-800 transition-all"><FaTwitter /></a>
+                            <a href="https://github.com/salihoglueyup" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-gray-400 hover:text-white hover:bg-slate-800 transition-all"><FaGithub /></a>
+                            <a href="https://linkedin.com/in/eyupzekisalihoglu" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-gray-400 hover:text-blue-400 hover:bg-slate-800 transition-all"><FaLinkedin /></a>
                         </div>
                     </div>
 
                     <div>
-                        <h3 className="text-white font-bold mb-6">Menü</h3>
+                        <h3 className="text-white font-bold mb-6">{t('navbar.home').includes('Home') ? 'Menu' : 'Menü'}</h3>
                         <ul className="space-y-3 text-gray-500">
-                            <li><Link to="/" className="hover:text-blue-400 transition-colors">Ana Sayfa</Link></li>
-                            <li><Link to="/about" className="hover:text-blue-400 transition-colors">Hakkımda</Link></li>
-                            <li><Link to="/projects" className="hover:text-blue-400 transition-colors">Projeler</Link></li>
-                            <li><Link to="/blog" className="hover:text-blue-400 transition-colors">Blog</Link></li>
+                            <li><Link to="/" className="hover:text-blue-400 transition-colors">{t('navbar.home')}</Link></li>
+                            <li><Link to="/about" className="hover:text-blue-400 transition-colors">{t('navbar.about')}</Link></li>
+                            <li><Link to="/projects" className="hover:text-blue-400 transition-colors">{t('navbar.projects')}</Link></li>
+                            <li><Link to="/blog" className="hover:text-blue-400 transition-colors">{t('navbar.blog')}</Link></li>
                         </ul>
                     </div>
 
@@ -61,8 +62,9 @@ const Footer = () => {
 
                 <div className="border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-gray-600 text-xs">
-                        &copy; {currentYear} Tüm Hakları Saklıdır. React & Vite ile <FaHeart className="inline text-red-500 mx-1" /> yapıldı.
+                        {t('footer.copyright')} <FaHeart className="inline text-red-500 mx-1" /> {t('footer.built_with')}
                     </p>
+
 
                     <button
                         onClick={scrollToTop}

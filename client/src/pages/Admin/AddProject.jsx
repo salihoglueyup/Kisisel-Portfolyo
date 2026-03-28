@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import axios from 'axios';
+import toast from 'react-hot-toast';
+import api from '../../api';
 import { motion } from 'framer-motion';
 import { FaSave, FaMagic, FaTimes, FaImage, FaBriefcase, FaCalendarAlt, FaInfoCircle, FaUpload, FaServer, FaListUl } from 'react-icons/fa';
 import ProjectCard from '../../components/project/ProjectCard';
@@ -9,21 +10,20 @@ const AddProject = () => {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        image: '', // Base64 veya URL
+        image: '',
+        imageFile: null,
         tags: [],
         tagInput: '',
         category: 'Web Geliştirme',
         role: '',
         status: 'Tamamlandı',
         date: '',
-        // Adım 2'den gelen Teknik Alanlar
         technicalArchitecture: {
             frontend: '',
             backend: '',
             database: '',
             devops: ''
         },
-        // Adım 2'den gelen Özellikler (Liste için string tutuyoruz)
         featuresInput: '',
         metrics: {
             complexity: 5,
@@ -36,13 +36,11 @@ const AddProject = () => {
         }
     });
 
-    const [status, setStatus] = useState({ type: '', msg: '' });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // --- INPUT HANDLER ---
     const handleChange = (e) => {
         const { name, value } = e.target;
-
-        // Nested (İç içe) Obje Yönetimi
         if (name.includes('.')) {
             const [parent, child] = name.split('.');
             setFormData(prev => ({
@@ -58,13 +56,13 @@ const AddProject = () => {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            if (file.size > 2 * 1024 * 1024) { // 2MB Sınırı
-                alert("Dosya çok büyük! Lütfen 2MB'dan küçük bir resim seçin.");
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Dosya çok büyük! Lütfen 5MB'dan küçük bir resim seçin.");
                 return;
             }
             const reader = new FileReader();
             reader.onloadend = () => {
-                setFormData(prev => ({ ...prev, image: reader.result }));
+                setFormData(prev => ({ ...prev, imageFile: file, image: reader.result }));
             };
             reader.readAsDataURL(file);
         }
@@ -94,29 +92,46 @@ const AddProject = () => {
     // --- GÖNDERME İŞLEMİ ---
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setStatus({ type: 'loading', msg: 'Veritabanına kaydediliyor...' });
+        setIsSubmitting(true);
 
         try {
-            // Features stringini satır satır ayırıp array yapıyoruz
             const featuresArray = formData.featuresInput.split('\n').filter(line => line.trim() !== '');
 
-            const payload = {
-                ...formData,
-                features: featuresArray, // Array olarak gönder
-                metrics: {
-                    complexity: Number(formData.metrics.complexity),
-                    hoursSpent: Number(formData.metrics.hoursSpent),
-                    linesOfCode: Number(formData.metrics.linesOfCode)
-                }
-            };
+            const submitData = new FormData();
+            submitData.append('title', formData.title);
+            submitData.append('description', formData.description);
+            submitData.append('category', formData.category);
+            submitData.append('role', formData.role);
+            submitData.append('status', formData.status);
+            if (formData.date) submitData.append('date', formData.date);
 
-            await axios.post('http://localhost:5000/api/projects', payload);
+            if (formData.imageFile) {
+                submitData.append('image', formData.imageFile);
+            }
 
-            setStatus({ type: 'success', msg: 'Proje ve Detaylar Eklendi! 🎉' });
+            formData.tags.forEach(tag => submitData.append('tags', tag));
+            featuresArray.forEach(feature => submitData.append('features', feature));
 
-            // Formu sıfırla
+            submitData.append('technicalArchitecture.frontend', formData.technicalArchitecture.frontend);
+            submitData.append('technicalArchitecture.backend', formData.technicalArchitecture.backend);
+            submitData.append('technicalArchitecture.database', formData.technicalArchitecture.database);
+            submitData.append('technicalArchitecture.devops', formData.technicalArchitecture.devops);
+
+            submitData.append('metrics.complexity', Number(formData.metrics.complexity));
+            submitData.append('metrics.hoursSpent', Number(formData.metrics.hoursSpent));
+            submitData.append('metrics.linesOfCode', Number(formData.metrics.linesOfCode));
+
+            submitData.append('links.github', formData.links.github);
+            submitData.append('links.live', formData.links.live);
+
+            await api.post('/projects', submitData, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            toast.success('Proje ve Detaylar Eklendi! 🎉');
+
             setFormData({
-                title: '', description: '', image: '', tags: [], tagInput: '',
+                title: '', description: '', image: '', imageFile: null, tags: [], tagInput: '',
                 category: 'Web Geliştirme', role: '', status: 'Tamamlandı', date: '',
                 technicalArchitecture: { frontend: '', backend: '', database: '', devops: '' },
                 featuresInput: '',
@@ -125,12 +140,9 @@ const AddProject = () => {
             });
 
         } catch (error) {
-            console.error(error);
-            if (error.response && error.response.status === 413) {
-                setStatus({ type: 'error', msg: 'Resim dosyası çok büyük!' });
-            } else {
-                setStatus({ type: 'error', msg: 'Hata oluştu. Backend çalışıyor mu?' });
-            }
+            // Global api handler takes care of the generic toast notification
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -177,7 +189,7 @@ const AddProject = () => {
                         {/* 2. Detaylar (Rol, Durum, Tarih) */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-2">
-                                <label className="text-sm text-gray-400 font-bold flex items-center gap-2"><FaBriefcase className="text-xs"/> Rolüm</label>
+                                <label className="text-sm text-gray-400 font-bold flex items-center gap-2"><FaBriefcase className="text-xs" /> Rolüm</label>
                                 <input
                                     type="text" name="role"
                                     value={formData.role} onChange={handleChange}
@@ -199,7 +211,7 @@ const AddProject = () => {
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <label className="text-sm text-gray-400 font-bold flex items-center gap-2"><FaCalendarAlt className="text-xs"/> Tarih</label>
+                                <label className="text-sm text-gray-400 font-bold flex items-center gap-2"><FaCalendarAlt className="text-xs" /> Tarih</label>
                                 <input
                                     type="date" name="date"
                                     value={formData.date} onChange={handleChange}
@@ -208,10 +220,10 @@ const AddProject = () => {
                             </div>
                         </div>
 
-                        {/* 3. TEKNİK MİMARİ GİRİŞİ (Adım 2'den Eklendi) */}
+                        {/* 3. TEKNİK MİMARİ GİRİŞİ */}
                         <div className="bg-[#111827] p-6 rounded-xl border border-slate-800 space-y-4">
                             <h3 className="text-white font-bold text-sm border-b border-slate-700 pb-2 mb-4 flex items-center gap-2">
-                                <FaServer className="text-green-500"/> Teknik Mimari (Teknolojiler)
+                                <FaServer className="text-green-500" /> Teknik Mimari (Teknolojiler)
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <input type="text" name="technicalArchitecture.frontend" placeholder="Frontend (Örn: React, Tailwind)" value={formData.technicalArchitecture.frontend} onChange={handleChange} className="bg-slate-900 border border-slate-600 rounded p-2 text-white text-sm outline-none focus:border-blue-500" />
@@ -221,20 +233,20 @@ const AddProject = () => {
                             </div>
                         </div>
 
-                        {/* 4. ANA ÖZELLİKLER (Adım 2'den Eklendi) */}
+                        {/* 4. ANA ÖZELLİKLER */}
                         <div className="space-y-2">
-                            <label className="text-sm text-gray-400 font-bold flex items-center gap-2"><FaListUl/> Ana Özellikler (Her satıra bir özellik yaz)</label>
+                            <label className="text-sm text-gray-400 font-bold flex items-center gap-2"><FaListUl /> Ana Özellikler (Her satıra bir özellik yaz)</label>
                             <textarea
                                 name="featuresInput" rows="4"
                                 value={formData.featuresInput} onChange={handleChange}
                                 className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
-                                placeholder="- Kullanıcı Giriş Sistemi&#10;- Admin Paneli&#10;- Gerçek Zamanlı Bildirimler"
+                                placeholder={"- Kullanıcı Giriş Sistemi\n- Admin Paneli\n- Gerçek Zamanlı Bildirimler"}
                             ></textarea>
                         </div>
 
-                        {/* 5. Görsel Yükleme (Dosya Seç) */}
+                        {/* 5. Görsel Yükleme */}
                         <div className="space-y-2">
-                            <label className="text-sm text-gray-400 font-bold flex items-center gap-2"><FaImage/> Kapak Görseli</label>
+                            <label className="text-sm text-gray-400 font-bold flex items-center gap-2"><FaImage /> Kapak Görseli</label>
                             <div className="flex flex-col gap-3">
                                 <label className="flex items-center justify-center w-full p-4 border-2 border-dashed border-slate-700 rounded-xl cursor-pointer hover:border-blue-500 hover:bg-slate-800/50 transition-all group">
                                     <div className="flex flex-col items-center gap-2">
@@ -335,32 +347,25 @@ const AddProject = () => {
                             <div className="flex flex-wrap gap-2 mb-2 min-h-[30px]">
                                 {formData.tags.map(tag => (
                                     <span key={tag} className="bg-blue-600/20 text-blue-400 px-2 py-1 rounded text-xs flex items-center gap-1 border border-blue-500/30">
-                                        {tag} <FaTimes className="cursor-pointer hover:text-white" onClick={() => removeTag(tag)}/>
+                                        {tag} <FaTimes className="cursor-pointer hover:text-white" onClick={() => removeTag(tag)} />
                                     </span>
                                 ))}
                             </div>
                             <input
                                 type="text" name="tagInput"
-                                value={formData.tagInput} onChange={(e) => setFormData({...formData, tagInput: e.target.value})}
+                                value={formData.tagInput} onChange={(e) => setFormData({ ...formData, tagInput: e.target.value })}
                                 onKeyDown={handleTagKeyDown}
                                 placeholder="React, MongoDB yazıp Enter'a bas..."
                                 className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
                             />
                         </div>
 
-                        {/* Mesaj Alanı */}
-                        {status.msg && (
-                            <div className={`p-4 rounded-lg font-bold text-center ${status.type === 'success' ? 'bg-green-500/20 text-green-400 border border-green-500/50' : 'bg-red-500/20 text-red-400 border border-red-500/50'}`}>
-                                {status.msg}
-                            </div>
-                        )}
-
                         <button
                             type="submit"
-                            disabled={status.type === 'loading'}
+                            disabled={isSubmitting}
                             className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-bold rounded-xl hover:shadow-lg hover:shadow-blue-500/20 transition-all flex items-center justify-center gap-2"
                         >
-                            {status.type === 'loading' ? 'Kaydediliyor...' : <><FaSave /> Projeyi Veritabanına İşle</>}
+                            {isSubmitting ? 'Kaydediliyor...' : <><FaSave /> Projeyi Veritabanına İşle</>}
                         </button>
 
                     </form>
@@ -369,7 +374,7 @@ const AddProject = () => {
                 {/* SAĞ: CANLI ÖNİZLEME (PREVIEW) */}
                 <div className="hidden lg:block sticky top-28 h-min">
                     <h2 className="text-xl font-bold text-gray-400 mb-6 uppercase tracking-wider flex items-center gap-2">
-                        <FaImage className="text-blue-500"/> Canlı Önizleme
+                        <FaImage className="text-blue-500" /> Canlı Önizleme
                     </h2>
 
                     <div className="pointer-events-none transform scale-100 origin-top">
@@ -384,7 +389,7 @@ const AddProject = () => {
                     </div>
 
                     <div className="mt-8 p-6 bg-blue-900/10 rounded-xl border border-blue-500/20 text-sm text-blue-200">
-                        <h4 className="font-bold mb-2 flex items-center gap-2"><FaInfoCircle/> Tam Kontrol</h4>
+                        <h4 className="font-bold mb-2 flex items-center gap-2"><FaInfoCircle /> Tam Kontrol</h4>
                         <p className="mb-2">Girdiğin 'Teknik Mimari' ve 'Özellikler' bilgileri artık proje detay sayfasında özel sekmeler halinde görünecek.</p>
                     </div>
                 </div>

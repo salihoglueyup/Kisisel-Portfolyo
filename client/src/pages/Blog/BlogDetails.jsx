@@ -1,8 +1,9 @@
 // client/src/pages/Blog/BlogDetails.jsx
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../api';
 import { FaArrowLeft, FaClock, FaCalendarAlt, FaUserCircle } from 'react-icons/fa';
+import SEO from '../../components/common/SEO';
 
 const BlogDetails = () => {
     const { id } = useParams();
@@ -11,9 +12,9 @@ const BlogDetails = () => {
     useEffect(() => {
         const fetchBlog = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/blogs/${id}`);
+                const res = await api.get(`/blogs/${id}`);
                 setBlog(res.data);
-            } catch(err) { console.log(err); }
+            } catch (err) { console.log(err); }
         };
         fetchBlog();
     }, [id]);
@@ -22,6 +23,7 @@ const BlogDetails = () => {
 
     return (
         <div className="min-h-screen bg-[#0B1120] pt-28 pb-20 px-6">
+            <SEO title={blog.title} description={blog.excerpt} />
             <div className="max-w-3xl mx-auto">
 
                 <Link to="/blog" className="text-gray-400 hover:text-white flex items-center gap-2 mb-8 transition-colors">
