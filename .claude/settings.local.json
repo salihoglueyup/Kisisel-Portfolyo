@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(node --check index.js)",
+      "Bash(node --check controllers/authController.js)",
+      "Bash(node --check routes/authRoutes.js)",
+      "Bash(node --check seedAdmin.js)",
+      "Bash(npx eslint *)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(npx jest *)",
+      "Bash(node -e \"process.env.NODE_ENV='test'; const request=require\\('supertest'\\); const app=require\\('./app'\\); request\\(app\\).get\\('/'\\).then\\(r=>console.log\\('STATUS',r.statusCode, r.text?.slice\\(0,300\\)\\)\\);\")",
+      "Bash(npm run *)",
+      "Bash(node --check config/db.js)",
+      "Bash(node --check controllers/messageController.js)"
+    ]
+  }
+}

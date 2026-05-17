@@ -114,8 +114,7 @@ const About = () => {
                             </span>
                         </h1>
                         <p className="text-lg leading-relaxed text-gray-400 mb-6 border-l-4 border-blue-500/50 pl-4">
-                            Yönetim Bilişim Sistemleri (MIS) disipliniyle, karmaşık iş süreçlerini
-                            anlaşılır, ölçeklenebilir ve modern yazılım çözümlerine dönüştürüyorum.
+                            {t('about.hero_desc')}
                         </p>
 
                         <div className="flex flex-wrap gap-4 mt-8">
@@ -159,22 +158,22 @@ const About = () => {
                                 <div className="flex gap-4">
                                     <div className="w-10 h-10 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 shrink-0"><FaLightbulb /></div>
                                     <div>
-                                        <h4 className="font-bold text-white">Sürekli Merak</h4>
-                                        <p className="text-sm text-gray-500">Teknoloji durmaz, ben de durmam. Her gün yeni bir şeyler öğrenirim.</p>
+                                        <h4 className="font-bold text-white">{t('about.principle_curiosity')}</h4>
+                                        <p className="text-sm text-gray-500">{t('about.principle_curiosity_desc')}</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
                                     <div className="w-10 h-10 bg-purple-500/10 rounded-lg flex items-center justify-center text-purple-400 shrink-0"><FaBrain /></div>
                                     <div>
-                                        <h4 className="font-bold text-white">Analitik Yaklaşım</h4>
-                                        <p className="text-sm text-gray-500">Kararlarımı hislere göre değil, verilere ve mantığa göre veririm.</p>
+                                        <h4 className="font-bold text-white">{t('about.principle_analytic')}</h4>
+                                        <p className="text-sm text-gray-500">{t('about.principle_analytic_desc')}</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
                                     <div className="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center text-green-400 shrink-0"><FaRocket /></div>
                                     <div>
-                                        <h4 className="font-bold text-white">Sonuç Odaklılık</h4>
-                                        <p className="text-sm text-gray-500">Temiz kod önemlidir, ama çalışan ve değer üreten ürün daha önemlidir.</p>
+                                        <h4 className="font-bold text-white">{t('about.principle_results')}</h4>
+                                        <p className="text-sm text-gray-500">{t('about.principle_results_desc')}</p>
                                     </div>
                                 </div>
                             </div>
@@ -250,7 +249,7 @@ const About = () => {
                         <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-500/30 rounded-2xl p-8 flex-1 flex flex-col justify-center">
                             <h4 className="text-blue-400 font-bold mb-2">{t('about.goal_2025')}</h4>
                             <p className="text-gray-300 italic">
-                                "Yapay Zeka destekli kurumsal SaaS projeleri geliştirerek sektörde fark yaratmak."
+                                "{t('about.goal_text')}"
                             </p>
                         </div>
                     </div>

@@ -15,6 +15,7 @@ const messageRoutes = require('./routes/messageRoutes');
 const blogRoutes = require('./routes/blogRoutes');
 const projectRoutes = require('./routes/projectRoutes');
 const authRoutes = require('./routes/authRoutes');
+const subscriberRoutes = require('./routes/subscriberRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const { getSitemap } = require('./controllers/sitemapController');
 
@@ -97,6 +98,7 @@ app.use('/api/auth', isTest ? authRoutes : [authLimiter, authRoutes]);
 app.use('/api/projects', projectRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/blogs', blogRoutes);
+app.use('/api/subscribers', subscriberRoutes);
 
 // Global Error Handler Middleware
 app.use(errorHandler);

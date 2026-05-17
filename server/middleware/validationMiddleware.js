@@ -69,6 +69,13 @@ const validateResetPassword = [
     handleValidationErrors
 ];
 
+const validateSubscribe = [
+    body('email')
+        .isEmail().withMessage('Geçerli bir e-posta adresi giriniz')
+        .normalizeEmail(),
+    handleValidationErrors
+];
+
 // --- PROJE VALİDASYONLARI ---
 const validateProject = [
     body('title')
@@ -122,6 +129,7 @@ module.exports = {
     validatePasswordChange,
     validateForgotPassword,
     validateResetPassword,
+    validateSubscribe,
     validateProject,
     validateBlog,
     validateMessage
