@@ -10,3 +10,15 @@ export const useProjects = () => {
         }
     });
 };
+
+// Tek proje detayı — cache + retry + anlık geri gösterim
+export const useProject = (id) => {
+    return useQuery({
+        queryKey: ['project', id],
+        queryFn: async () => {
+            const { data } = await api.get(`/projects/${id}`);
+            return data.data;
+        },
+        enabled: !!id
+    });
+};

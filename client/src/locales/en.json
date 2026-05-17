@@ -67,7 +67,23 @@
         "total_hours": "Total Hours",
         "total_lines": "Total Lines",
         "avg_complexity": "Avg. Complexity",
-        "tech_distribution": "Tech Distribution"
+        "tech_distribution": "Tech Distribution",
+        "featured_badge": "FEATURED PROJECT",
+        "case_study": "Explore Case Study",
+        "f_complexity": "Complexity",
+        "f_development": "Development",
+        "f_architecture": "Architecture",
+        "process_title": "My Development Process",
+        "process_subtitle": "Agile & Data-Driven Approach",
+        "step1_title": "Analysis",
+        "step1_desc": "Requirements & Data Modeling",
+        "step2_title": "Architecture",
+        "step2_desc": "DB Schema & API Design",
+        "step3_title": "Coding",
+        "step3_desc": "Clean Code & Test Driven",
+        "step4_title": "Deploy",
+        "step4_desc": "CI/CD & Cloud Integration",
+        "filter_by_category": "Filter by Category"
     },
     "blog": {
         "title": "Blog",
@@ -81,7 +97,14 @@
         "views": "views",
         "popular_tags": "Popular Tags",
         "newsletter_title": "Newsletter",
-        "newsletter_desc": "Stay updated with new articles."
+        "newsletter_desc": "Stay updated with new articles.",
+        "hot_topic": "HOT TOPIC",
+        "author_bio": "I share my experiences on technology, business and coding.",
+        "follow": "Follow",
+        "community_title": "Join the Community",
+        "community_desc": "Subscribe to the newsletter for the latest from the MIS world.",
+        "prev": "Previous",
+        "next": "Next"
     },
     "contact": {
         "title": "Contact",
@@ -122,6 +145,36 @@
         "form_placeholder": "Tell me about your project or idea...",
         "success_title": "Message Delivered!",
         "success_desc": "Thank you. I'll get back to you as soon as possible."
+    },
+    "projectDetails": {
+        "back": "Back to Projects",
+        "not_found": "Project Not Found.",
+        "source_code": "Source Code",
+        "live_demo": "Live Demo",
+        "stat_complexity": "Complexity",
+        "stat_hours": "Development Time",
+        "stat_lines": "Lines of Code",
+        "stat_year": "Year",
+        "tab_overview": "Overview",
+        "tab_technical": "Technical Architecture",
+        "tab_challenges": "Challenges & Solutions",
+        "about_title": "About the Project",
+        "features_title": "Key Features",
+        "tech_title": "Technical Stack",
+        "challenges_title": "Challenges Faced and Solutions",
+        "challenge_problem": "Problem",
+        "challenge_solution": "Solution",
+        "spec_title": "Project Info",
+        "spec_category": "Category",
+        "spec_role": "Role",
+        "spec_status": "Status",
+        "spec_tech": "Technologies Used"
+    },
+    "blogDetails": {
+        "back": "Back to All Posts",
+        "not_found": "Blog post not found.",
+        "back_short": "Back to Blog",
+        "author_note": "Notes on technology and business."
     },
     "footer": {
         "copyright": "© {{year}} Eyüp Zeki Salihoğlu — All rights reserved.",

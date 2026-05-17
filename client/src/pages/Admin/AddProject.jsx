@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import api from '../../api';
 import { FaSave, FaMagic, FaTimes, FaImage, FaBriefcase, FaCalendarAlt, FaInfoCircle, FaUpload, FaServer, FaListUl } from 'react-icons/fa';
 import ProjectCard from '../../components/project/ProjectCard';
+import { PROJECT_CATEGORIES } from '../../constants/projects';
 
 const AddProject = () => {
     // --- FORM VERİLERİ (Tüm alanlar birleştirildi) ---
@@ -13,7 +14,7 @@ const AddProject = () => {
         imageFile: null,
         tags: [],
         tagInput: '',
-        category: 'Web Geliştirme',
+        category: PROJECT_CATEGORIES[0],
         role: '',
         status: 'Tamamlandı',
         date: '',
@@ -24,6 +25,7 @@ const AddProject = () => {
             devops: ''
         },
         featuresInput: '',
+        challenges: [],
         metrics: {
             complexity: 5,
             hoursSpent: 0,
@@ -88,6 +90,28 @@ const AddProject = () => {
         }));
     };
 
+    // --- ZORLUKLAR & ÇÖZÜMLER (repeater) ---
+    const addChallenge = () => {
+        setFormData(prev => ({
+            ...prev,
+            challenges: [...prev.challenges, { problem: '', solution: '' }]
+        }));
+    };
+
+    const updateChallenge = (index, field, value) => {
+        setFormData(prev => ({
+            ...prev,
+            challenges: prev.challenges.map((c, i) => (i === index ? { ...c, [field]: value } : c))
+        }));
+    };
+
+    const removeChallenge = (index) => {
+        setFormData(prev => ({
+            ...prev,
+            challenges: prev.challenges.filter((_, i) => i !== index)
+        }));
+    };
+
     // --- GÖNDERME İŞLEMİ ---
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -111,6 +135,9 @@ const AddProject = () => {
             formData.tags.forEach(tag => submitData.append('tags', tag));
             featuresArray.forEach(feature => submitData.append('features', feature));
 
+            const cleanChallenges = formData.challenges.filter(c => c.problem.trim() || c.solution.trim());
+            submitData.append('challenges', JSON.stringify(cleanChallenges));
+
             submitData.append('technicalArchitecture.frontend', formData.technicalArchitecture.frontend);
             submitData.append('technicalArchitecture.backend', formData.technicalArchitecture.backend);
             submitData.append('technicalArchitecture.database', formData.technicalArchitecture.database);
@@ -131,9 +158,10 @@ const AddProject = () => {
 
             setFormData({
                 title: '', description: '', image: '', imageFile: null, tags: [], tagInput: '',
-                category: 'Web Geliştirme', role: '', status: 'Tamamlandı', date: '',
+                category: PROJECT_CATEGORIES[0], role: '', status: 'Tamamlandı', date: '',
                 technicalArchitecture: { frontend: '', backend: '', database: '', devops: '' },
                 featuresInput: '',
+                challenges: [],
                 metrics: { complexity: 5, hoursSpent: 0, linesOfCode: 0 },
                 links: { github: '', live: '' }
             });
@@ -176,11 +204,9 @@ const AddProject = () => {
                                     value={formData.category} onChange={handleChange}
                                     className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
                                 >
-                                    <option>Web Geliştirme</option>
-                                    <option>Mobil Uygulama</option>
-                                    <option>Veri Analizi</option>
-                                    <option>Yapay Zeka</option>
-                                    <option>Masaüstü Yazılım</option>
+                                    {PROJECT_CATEGORIES.map(cat => (
+                                        <option key={cat} value={cat}>{cat}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
@@ -241,6 +267,47 @@ const AddProject = () => {
                                 className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
                                 placeholder={"- Kullanıcı Giriş Sistemi\n- Admin Paneli\n- Gerçek Zamanlı Bildirimler"}
                             ></textarea>
+                        </div>
+
+                        {/* 4.5 ZORLUKLAR & ÇÖZÜMLER */}
+                        <div className="bg-[#111827] p-6 rounded-xl border border-slate-800 space-y-4">
+                            <div className="flex items-center justify-between border-b border-slate-700 pb-2">
+                                <h3 className="text-white font-bold text-sm flex items-center gap-2">
+                                    <FaInfoCircle className="text-red-400" /> Zorluklar & Çözümler
+                                </h3>
+                                <button type="button" onClick={addChallenge} className="text-xs px-3 py-1 rounded-lg bg-blue-600/20 text-blue-400 border border-blue-500/30 hover:bg-blue-600/30 transition-colors">
+                                    + Ekle
+                                </button>
+                            </div>
+
+                            {formData.challenges.length === 0 && (
+                                <p className="text-xs text-gray-500">Henüz zorluk eklenmedi. Boş bırakılırsa detay sayfasında bu sekme gösterilmez.</p>
+                            )}
+
+                            {formData.challenges.map((ch, idx) => (
+                                <div key={idx} className="bg-slate-900/50 border border-slate-700 rounded-lg p-4 space-y-3">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-xs font-bold text-gray-500">#{idx + 1}</span>
+                                        <button type="button" onClick={() => removeChallenge(idx)} aria-label="Zorluğu kaldır" className="text-gray-500 hover:text-red-400 transition-colors">
+                                            <FaTimes />
+                                        </button>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={ch.problem}
+                                        onChange={(e) => updateChallenge(idx, 'problem', e.target.value)}
+                                        placeholder="Sorun (örn: Yüksek frekanslı veride model gecikmesi)"
+                                        className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white text-sm outline-none focus:border-red-500"
+                                    />
+                                    <textarea
+                                        rows="2"
+                                        value={ch.solution}
+                                        onChange={(e) => updateChallenge(idx, 'solution', e.target.value)}
+                                        placeholder="Çözüm (örn: Çıkarımı ayrı mikroservise taşıyıp Redis cache ekledik)"
+                                        className="w-full bg-slate-900 border border-slate-600 rounded p-2 text-white text-sm outline-none focus:border-green-500 resize-none"
+                                    />
+                                </div>
+                            ))}
                         </div>
 
                         {/* 5. Görsel Yükleme */}

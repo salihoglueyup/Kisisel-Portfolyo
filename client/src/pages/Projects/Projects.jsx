@@ -8,6 +8,7 @@ import ProjectCard from '../../components/project/ProjectCard';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import SEO from '../../components/common/SEO';
+import { PROJECT_FILTERS } from '../../constants/projects';
 import { useTranslation } from 'react-i18next';
 
 const Projects = () => {
@@ -27,7 +28,7 @@ const Projects = () => {
     const [viewMode, setViewMode] = useState('grid'); // 'grid' veya 'list'
 
     // Gerçek portfolyo kategorileri (seeder'daki project.category değerleriyle birebir)
-    const categories = ['All', 'AI / RAG', 'AI / ML', 'Full-Stack', 'Cybersecurity', 'IoT / Araştırma', 'Kurumsal', 'Gönüllü'];
+    const categories = PROJECT_FILTERS;
 
     const error = queryError ? (queryError.friendlyMessage || queryError.message || 'Projeler yüklenemedi.') : null;
 
@@ -138,7 +139,7 @@ const Projects = () => {
                         <div className="relative bg-[#111827] border border-slate-800 rounded-3xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
                             <div className="h-64 md:h-auto bg-slate-900 relative overflow-hidden">
                                 <div className="absolute top-4 left-4 z-10">
-                                    <span className="px-3 py-1 bg-yellow-500 text-black text-xs font-bold rounded-full flex items-center gap-1 shadow-lg"><FaStar /> FEATURED PROJECT</span>
+                                    <span className="px-3 py-1 bg-yellow-500 text-black text-xs font-bold rounded-full flex items-center gap-1 shadow-lg"><FaStar /> {t('projects.featured_badge')}</span>
                                 </div>
                                 {featuredProject.image ? (
                                     <img src={featuredProject.image} alt="Featured" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
@@ -154,13 +155,13 @@ const Projects = () => {
                                 <p className="text-gray-400 text-lg mb-8 line-clamp-3">{featuredProject.description}</p>
 
                                 <div className="grid grid-cols-3 gap-4 mb-8 border-t border-slate-800 pt-6">
-                                    <div><span className="block text-2xl font-bold text-white">{featuredProject.metrics?.complexity}/10</span><span className="text-xs text-gray-500">Complexity</span></div>
-                                    <div><span className="block text-2xl font-bold text-white">{featuredProject.metrics?.hoursSpent}h</span><span className="text-xs text-gray-500">Development</span></div>
-                                    <div><span className="block text-2xl font-bold text-white">Backend</span><span className="text-xs text-gray-500">Architecture</span></div>
+                                    <div><span className="block text-2xl font-bold text-white">{featuredProject.metrics?.complexity}/10</span><span className="text-xs text-gray-500">{t('projects.f_complexity')}</span></div>
+                                    <div><span className="block text-2xl font-bold text-white">{featuredProject.metrics?.hoursSpent}h</span><span className="text-xs text-gray-500">{t('projects.f_development')}</span></div>
+                                    <div><span className="block text-2xl font-bold text-white">Backend</span><span className="text-xs text-gray-500">{t('projects.f_architecture')}</span></div>
                                 </div>
 
                                 <Link to={`/projects/${featuredProject._id}`} className="w-max px-8 py-3 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition-colors flex items-center gap-2">
-                                    Vaka Analizini İncele <FaArrowRight />
+                                    {t('projects.case_study')} <FaArrowRight />
                                 </Link>
                             </div>
                         </div>
@@ -170,15 +171,15 @@ const Projects = () => {
                 {/* --- BÖLÜM 3: METODOLOJİ --- */}
                 <div className="mb-20 border-y border-slate-800 py-12 bg-[#111827]/30">
                     <div className="text-center mb-10">
-                        <h3 className="text-2xl font-bold text-white">Geliştirme Sürecim</h3>
-                        <p className="text-sm text-gray-400">Agile & Veri Odaklı Yaklaşım</p>
+                        <h3 className="text-2xl font-bold text-white">{t('projects.process_title')}</h3>
+                        <p className="text-sm text-gray-400">{t('projects.process_subtitle')}</p>
                     </div>
                     <div className="flex flex-wrap justify-center gap-8 md:gap-16 px-4">
                         {[
-                            { step: "01", title: "Analiz", desc: "Gereksinim & Veri Modelleme" },
-                            { step: "02", title: "Mimari", desc: "DB Şeması & API Tasarımı" },
-                            { step: "03", title: "Kodlama", desc: "Clean Code & Test Driven" },
-                            { step: "04", title: "Deploy", desc: "CI/CD & Cloud Integration" },
+                            { step: "01", title: t('projects.step1_title'), desc: t('projects.step1_desc') },
+                            { step: "02", title: t('projects.step2_title'), desc: t('projects.step2_desc') },
+                            { step: "03", title: t('projects.step3_title'), desc: t('projects.step3_desc') },
+                            { step: "04", title: t('projects.step4_title'), desc: t('projects.step4_desc') },
                         ].map((item, idx) => (
                             <div key={idx} className="flex flex-col items-center text-center group">
                                 <div className="w-16 h-16 rounded-full border-2 border-slate-700 flex items-center justify-center text-xl font-bold text-gray-500 mb-4 group-hover:border-blue-500 group-hover:text-blue-400 transition-all bg-[#0B1120]">{item.step}</div>
@@ -192,7 +193,7 @@ const Projects = () => {
                 {/* --- BÖLÜM 4: KONTROL VE LİSTE --- */}
                 <div className="flex flex-col md:flex-row justify-between items-end gap-6 mb-8 sticky top-24 z-30 bg-[#0B1120]/90 backdrop-blur-md py-4 border-b border-slate-800">
                     <div className="flex flex-col gap-2 w-full md:w-auto">
-                        <span className="text-xs text-gray-500 font-bold uppercase ml-1">Kategoriye Göre Filtrele</span>
+                        <span className="text-xs text-gray-500 font-bold uppercase ml-1">{t('projects.filter_by_category')}</span>
                         <div className="flex flex-wrap gap-2">
                             {categories.map((cat) => (
                                 <button key={cat} onClick={() => setActiveFilter(cat)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all border ${activeFilter === cat ? 'bg-blue-600 border-blue-500 text-white' : 'bg-[#1f2937] border-slate-700 text-gray-400 hover:border-gray-500'}`}>

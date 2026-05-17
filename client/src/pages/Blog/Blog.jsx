@@ -61,6 +61,11 @@ const Blog = () => {
 
     // --- ÖNE ÇIKAN YAZI (VİTRİN) — yalnız ilk sayfada ve filtre yokken ---
     const featuredPost = posts.find(p => p.featured) || posts[0];
+    const showFeatured = !isFiltering && page === 1 && !!featuredPost;
+    // Vitrin gösteriliyorsa aynı yazı alttaki listede tekrar etmesin
+    const listPosts = showFeatured
+        ? posts.filter(p => p._id !== featuredPost._id)
+        : posts;
 
     // Tarih Formatlayıcı Yardımcı Fonksiyon
     const formatDate = (dateString) => {
@@ -98,7 +103,7 @@ const Blog = () => {
                 )}
 
                 {/* --- VİTRİN BÖLÜMÜ (FEATURED POST) --- */}
-                {!loading && !error && featuredPost && !isFiltering && page === 1 && (
+                {!loading && !error && showFeatured && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -108,7 +113,7 @@ const Blog = () => {
                             <div className="relative h-64 md:h-full overflow-hidden">
                                 <div className="absolute top-4 left-4 z-10">
                                     <span className="px-3 py-1 bg-red-600 text-white text-xs font-bold rounded-full flex items-center gap-1 shadow-lg animate-pulse">
-                                        <FaFire /> HOT TOPIC
+                                        <FaFire /> {t('blog.hot_topic')}
                                     </span>
                                 </div>
                                 {/* Resim Yoksa Placeholder */}
@@ -134,9 +139,9 @@ const Blog = () => {
                                 </p>
 
                                 <div className="flex items-center gap-6 text-gray-500 text-sm font-medium mt-auto">
-                                    <div className="flex items-center gap-2"><FaHeart className="text-red-500" /> {featuredPost.views || 0} Okunma</div>
+                                    <div className="flex items-center gap-2"><FaHeart className="text-red-500" /> {featuredPost.views || 0} {t('blog.views')}</div>
                                     <div className="flex items-center gap-2 ml-auto text-white group-hover:translate-x-2 transition-transform">
-                                        Devamını Oku <FaArrowRight />
+                                        {t('blog.read_more')} <FaArrowRight />
                                     </div>
                                 </div>
                             </div>
@@ -165,13 +170,13 @@ const Blog = () => {
 
                         {/* Yazılar Grid */}
                         <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-8">
-                            {!loading && posts.length === 0 ? (
+                            {!loading && listPosts.length === 0 && !showFeatured ? (
                                 <div className="text-center py-20 border border-dashed border-slate-800 rounded-2xl">
                                     <h3 className="text-xl font-bold text-white">{t('blog.no_posts')}</h3>
                                 </div>
                             ) : (
                                 <AnimatePresence>
-                                    {posts.map((post) => (
+                                    {listPosts.map((post) => (
                                         <motion.div layout key={post._id} variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }} exit={{ opacity: 0, scale: 0.9 }} className="group">
                                             {/* LİNK BİLEŞENİ: Tüm kartı kapsar */}
                                             <Link to={`/blog/${post._id}`} className="bg-[#111827] border border-slate-800 rounded-2xl p-6 hover:border-blue-500/30 transition-all flex flex-col md:flex-row gap-6 h-full">
@@ -219,7 +224,7 @@ const Blog = () => {
                                     disabled={pagination.page <= 1}
                                     className="px-4 py-2 rounded-lg text-sm font-medium bg-[#1f2937] border border-slate-700 text-gray-300 hover:border-blue-500 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
-                                    ← Önceki
+                                    ← {t('blog.prev')}
                                 </button>
                                 <span className="text-sm text-gray-400 font-mono">
                                     {pagination.page} / {pagination.totalPages}
@@ -229,7 +234,7 @@ const Blog = () => {
                                     disabled={pagination.page >= pagination.totalPages}
                                     className="px-4 py-2 rounded-lg text-sm font-medium bg-[#1f2937] border border-slate-700 text-gray-300 hover:border-blue-500 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
-                                    Sonraki →
+                                    {t('blog.next')} →
                                 </button>
                             </div>
                         )}
@@ -246,17 +251,17 @@ const Blog = () => {
                                 </div>
                             </div>
                             <h3 className="text-white font-bold text-lg">Eyüp Zeki Salihoğlu</h3>
-                            <p className="text-gray-400 text-sm mb-4">Teknoloji, iş dünyası ve kodlama üzerine deneyimlerimi paylaşıyorum.</p>
+                            <p className="text-gray-400 text-sm mb-4">{t('blog.author_bio')}</p>
                             <div className="flex justify-center gap-3 mb-6">
                                 <a href="https://www.linkedin.com/in/eyupzekisalihoglu/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profili" className="text-gray-400 hover:text-blue-500 transition-colors"><FaLinkedin /></a>
                                 <a href="https://github.com/salihoglueyup" target="_blank" rel="noopener noreferrer" aria-label="GitHub profili" className="text-gray-400 hover:text-white transition-colors"><FaGithub /></a>
                             </div>
-                            <a href="https://github.com/salihoglueyup" target="_blank" rel="noopener noreferrer" className="block w-full py-2 bg-white text-black font-bold rounded-lg text-sm hover:bg-gray-200 transition-colors text-center">Takip Et</a>
+                            <a href="https://github.com/salihoglueyup" target="_blank" rel="noopener noreferrer" className="block w-full py-2 bg-white text-black font-bold rounded-lg text-sm hover:bg-gray-200 transition-colors text-center">{t('blog.follow')}</a>
                         </div>
 
                         {/* Popüler Etiketler */}
                         <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6">
-                            <h4 className="text-white font-bold mb-4 flex items-center gap-2"><FaTag className="text-blue-500" /> Popüler Etiketler</h4>
+                            <h4 className="text-white font-bold mb-4 flex items-center gap-2"><FaTag className="text-blue-500" /> {t('blog.popular_tags')}</h4>
                             <div className="flex flex-wrap gap-2">
                                 {popularTags.map(tag => (
                                     <span key={tag} className="text-xs text-gray-400 bg-slate-800 border border-slate-700 px-3 py-1 rounded-full hover:border-blue-500 hover:text-white cursor-pointer transition-all">
@@ -284,8 +289,8 @@ const Blog = () => {
 
                     <div className="relative z-10 max-w-2xl mx-auto">
                         <FaHashtag className="text-4xl text-gray-600 mx-auto mb-4" />
-                        <h2 className="text-3xl font-bold text-white mb-4">Topluluğa Katıl</h2>
-                        <p className="text-gray-400 mb-8">YBS dünyasından en güncel haberler için bültene katılın.</p>
+                        <h2 className="text-3xl font-bold text-white mb-4">{t('blog.community_title')}</h2>
+                        <p className="text-gray-400 mb-8">{t('blog.community_desc')}</p>
                         <NewsletterForm variant="inline" />
                     </div>
                 </div>

@@ -4,8 +4,23 @@ const pick = require('../utils/pick');
 
 const PROJECT_FIELDS = [
     'title', 'description', 'image', 'tags', 'category', 'role', 'status',
-    'date', 'technicalArchitecture', 'features', 'metrics', 'links'
+    'date', 'technicalArchitecture', 'features', 'metrics', 'links', 'challenges'
 ];
+
+// Form multipart gönderdiğinde challenges JSON string olarak gelir;
+// Mongoose'a vermeden önce diziye çevir. (Seeder düz nesne gönderir,
+// string olmadığı için dokunulmaz.)
+const parseChallenges = (body) => {
+    if (typeof body.challenges === 'string') {
+        try {
+            const parsed = JSON.parse(body.challenges);
+            body.challenges = Array.isArray(parsed) ? parsed : [];
+        } catch {
+            body.challenges = [];
+        }
+    }
+    return body;
+};
 
 const getProjects = asyncHandler(async (req, res) => {
     const projects = await Project.find().sort({ createdAt: -1 });
@@ -13,7 +28,7 @@ const getProjects = asyncHandler(async (req, res) => {
 });
 
 const createProject = asyncHandler(async (req, res) => {
-    const newProject = await Project.create(pick(req.body, PROJECT_FIELDS));
+    const newProject = await Project.create(pick(parseChallenges(req.body), PROJECT_FIELDS));
     res.status(201).json({ success: true, data: newProject, message: 'Proje oluşturuldu.' });
 });
 
@@ -27,7 +42,7 @@ const getProjectById = asyncHandler(async (req, res) => {
 });
 
 const updateProject = asyncHandler(async (req, res) => {
-    const updatedProject = await Project.findByIdAndUpdate(req.params.id, pick(req.body, PROJECT_FIELDS), {
+    const updatedProject = await Project.findByIdAndUpdate(req.params.id, pick(parseChallenges(req.body), PROJECT_FIELDS), {
         new: true,
         runValidators: true
     });

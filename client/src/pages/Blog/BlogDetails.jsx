@@ -1,29 +1,16 @@
 // client/src/pages/Blog/BlogDetails.jsx
-import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../../api';
 import { FaArrowLeft, FaClock, FaCalendarAlt } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
-import toast from 'react-hot-toast';
+import { useBlog } from '../../hooks/queries/useBlogs';
+import { useTranslation } from 'react-i18next';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const BlogDetails = () => {
+    const { t } = useTranslation();
     const { id } = useParams();
-    const [blog, setBlog] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchBlog = async () => {
-            try {
-                const res = await api.get(`/blogs/${id}`);
-                setBlog(res.data.data); // ✅ Standardize response uyumu
-            } catch (err) {
-                toast.error(err.friendlyMessage || 'Blog yazısı yüklenemedi.');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBlog();
-    }, [id]);
+    const { data: blog, isLoading: loading } = useBlog(id);
 
     if (loading) return (
         <div className="min-h-screen bg-[#0B1120] pt-32 flex items-center justify-center">
@@ -33,8 +20,8 @@ const BlogDetails = () => {
 
     if (!blog) return (
         <div className="min-h-screen bg-[#0B1120] pt-32 text-center text-white">
-            <p className="text-gray-400">Blog yazısı bulunamadı.</p>
-            <Link to="/blog" className="text-blue-400 hover:underline mt-4 inline-block">← Bloga Dön</Link>
+            <p className="text-gray-400">{t('blogDetails.not_found')}</p>
+            <Link to="/blog" className="text-blue-400 hover:underline mt-4 inline-block">← {t('blogDetails.back_short')}</Link>
         </div>
     );
 
@@ -61,7 +48,7 @@ const BlogDetails = () => {
             <div className="max-w-3xl mx-auto">
 
                 <Link to="/blog" className="text-gray-400 hover:text-white flex items-center gap-2 mb-8 transition-colors">
-                    <FaArrowLeft /> Tüm Yazılara Dön
+                    <FaArrowLeft /> {t('blogDetails.back')}
                 </Link>
 
                 {/* Meta Veriler */}
@@ -80,8 +67,8 @@ const BlogDetails = () => {
                 )}
 
                 {/* İçerik Alanı */}
-                <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-loose whitespace-pre-wrap">
-                    {blog.content}
+                <div className="prose prose-invert prose-lg max-w-none">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{blog.content}</ReactMarkdown>
                 </div>
 
                 {/* Yazar Kutusu */}
@@ -89,7 +76,7 @@ const BlogDetails = () => {
                     <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center text-3xl">👨‍💻</div>
                     <div>
                         <h4 className="text-white font-bold">Eyüp Zeki Salihoğlu</h4>
-                        <p className="text-sm text-gray-500">Teknoloji ve iş dünyası üzerine notlar.</p>
+                        <p className="text-sm text-gray-500">{t('blogDetails.author_note')}</p>
                     </div>
                 </div>
 

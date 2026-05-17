@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProjects } from '../../hooks/queries/useProjects';
 import { useBlogs } from '../../hooks/queries/useBlogs';
@@ -22,17 +21,9 @@ const AdminDashboard = () => {
     const { data: projects = [] } = useProjects();
     const { data: blogs = [] } = useBlogs();
     const { data: messages = [] } = useMessages();
-    const { data: profile, isError: isProfileError } = useProfile();
-
-    // Yetki kontrolü
-    useEffect(() => {
-        if (isProfileError) {
-            toast.error('Oturum süresi doldu veya yetkisiz erişim.');
-            localStorage.removeItem('adminToken');
-            localStorage.removeItem('csrfToken');
-            navigate('/admin/login');
-        }
-    }, [isProfileError, navigate]);
+    // Yetki kontrolü ProtectedRoute'ta tek noktadan yapılıyor;
+    // burada profil yalnızca sidebar verisi için kullanılıyor.
+    const { data: profile } = useProfile();
 
     const handleLogout = async () => {
         if (window.confirm("Çıkış yapmak istediğine emin misin?")) {
