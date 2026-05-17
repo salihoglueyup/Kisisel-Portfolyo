@@ -5,11 +5,12 @@ import { Link } from 'react-router-dom'; // Link bileşeni eklendi
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     FaSearch, FaClock, FaHashtag, FaArrowRight, FaRegNewspaper, FaFire,
-    FaHeart, FaRegComment, FaBookmark, FaTag, FaTwitter, FaLinkedin, FaGithub
+    FaHeart, FaRegComment, FaBookmark, FaTag, FaLinkedin, FaGithub
 } from 'react-icons/fa';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import SEO from '../../components/common/SEO';
+import NewsletterForm from '../../components/common/NewsletterForm';
 import { useTranslation } from 'react-i18next';
 
 const Blog = () => {
@@ -73,19 +74,19 @@ const Blog = () => {
 
                 {/* HEADER */}
                 <div className="text-center mb-16">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 border border-pink-500/30 rounded-full bg-pink-500/10 text-pink-400 text-xs font-mono">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 border border-blue-500/30 rounded-full bg-blue-500/10 text-blue-400 text-xs font-mono">
                         <FaRegNewspaper /> DEV_BLOG_V1
                     </div>
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
                         {t('blog.title')} <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">{t('blog.subtitle')}</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">{t('blog.subtitle')}</span>
                     </h1>
                 </div>
 
                 {/* YÜKLENİYOR DURUMU */}
                 {loading && (
                     <div className="flex justify-center items-center h-64 mb-12">
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500"></div>
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
                     </div>
                 )}
 
@@ -112,20 +113,20 @@ const Blog = () => {
                                 </div>
                                 {/* Resim Yoksa Placeholder */}
                                 {featuredPost.image ? (
-                                    <img src={featuredPost.image} alt="Featured" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                    <img src={featuredPost.image} alt={featuredPost.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                                 ) : (
                                     <div className="w-full h-full bg-gradient-to-br from-slate-800 to-black flex items-center justify-center text-6xl">📝</div>
                                 )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#111827] to-transparent md:bg-gradient-to-r"></div>
                             </div>
                             <div className="p-8 md:p-12 flex flex-col justify-center relative">
-                                <div className="absolute -top-10 -right-10 w-32 h-32 bg-pink-500/20 rounded-full blur-3xl"></div>
-                                <div className="flex items-center gap-4 mb-4 text-sm text-pink-400 font-mono font-bold">
+                                <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
+                                <div className="flex items-center gap-4 mb-4 text-sm text-blue-400 font-mono font-bold">
                                     <span>{featuredPost.category}</span>
                                     <span className="text-gray-600">•</span>
                                     <span>{formatDate(featuredPost.createdAt)}</span>
                                 </div>
-                                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 group-hover:text-pink-400 transition-colors leading-tight">
+                                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 group-hover:text-blue-400 transition-colors leading-tight">
                                     {featuredPost.title}
                                 </h2>
                                 <p className="text-gray-400 mb-8 line-clamp-3 text-lg">
@@ -153,12 +154,12 @@ const Blog = () => {
                         <div className="flex flex-wrap gap-4 mb-8 items-center justify-between bg-[#1f2937]/50 p-2 rounded-xl border border-slate-800">
                             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
                                 {categories.map(cat => (
-                                    <button key={cat.key} onClick={() => changeCategory(cat.key)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeCat === cat.key ? 'bg-pink-600 text-white shadow-lg shadow-pink-600/20' : 'text-gray-400 hover:text-white hover:bg-slate-700'}`}>{cat.label}</button>
+                                    <button key={cat.key} onClick={() => changeCategory(cat.key)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeCat === cat.key ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-400 hover:text-white hover:bg-slate-700'}`}>{cat.label}</button>
                                 ))}
                             </div>
                             <div className="relative w-full md:w-48">
                                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                                <input type="text" placeholder={t('blog.search')} value={searchTerm} onChange={(e) => changeSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-black/20 border border-slate-700 rounded-lg text-gray-200 text-sm focus:outline-none focus:border-pink-500" />
+                                <input type="text" placeholder={t('blog.search')} value={searchTerm} onChange={(e) => changeSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-black/20 border border-slate-700 rounded-lg text-gray-200 text-sm focus:outline-none focus:border-blue-500" />
                             </div>
                         </div>
 
@@ -173,7 +174,7 @@ const Blog = () => {
                                     {posts.map((post) => (
                                         <motion.div layout key={post._id} variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }} exit={{ opacity: 0, scale: 0.9 }} className="group">
                                             {/* LİNK BİLEŞENİ: Tüm kartı kapsar */}
-                                            <Link to={`/blog/${post._id}`} className="bg-[#111827] border border-slate-800 rounded-2xl p-6 hover:border-pink-500/30 transition-all flex flex-col md:flex-row gap-6 h-full">
+                                            <Link to={`/blog/${post._id}`} className="bg-[#111827] border border-slate-800 rounded-2xl p-6 hover:border-blue-500/30 transition-all flex flex-col md:flex-row gap-6 h-full">
                                                 <div className="w-full md:w-48 h-48 rounded-xl overflow-hidden shrink-0 bg-slate-800">
                                                     {post.image ? (
                                                         <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -183,10 +184,10 @@ const Blog = () => {
                                                 </div>
                                                 <div className="flex flex-col flex-1">
                                                     <div className="flex justify-between items-start mb-2">
-                                                        <span className="text-pink-400 text-xs font-bold uppercase tracking-wider bg-pink-500/10 px-2 py-1 rounded">{post.category}</span>
+                                                        <span className="text-blue-400 text-xs font-bold uppercase tracking-wider bg-blue-500/10 px-2 py-1 rounded">{post.category}</span>
                                                         <FaBookmark className="text-gray-600 hover:text-white transition-colors" />
                                                     </div>
-                                                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-pink-400 transition-colors line-clamp-2">
+                                                    <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors line-clamp-2">
                                                         {post.title}
                                                     </h3>
                                                     <p className="text-gray-400 text-sm line-clamp-2 mb-4 flex-1">
@@ -216,7 +217,7 @@ const Blog = () => {
                                 <button
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
                                     disabled={pagination.page <= 1}
-                                    className="px-4 py-2 rounded-lg text-sm font-medium bg-[#1f2937] border border-slate-700 text-gray-300 hover:border-pink-500 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="px-4 py-2 rounded-lg text-sm font-medium bg-[#1f2937] border border-slate-700 text-gray-300 hover:border-blue-500 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     ← Önceki
                                 </button>
@@ -226,7 +227,7 @@ const Blog = () => {
                                 <button
                                     onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))}
                                     disabled={pagination.page >= pagination.totalPages}
-                                    className="px-4 py-2 rounded-lg text-sm font-medium bg-[#1f2937] border border-slate-700 text-gray-300 hover:border-pink-500 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="px-4 py-2 rounded-lg text-sm font-medium bg-[#1f2937] border border-slate-700 text-gray-300 hover:border-blue-500 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     Sonraki →
                                 </button>
@@ -239,27 +240,26 @@ const Blog = () => {
 
                         {/* Yazar Kartı */}
                         <div className="bg-[#1f2937] border border-slate-700 rounded-2xl p-6 text-center sticky top-28">
-                            <div className="w-24 h-24 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full p-1 mx-auto mb-4">
+                            <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full p-1 mx-auto mb-4">
                                 <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center overflow-hidden">
                                     <span className="text-4xl">👨‍💻</span>
                                 </div>
                             </div>
-                            <h3 className="text-white font-bold text-lg">YBS Geliştirici</h3>
+                            <h3 className="text-white font-bold text-lg">Eyüp Zeki Salihoğlu</h3>
                             <p className="text-gray-400 text-sm mb-4">Teknoloji, iş dünyası ve kodlama üzerine deneyimlerimi paylaşıyorum.</p>
                             <div className="flex justify-center gap-3 mb-6">
-                                <FaTwitter className="text-gray-400 hover:text-blue-400 cursor-pointer" />
-                                <FaLinkedin className="text-gray-400 hover:text-blue-600 cursor-pointer" />
-                                <FaGithub className="text-gray-400 hover:text-white cursor-pointer" />
+                                <a href="https://www.linkedin.com/in/eyupzekisalihoglu/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profili" className="text-gray-400 hover:text-blue-500 transition-colors"><FaLinkedin /></a>
+                                <a href="https://github.com/salihoglueyup" target="_blank" rel="noopener noreferrer" aria-label="GitHub profili" className="text-gray-400 hover:text-white transition-colors"><FaGithub /></a>
                             </div>
-                            <button className="w-full py-2 bg-white text-black font-bold rounded-lg text-sm hover:bg-gray-200 transition-colors">Takip Et</button>
+                            <a href="https://github.com/salihoglueyup" target="_blank" rel="noopener noreferrer" className="block w-full py-2 bg-white text-black font-bold rounded-lg text-sm hover:bg-gray-200 transition-colors text-center">Takip Et</a>
                         </div>
 
                         {/* Popüler Etiketler */}
                         <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6">
-                            <h4 className="text-white font-bold mb-4 flex items-center gap-2"><FaTag className="text-pink-500" /> Popüler Etiketler</h4>
+                            <h4 className="text-white font-bold mb-4 flex items-center gap-2"><FaTag className="text-blue-500" /> Popüler Etiketler</h4>
                             <div className="flex flex-wrap gap-2">
                                 {popularTags.map(tag => (
-                                    <span key={tag} className="text-xs text-gray-400 bg-slate-800 border border-slate-700 px-3 py-1 rounded-full hover:border-pink-500 hover:text-white cursor-pointer transition-all">
+                                    <span key={tag} className="text-xs text-gray-400 bg-slate-800 border border-slate-700 px-3 py-1 rounded-full hover:border-blue-500 hover:text-white cursor-pointer transition-all">
                                         #{tag}
                                     </span>
                                 ))}
@@ -267,11 +267,10 @@ const Blog = () => {
                         </div>
 
                         {/* Mini Bülten */}
-                        <div className="bg-gradient-to-br from-pink-900/20 to-purple-900/20 border border-pink-500/30 rounded-2xl p-6">
+                        <div className="bg-gradient-to-br from-blue-900/20 to-purple-900/20 border border-blue-500/30 rounded-2xl p-6">
                             <h4 className="text-white font-bold mb-2">{t('blog.newsletter_title')}</h4>
                             <p className="text-xs text-gray-400 mb-4">{t('blog.newsletter_desc')}</p>
-                            <input type="email" placeholder="Email adresi" className="w-full bg-black/30 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white mb-2 focus:border-pink-500 outline-none" />
-                            <button className="w-full py-2 bg-pink-600 hover:bg-pink-500 text-white text-sm font-bold rounded-lg transition-colors">Abone Ol</button>
+                            <NewsletterForm variant="compact" />
                         </div>
 
                     </div>
@@ -280,17 +279,14 @@ const Blog = () => {
 
                 {/* NEWSLETTER (Mobil için de görünür) */}
                 <div className="mt-24 bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
-                    <div className="absolute -top-24 -left-24 w-64 h-64 bg-pink-600/20 rounded-full blur-[100px]"></div>
-                    <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px]"></div>
+                    <div className="absolute -top-24 -left-24 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px]"></div>
+                    <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-purple-600/20 rounded-full blur-[100px]"></div>
 
                     <div className="relative z-10 max-w-2xl mx-auto">
                         <FaHashtag className="text-4xl text-gray-600 mx-auto mb-4" />
                         <h2 className="text-3xl font-bold text-white mb-4">Topluluğa Katıl</h2>
                         <p className="text-gray-400 mb-8">YBS dünyasından en güncel haberler için bültene katılın.</p>
-                        <form className="flex flex-col sm:flex-row gap-4" onSubmit={(e) => e.preventDefault()}>
-                            <input type="email" placeholder="E-posta adresiniz" className="flex-1 px-6 py-4 bg-black/30 border border-slate-600 rounded-xl text-white focus:border-pink-500 outline-none backdrop-blur-sm" />
-                            <button className="px-8 py-4 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-pink-600/25">Abone Ol</button>
-                        </form>
+                        <NewsletterForm variant="inline" />
                     </div>
                 </div>
 

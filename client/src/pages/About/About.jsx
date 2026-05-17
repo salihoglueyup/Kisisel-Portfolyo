@@ -1,62 +1,155 @@
 import { motion } from 'framer-motion';
 import {
     FaGraduationCap, FaBriefcase, FaCode, FaBrain, FaCoffee, FaGamepad, FaCodeBranch,FaDesktop,
-    FaAward, FaCertificate, FaLaptopCode, FaLanguage, FaUserAstronaut, FaQuoteLeft, FaLightbulb, FaRocket, FaFilePdf,FaTablet,FaWindows
+    FaLaptopCode, FaLanguage, FaUserAstronaut, FaQuoteLeft, FaLightbulb, FaRocket, FaFilePdf,FaTablet,FaWindows,
+    FaBuilding, FaAward, FaCertificate, FaUsers, FaShieldAlt, FaRobot, FaDatabase, FaHandsHelping,
+    FaServer, FaReact
 } from 'react-icons/fa';
 import {
     SiPython, SiJavascript, SiReact, SiNodedotjs, SiMongodb, SiPostgresql, SiDocker, SiFigma,
-    SiWebstorm,SiPycharm,SiCisco,SiDbeaver
+    SiWebstorm,SiPycharm,SiCisco,SiDbeaver,
+    SiFastapi, SiDjango, SiPytorch, SiRedis, SiLinux, SiNginx
 } from 'react-icons/si';
 import { VscVscode } from "react-icons/vsc";
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import profilFoto from '../../assets/profil.jpeg';
 import SEO from '../../components/common/SEO';
 import { useTranslation } from 'react-i18next';
 
-const routineData = [
-    { name: 'Kodlama', value: 5, color: '#3b82f6' },
-    { name: 'Analiz & Öğrenme', value: 6, color: '#8b5cf6' },
-    { name: 'Uyku', value: 9, color: '#1e293b' },
-    { name: 'Sosyal & Oyun', value: 4, color: '#10b981' },
+const softwareTools = [
+    { name: "WebStorm", desc: "Ana IDE (JavaScript & Front-End)" },
+    { name: "PyCharm", desc: "Python Geliştirme Ortamı" },
+    { name: "Cisco Packet Tracer", desc: "Ağ Simülasyonu & Konfigürasyon" },
+    { name: "DBeaver", desc: "Veritabanı Yönetimi (SQL)" },
 ];
 
-const certifications = [
-    { title: "Sıfırdan IT Uzmanlığı", issuer: "Udemy", date: "2025", icon: <FaAward className="text-yellow-400" /> },
-    { title: "AWS Cloud Practitioner", issuer: "Amazon Web Services", date: "2023", icon: <FaCertificate className="text-orange-400" /> },
-    { title: "Advanced React Patterns", issuer: "Udemy", date: "2023", icon: <FaCode className="text-blue-400" /> },
-];
-
-const gear = {
-    hardware: [
-        { name: "HP Victus 15", desc: "Ana İş İstasyonu", icon: <FaWindows /> },
-        { name: "Steelseries Prime RGB", desc: "Verimlilik Faresi", icon: <FaLaptopCode /> },
-        { name: "Honor Pad X8A", desc: "Yardımcı Tablet", icon: <FaTablet /> },
-        { name: "Viewsonic VX2779-HD-PRO", desc: "Çoklu ekran çalışma", icon: <FaDesktop /> },
-
-    ],
-    software: [
-        {
-            name: "WebStorm",
-            desc: "Ana IDE (JavaScript & Front-End)",
-            icon: <SiWebstorm className="text-blue-400" />
-        },
-        {
-            name: "PyCharm",
-            desc: "Python Geliştirme Ortamı",
-            icon: <SiPycharm className="text-green-400" />
-        },
-        {
-            name: "Cisco Packet Tracer",
-            desc: "Ağ Simülasyonu & Konfigürasyon",
-            icon: <SiCisco className="text-blue-500" />
-        },
-        {
-            name: "DBeaver",
-            desc: "Veritabanı Yönetimi (SQL)",
-            icon: <SiDbeaver className="text-gray-300" />
-        },
-    ]
+// AI/ML — kimliğin merkezi: öne çıkan kart
+const aiCategory = {
+    group: "AI / ML",
+    icon: <FaBrain />,
+    titleColor: "text-purple-300",
+    chip: "border-purple-500/30 text-purple-200 hover:border-purple-400 hover:bg-purple-500/10",
+    items: ["LangChain", "LightRAG", "Ollama", "RAG", "PyTorch", "Hugging Face", "Prompt Engineering", "Vector DB"]
 };
+
+const techCategories = [
+    { group: "Backend", icon: <FaServer />, titleColor: "text-teal-300", chip: "border-teal-500/30 text-teal-200 hover:border-teal-400 hover:bg-teal-500/10", items: ["Python", "FastAPI", "Django", "Flask", "Node.js", "REST API", "Microservice", "Bash"] },
+    { group: "Frontend", icon: <FaReact />, titleColor: "text-blue-300", chip: "border-blue-500/30 text-blue-200 hover:border-blue-400 hover:bg-blue-500/10", items: ["React 18", "Vite", "JavaScript (ES6+)", "Tailwind CSS", "HTML5/CSS3", "Electron.js", "WebSocket"] },
+    { group: "Veritabanı & DevOps", icon: <FaDatabase />, titleColor: "text-green-300", chip: "border-green-500/30 text-green-200 hover:border-green-400 hover:bg-green-500/10", items: ["PostgreSQL", "MongoDB", "Redis", "SQLite", "Docker", "GitHub Actions", "Nginx", "Linux", "VMware"] },
+    { group: "Güvenlik & İzleme", icon: <FaShieldAlt />, titleColor: "text-cyan-300", chip: "border-cyan-500/30 text-cyan-200 hover:border-cyan-400 hover:bg-cyan-500/10", items: ["JWT", "RBAC", "OWASP", "Pentest", "SIEM", "Log Analizi", "ELK Stack", "Grafana"] },
+];
+
+const experience = [
+    {
+        company: "Metazon", role: "Yapay Zeka Stajyeri", date: "Ara 2025 – Mar 2026", place: "İstanbul (Hibrit)",
+        points: [
+            "AI destekli video üretimi, kurgu ve içerik süreçlerini uçtan uca yönetiyorum.",
+            "Generative AI + Local LLM (Ollama, ComfyUI) ile görsel/video pipeline'ları ve ses klonlama/sentez kuruyorum.",
+            "React + Django/Flask ile iç yönetim platformu geliştirip AI özellikleri (otomatik metin/özet) entegre ediyorum.",
+            "İleri Prompt Engineering ve Python otomasyonuyla tekrarlayan görevlerin zaman maliyetini düşürüyorum."
+        ]
+    },
+    {
+        company: "Siber Vatan", role: "Siber Güvenlik Kursiyeri", date: "Kas 2025 – Mar 2026", place: "İstanbul (Uzaktan)",
+        points: [
+            "Red Team (sızma testi, payload geliştirme) ve Blue Team (SOC, log analizi) uygulamalı lab çalışmaları.",
+            "Gerçek senaryolarla ağ güvenliği, zafiyet analizi ve sistem sıkılaştırma.",
+            "CTF yarışmaları ve simülasyon ortamlarında ofansif/defansif beceri geliştirme."
+        ]
+    },
+    {
+        company: "İlkay Denizcilik", role: "Bilgi Teknolojileri Stajyeri", date: "Eki 2025 – Kas 2025", place: "İstanbul (Ofis)",
+        points: [
+            "BT altyapısının yönetimi ve günlük operasyonlara destek sağladım.",
+            "Excel script/makrolarıyla raporlama ve veri girişini otomatize ederek manuel iş yükünü azalttım."
+        ]
+    },
+    {
+        company: "Bluesense", role: "Yapay Zeka Mühendisi Stajyeri", date: "Eyl 2025 – Kas 2025", place: "İstanbul (Uzaktan)",
+        points: [
+            "AI modellerinin araştırılması, testi ve sisteme entegrasyonunda görev aldım.",
+            "Python web scraping bot'larıyla ML eğitimi için büyük ölçekli veri setleri topladım.",
+            "Veri madenciliği ve preprocessing ile ham veriyi analize hazır hale getirdim."
+        ]
+    },
+    {
+        company: "Techbros", role: "Veri Analizi Stajyeri", date: "Tem 2025 – Ağu 2025", place: "İstanbul (Uzaktan)",
+        points: [
+            "Python ile ETL süreçleri; SQL sorgulama/optimizasyon işlemleri gerçekleştirdim.",
+            "Power BI ile interaktif rapor/dashboard tasarladım.",
+            "IBM Cloud Pak for Data üzerinden BI ve AI tabanlı analitik çözümler geliştirdim."
+        ]
+    },
+    {
+        company: "Öztiryakiler Savunma", role: "Bilgi Teknolojileri Stajyeri", date: "Mar 2025 – Haz 2025", place: "Tekirdağ (Ofis)",
+        points: [
+            "Log analizi, zafiyet taraması ve ağ güvenliği denetimleri gerçekleştirdim.",
+            "Python otomasyon script'leri ve SQL veritabanı operasyonları geliştirdim.",
+            "Ağ cihazı yapılandırması, sistem kurulumları ve donanım/yazılım sorun çözümü."
+        ]
+    },
+    {
+        company: "İstanbul Aydın Üniversitesi", role: "Bilgi Teknolojileri Stajyeri", date: "Eki 2024 – Ara 2024", place: "İstanbul (Ofis)",
+        points: [
+            "Üniversite IT altyapısı, ağ yönetimi ve envanter takibine teknik destek sağladım.",
+            "Donanım/yazılım sorun tespiti, sistem bakımı, güncelleme ve veri yedekleme süreçlerini yürüttüm.",
+            "Kampüs ağ güvenliği ve laboratuvar cihaz konfigürasyonlarında aktif rol aldım."
+        ]
+    },
+];
+
+// Öne çıkan: bir program kabulü (sertifika değil) — ayrı vurgulu şerit
+const featuredCert = {
+    title: "İleri Seviye Siber Güvenlik",
+    issuer: "IBM AI4Future",
+    date: "2026",
+    tag: "Program · Kabul"
+};
+
+const certGroups = [
+    {
+        group: "Yapay Zeka",
+        icon: <FaBrain />,
+        accent: "text-purple-300",
+        items: [
+            { title: "Anthropic Academy — 10 Sertifika", issuer: "Claude Code, MCP, Subagents, Agent Skills, Claude API…", date: "May 2026" },
+            { title: "Career Essentials in Generative AI", issuer: "Microsoft & LinkedIn", date: "Şub 2026" },
+            { title: "AI Literacy for Everyone", issuer: "LinkedIn", date: "Şub 2026" },
+            { title: "Akbank Generative AI Bootcamp", issuer: "Global AI Hub", date: "Kas 2025" },
+        ]
+    },
+    {
+        group: "Veri & BI",
+        icon: <FaDatabase />,
+        accent: "text-green-300",
+        items: [
+            { title: "Veri Bilimi ve Yapay Zeka Eğitimi", issuer: "Doğuş Teknoloji", date: "Kas 2025" },
+            { title: "InternCamp2025 (SQL, Veri Müh./Bilimi, BI)", issuer: "TECHBROS", date: "Ağu 2025" },
+        ]
+    },
+    {
+        group: "Siber Güvenlik & Sistem",
+        icon: <FaShieldAlt />,
+        accent: "text-cyan-300",
+        items: [
+            { title: "Network Güvenliği Temelleri", issuer: "Siber Kulüpler Birliği", date: "Eyl 2025" },
+            { title: "Introduction to Cybersecurity", issuer: "Cisco Networking Academy", date: "Ağu 2025" },
+            { title: "Operating Systems Basics", issuer: "Cisco Networking Academy", date: "Ağu 2025" },
+        ]
+    },
+];
+
+const leadership = [
+    {
+        title: "Gönüllü Ekip Lideri", org: "AFAD (Afet ve Acil Durum Yönetimi)", date: "2022 – Devam ediyor",
+        desc: "3+ yıl aktif gönüllü hizmet; 15 kişilik müdahale ekibine liderlik, ulusal operasyonlarda saha koordinasyonu ve kriz yönetimi.",
+        icon: <FaHandsHelping className="text-red-400" />
+    },
+    {
+        title: "Sınıf Temsilcisi", org: "İstanbul Aydın Üniversitesi", date: "2024 – 2026",
+        desc: "2 akademik yıl boyunca seçildim; öğrenci-akademisyen iletişiminin köprüsü olarak etkinlik ve geri bildirim süreçlerini yönettim.",
+        icon: <FaUsers className="text-purple-400" />
+    },
+];
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -70,42 +163,67 @@ const itemVariants = {
 
 const About = () => {
     const { t } = useTranslation();
+    // Eğitim & kilometre taşları — staj tekrarını önlemek için sade tutuldu (detay: Deneyim bölümü)
     const timeline = [
-        { year: "2025", title: "Full Stack Developer", desc: "Modern web teknolojileri (MERN) ile kurumsal projeler geliştiriyorum.", icon: <FaCode /> },
-        { year: "2023", title: "YBS Bölümü", desc: "Yönetim Bilişim Sistemleri lisans eğitimime başladım.", icon: <FaGraduationCap /> },
-        { year: "2022", title: "İlk Kod Satırı", desc: "Python ile algoritmik düşünce yapısına giriş.", icon: <FaBrain /> },
+        { year: "2026", title: "Mezuniyet (Beklenen)", desc: "İstanbul Aydın Üniversitesi — Yönetim Bilişim Sistemleri (Lisans).", icon: <FaGraduationCap /> },
+        { year: "2026", title: "IBM AI4Future — İleri Siber Güvenlik", desc: "İleri seviye siber güvenlik programına kabul aldım.", icon: <FaShieldAlt /> },
+        { year: "2022", title: "Üniversiteye Başlangıç", desc: "İstanbul Aydın Üniversitesi YBS lisans eğitimine başladım (Ağu 2022).", icon: <FaCode /> },
     ];
 
     return (
         <div className="min-h-screen bg-[#0B1120] text-gray-300 font-sans pt-24 pb-20 px-6 overflow-x-hidden">
-            <SEO title="Hakkımda" description="Eyüp Zeki Salihoğlu - Yönetim Bilişim Sistemleri öğrencisi, Full Stack Developer. Kariyer geçmişi, yetenekler ve sertifikalar." />
+            <SEO
+                title="Hakkımda"
+                description="Eyüp Zeki Salihoğlu - Yönetim Bilişim Sistemleri öğrencisi, Full Stack Developer. Kariyer geçmişi, yetenekler ve eğitim."
+                type="profile"
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'ProfilePage',
+                    mainEntity: {
+                        '@type': 'Person',
+                        name: 'Eyüp Zeki Salihoğlu',
+                        jobTitle: 'Full Stack Developer',
+                        description: 'Yönetim Bilişim Sistemleri öğrencisi, MERN Stack Full Stack Developer.',
+                        knowsLanguage: ['tr', 'en'],
+                        sameAs: [
+                            'https://github.com/salihoglueyup',
+                            'https://www.linkedin.com/in/eyupzekisalihoglu/'
+                        ]
+                    }
+                }}
+            />
 
             <motion.div
-                className="max-w-6xl mx-auto"
+                className="max-w-6xl mx-auto flex flex-col"
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
             >
 
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center mb-24">
+                <div className="order-1 grid grid-cols-1 md:grid-cols-12 gap-12 items-center mb-24">
                     <motion.div className="md:col-span-4 relative group" variants={itemVariants}>
                         <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000"></div>
-                        <div className="relative bg-[#111827] border border-slate-800 rounded-2xl overflow-hidden aspect-square flex items-center justify-center shadow-2xl">
-                            <div className="text-center">
-                                <img
-                                    src={profilFoto}
-                                    alt="Profile Picture"
-                                    className="w-32 h-32 object-cover mx-auto rounded-2xl"
-                                />
-                            </div>
+                        <div className="relative bg-[#111827] border border-slate-800 rounded-2xl overflow-hidden aspect-square shadow-2xl">
+                            <img
+                                src={profilFoto}
+                                alt="Eyüp Zeki Salihoğlu profil fotoğrafı"
+                                className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/60 to-transparent"></div>
                         </div>
                     </motion.div>
 
 
                     <motion.div className="md:col-span-8" variants={itemVariants}>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 border border-blue-500/20 rounded-full bg-blue-500/5 text-blue-400 text-xs font-mono">
-                            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                            {t('about.open_for_work')}
+                        <div className="flex flex-wrap gap-3 mb-6">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 border border-blue-500/20 rounded-full bg-blue-500/5 text-blue-400 text-xs font-mono">
+                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                                {t('about.open_for_work')}
+                            </div>
+                            <div className="inline-flex items-center gap-2 px-3 py-1 border border-cyan-500/30 rounded-full bg-cyan-500/10 text-cyan-300 text-xs font-mono">
+                                <FaShieldAlt className="text-cyan-400" />
+                                IBM AI4Future · İleri Siber Güvenlik (Kabul)
+                            </div>
                         </div>
                         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
                             {t('about.hero_title_1')} <br />
@@ -128,26 +246,24 @@ const About = () => {
                     </motion.div>
                 </div>
 
-                <motion.div variants={itemVariants} className="mb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <motion.div variants={itemVariants} className="order-2 mb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
                     <div className="lg:col-span-7 space-y-6 text-lg leading-relaxed text-gray-400">
-                        <h2 className="text-3xl font-bold text-white mb-6 flex items-center gap-3">
+                        <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                             <FaUserAstronaut className="text-blue-500" /> {t('about.journey_title')}
                         </h2>
                         <p>
-                            Bilgisayar dünyasına olan merakım, sadece oyun oynamakla değil, "Bu oyun nasıl yapılıyor?" sorusuyla başladı.
-                            Lise yıllarında basit HTML/CSS denemeleriyle başlayan bu serüven, üniversitede <strong className="text-white">Yönetim Bilişim Sistemleri</strong> bölümüyle profesyonel bir vizyona dönüştü.
+                            Yazılım yolculuğum, <strong className="text-white">Yönetim Bilişim Sistemleri</strong> disipliniyle başladı; ama beni asıl heyecanlandıran, teknolojinin gerçek dünya problemlerini nasıl çözdüğüydü.
+                            Bugün <strong className="text-white">Full-Stack AI Engineer</strong> olarak production seviyesinde RAG sistemleri ve kurumsal web uygulamaları geliştiriyorum.
                         </p>
                         <p>
-                            Sadece kod yazan biri değilim; kodun işletmeye kattığı değeri hesaplayan, süreçleri analiz eden ve veriyi anlamlandıran biriyim.
-                            Benim için yazılım, karmaşık problemleri en zarif ve verimli şekilde çözme sanatıdır.
+                            React ve FastAPI ile uçtan uca ürünler kuruyor; LangChain, vector database'ler ve local LLM altyapılarıyla
+                            yapay zekayı işin merkezine yerleştiriyorum. <strong className="text-white">JWT, RBAC ve OWASP</strong> standartlarıyla güvenli yazılım geliştirmeyi bir prensip olarak benimsiyorum.
                         </p>
                         <p>
-                            Şu anda MERN Stack (MongoDB, Express, React, Node.js) üzerinde uzmanlaşırken, bir yandan da veri analitiği ve yapay zeka konularında kendimi geliştiriyorum.
-                            Hedefim, teknolojiyi kullanarak insanların hayatını kolaylaştıran ölçeklenebilir sistemler kurmak.
+                            Metazon, Bluesense ve Techbros gibi şirketlerdeki stajlarımda GenAI pipeline'larından veri madenciliğine
+                            uzanan bir deneyim kazandım. Siber Vatan'da Red &amp; Blue Team operasyonlarıyla ofansif ve defansif güvenliği
+                            saha üzerinde öğrendim. Hedefim: ölçeklenebilir, güvenli ve gerçekten değer üreten AI sistemleri kurmak.
                         </p>
-                        <div className="pt-4 font-script text-3xl text-blue-400 opacity-80" style={{ fontFamily: 'cursive' }}>
-                            Eyüp Zeki Salihoğlu
-                        </div>
                     </div>
 
                     <div className="lg:col-span-5">
@@ -181,86 +297,38 @@ const About = () => {
                     </div>
                 </motion.div>
 
-                {/* 2. İSTATİSTİK VE RUTİN */}
-                <motion.div variants={itemVariants} className="mb-24 grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-                    {/* Sol: Bir Günüm (Grafik) */}
-                    <div className="bg-[#111827] border border-slate-800 rounded-2xl p-8 relative overflow-hidden">
-                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                            <FaBrain className="text-purple-500"/> {t('about.daily_routine')}
-                        </h3>
-                        <div className="h-64 w-full relative z-10">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie
-                                        data={routineData}
-                                        cx="50%"
-                                        cy="50%"
-                                        innerRadius={60}
-                                        outerRadius={80}
-                                        paddingAngle={5}
-                                        dataKey="value"
-                                    >
-                                        {routineData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.color} stroke="none" />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip
-                                        contentStyle={{ backgroundColor: '#1e293b', borderColor: '#334155', borderRadius: '8px' }}
-                                        itemStyle={{ color: '#fff' }}
-                                    />
-                                    <Legend verticalAlign="bottom" height={36} iconType="circle" />
-                                </PieChart>
-                            </ResponsiveContainer>
-                            {/* Ortadaki Yazı */}
-                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none mb-4">
-                                <span className="text-2xl font-bold text-white">24h</span>
-                                <span className="block text-xs text-gray-500">Daily Cycle</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Sağ: Dil Yetkinlikleri & Hedefler */}
-                    <div className="flex flex-col gap-6">
-                        {/* Diller */}
-                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-8">
-                            <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                                <FaLanguage className="text-green-500"/> {t('about.language_skills')}
-                            </h3>
-                            <div className="space-y-4">
-                                <div>
-                                    <div className="flex justify-between mb-1">
-                                        <span className="text-white text-sm">Türkçe (Ana Dil)</span>
-                                        <span className="text-green-400 text-xs">Native</span>
-                                    </div>
-                                    <div className="h-2 bg-slate-700 rounded-full"><div className="h-full w-full bg-green-500 rounded-full"></div></div>
+                {/* DENEYİM */}
+                <motion.div variants={itemVariants} className="order-4 mb-24">
+                    <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                        <FaBuilding className="text-blue-500" />
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">Deneyim</span>
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {experience.map((exp, idx) => (
+                            <div key={idx} className="bg-[#111827] border border-slate-800 rounded-xl p-6 hover:border-blue-500/40 transition-all">
+                                <div className="flex items-start justify-between mb-1 gap-3">
+                                    <h3 className="text-white font-bold">{exp.company}</h3>
+                                    <time className="font-mono text-[11px] text-blue-400 bg-blue-400/10 px-2 py-1 rounded shrink-0">{exp.date}</time>
                                 </div>
-                                <div>
-                                    <div className="flex justify-between mb-1">
-                                        <span className="text-white text-sm">İngilizce (Teknik)</span>
-                                        <span className="text-blue-400 text-xs">Advanced (C1)</span>
-                                    </div>
-                                    <div className="h-2 bg-slate-700 rounded-full"><div className="h-full w-[85%] bg-blue-500 rounded-full"></div></div>
-                                </div>
+                                <p className="text-sm text-blue-300 mb-1">{exp.role}</p>
+                                <p className="text-xs text-gray-500 mb-3">{exp.place}</p>
+                                <ul className="space-y-1.5">
+                                    {exp.points.map((p, i) => (
+                                        <li key={i} className="text-sm text-gray-400 flex gap-2">
+                                            <span className="text-blue-500 mt-1 shrink-0">▹</span>{p}
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
-                        </div>
-
-                        {/* Hedef */}
-                        <div className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border border-blue-500/30 rounded-2xl p-8 flex-1 flex flex-col justify-center">
-                            <h4 className="text-blue-400 font-bold mb-2">{t('about.goal_2025')}</h4>
-                            <p className="text-gray-300 italic">
-                                "{t('about.goal_text')}"
-                            </p>
-                        </div>
+                        ))}
                     </div>
-
                 </motion.div>
 
-                {/* 3. TIMELINE */}
-                <motion.div variants={itemVariants} className="mb-24">
-                    <h2 className="text-2xl font-bold text-white mb-10 flex items-center gap-3">
+                {/* EĞİTİM & KİLOMETRE TAŞLARI */}
+                <motion.div variants={itemVariants} className="order-3 mb-24">
+                    <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                         <FaCodeBranch className="text-blue-500" />
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">{t('about.career_title')}</span>
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">Eğitim & Kilometre Taşları</span>
                     </h2>
 
                     <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-slate-800">
@@ -281,151 +349,128 @@ const About = () => {
                     </div>
                 </motion.div>
 
-                {/* 4. SERTİFİKALAR VE TECH STACK */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-24">
+                {/* TEKNOLOJİ & GELİŞTİRME ORTAMI (Tech + Gear birleşik) */}
+                <motion.div variants={itemVariants} className="order-7 mb-24">
+                    <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                        <FaCode className="text-blue-500"/> Teknoloji & Geliştirme Ortamım
+                    </h2>
 
-                    {/* Sertifikalar */}
-                    <motion.div variants={itemVariants} className="lg:col-span-1">
-                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                            <FaAward className="text-yellow-500"/> {t('about.certs_title')}
-                        </h3>
-                        <div className="space-y-4">
-                            {certifications.map((cert, idx) => (
-                                <div key={idx} className="flex items-center gap-4 p-4 bg-[#111827] border border-slate-800 rounded-xl hover:border-yellow-500/50 transition-colors group cursor-default">
-                                    <div className="text-2xl p-3 bg-slate-800 rounded-lg group-hover:bg-slate-700 transition-colors">
-                                        {cert.icon}
-                                    </div>
-                                    <div>
-                                        <h4 className="text-white font-bold text-sm">{cert.title}</h4>
-                                        <p className="text-xs text-gray-500">{cert.issuer} • {cert.date}</p>
-                                    </div>
-                                </div>
+                    {/* Öne çıkan: AI / ML (kimliğin merkezi) */}
+                    <div className="mb-6 bg-gradient-to-br from-purple-900/25 to-[#111827] border border-purple-500/30 rounded-2xl p-6">
+                        <div className="flex items-center gap-3 mb-4">
+                            <span className="text-2xl text-purple-300">{aiCategory.icon}</span>
+                            <h3 className={`text-lg font-bold ${aiCategory.titleColor}`}>{aiCategory.group}</h3>
+                            <span className="text-xs font-mono text-purple-400/70 bg-purple-500/10 px-2 py-0.5 rounded-full">{aiCategory.items.length}</span>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {aiCategory.items.map((it, i) => (
+                                <span key={i} className={`text-xs px-3 py-1.5 rounded-full bg-slate-800/60 border transition-colors ${aiCategory.chip}`}>{it}</span>
                             ))}
                         </div>
-                    </motion.div>
+                    </div>
 
-                    {/* Teknoloji Stack */}
-                    <motion.div variants={itemVariants} className="lg:col-span-2">
-                        <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
-                            <FaCode className="text-blue-500"/> {t('about.tech_title')}
-                        </h3>
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                            {[
-                                { name: "Python", icon: <SiPython />, color: "text-yellow-400" },
-                                { name: "JavaScript", icon: <SiJavascript />, color: "text-yellow-300" },
-                                { name: "React", icon: <SiReact />, color: "text-blue-400" },
-                                { name: "Node.js", icon: <SiNodedotjs />, color: "text-green-500" },
-                                { name: "MongoDB", icon: <SiMongodb />, color: "text-green-400" },
-                                { name: "PostgreSQL", icon: <SiPostgresql />, color: "text-blue-300" },
-                                { name: "Docker", icon: <SiDocker />, color: "text-blue-500" },
-                                { name: "Figma", icon: <SiFigma />, color: "text-pink-500" },
-                            ].map((tech, idx) => (
-                                <div key={idx} className="flex flex-col items-center justify-center p-6 bg-[#111827] border border-slate-800 rounded-xl hover:border-blue-500/30 hover:bg-slate-800/50 transition-all group">
-                                    <span className={`text-4xl mb-3 ${tech.color} group-hover:scale-110 transition-transform`}>{tech.icon}</span>
-                                    <span className="text-gray-300 text-sm font-medium">{tech.name}</span>
+                    {/* Diğer 4 kategori — 2×2 */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                        {techCategories.map((cat, idx) => (
+                            <div key={idx} className="bg-[#111827] border border-slate-800 rounded-xl p-6 hover:border-slate-700 transition-colors">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <span className={`text-xl ${cat.titleColor}`}>{cat.icon}</span>
+                                    <h3 className={`text-sm font-bold uppercase tracking-wider ${cat.titleColor}`}>{cat.group}</h3>
+                                    <span className="text-[10px] font-mono text-gray-500 bg-slate-800 px-2 py-0.5 rounded-full">{cat.items.length}</span>
                                 </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {cat.items.map((it, i) => (
+                                        <span key={i} className={`text-xs px-3 py-1.5 rounded-full bg-slate-800/60 border transition-colors ${cat.chip}`}>{it}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Geliştirme Ortamı — Software & Tools (kompakt) */}
+                    <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                            <FaLaptopCode className="text-blue-400"/> {t('about.software')}
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                            {softwareTools.map((item, i) => (
+                                <span key={i} title={item.desc} className="text-xs text-gray-300 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-full hover:border-blue-500/50 transition-colors cursor-default">
+                                    {item.name}
+                                </span>
                             ))}
-                        </div>
-                    </motion.div>
-                </div>
-
-                {/* 5. EKİPMANLAR (MY GEAR) */}
-                <motion.div variants={itemVariants} className="bg-[#111827] border border-slate-800 rounded-2xl p-8">
-                    <h3 className="text-xl font-bold text-white mb-8 text-center flex items-center justify-center gap-2">
-                        <FaLaptopCode className="text-blue-400"/> {t('about.gear_title')}
-                    </h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        {/* Hardware */}
-                        <div>
-                            <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">{t('about.hardware')}</h4>
-                            <div className="space-y-4">
-                                {gear.hardware.map((item, i) => (
-                                    <div key={i} className="flex items-center justify-between group">
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-xl text-gray-400 group-hover:text-white transition-colors">{item.icon}</span>
-                                            <span className="text-gray-200 font-medium">{item.name}</span>
-                                        </div>
-                                        <span className="text-xs text-gray-500">{item.desc}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Software */}
-                        <div>
-                            <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 border-b border-slate-800 pb-2">{t('about.software')}</h4>
-                            <div className="space-y-4">
-                                {gear.software.map((item, i) => (
-                                    <div key={i} className="flex items-center justify-between group">
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-xl text-gray-400 group-hover:text-white transition-colors">{item.icon}</span>
-                                            <span className="text-gray-200 font-medium">{item.name}</span>
-                                        </div>
-                                        <span className="text-xs text-gray-500">{item.desc}</span>
-                                    </div>
-                                ))}
-                            </div>
                         </div>
                     </div>
                 </motion.div>
 
-                {/* 6. YENİ: AKADEMİK ODAK (YBS VİZYONU) */}
-                <motion.div variants={itemVariants} className="mb-24">
-                    <h3 className="text-xl font-bold text-white mb-8 flex items-center gap-2">
-                        <FaGraduationCap className="text-green-500"/> {t('about.academic_title')}
-                    </h3>
+                {/* SERTİFİKALAR & EĞİTİMLER */}
+                <motion.div variants={itemVariants} className="order-5 mb-24">
+                    <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
+                        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                            <FaCertificate className="text-yellow-500"/> Sertifikalar & Eğitimler
+                        </h2>
+                        <span className="text-xs font-mono text-yellow-400 bg-yellow-400/10 border border-yellow-400/30 px-3 py-1 rounded-full">20+ Sertifika</span>
+                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {/* Teknik */}
-                        <div className="bg-[#111827] border border-slate-800 rounded-xl p-6 hover:border-blue-500/30 transition-colors">
-                            <div className="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 mb-4">
-                                <FaCode />
+                    {/* Öne çıkan: IBM AI4Future (program kabulü) */}
+                    <div className="mb-8 bg-gradient-to-r from-cyan-900/30 to-[#111827] border border-cyan-500/40 rounded-2xl p-6 flex items-center gap-5">
+                        <div className="text-3xl text-cyan-300 shrink-0"><FaShieldAlt /></div>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <h3 className="text-white font-bold">{featuredCert.title}</h3>
+                                <span className="text-[10px] font-bold text-cyan-300 bg-cyan-400/10 border border-cyan-500/30 px-2 py-0.5 rounded-full">{featuredCert.tag}</span>
                             </div>
-                            <h4 className="text-white font-bold mb-4">{t('about.academic_tech')}</h4>
-                            <div className="flex flex-wrap gap-2">
-                                {['Veri Madenciliği', 'Algoritma ve Programlama', 'Veri Tabanı Yön.', 'Web Teknolojileri', 'Mobil Prog.'].map((course, i) => (
-                                    <span key={i} className="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-2 py-1 rounded">
-                                 {course}
-                             </span>
-                                ))}
-                            </div>
+                            <p className="text-sm text-cyan-200/70">{featuredCert.issuer} • {featuredCert.date}</p>
                         </div>
+                    </div>
 
-                        {/* İşletme */}
-                        <div className="bg-[#111827] border border-slate-800 rounded-xl p-6 hover:border-yellow-500/30 transition-colors">
-                            <div className="w-12 h-12 bg-yellow-500/10 rounded-lg flex items-center justify-center text-yellow-400 mb-4">
-                                <FaBriefcase />
+                    {/* Kategoriye göre gruplu sertifikalar */}
+                    <div className="space-y-8">
+                        {certGroups.map((grp, gi) => (
+                            <div key={gi}>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <span className={`text-lg ${grp.accent}`}>{grp.icon}</span>
+                                    <h3 className={`text-sm font-bold uppercase tracking-wider ${grp.accent}`}>{grp.group}</h3>
+                                    <span className="text-[10px] font-mono text-gray-500 bg-slate-800 px-2 py-0.5 rounded-full">{grp.items.length}</span>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                    {grp.items.map((cert, idx) => (
+                                        <div key={idx} className="bg-[#111827] border border-slate-800 rounded-xl p-4 hover:border-yellow-500/40 transition-colors">
+                                            <h4 className="text-white font-bold text-sm mb-1">{cert.title}</h4>
+                                            <p className="text-xs text-gray-500">{cert.issuer} • {cert.date}</p>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
-                            <h4 className="text-white font-bold mb-4">{t('about.academic_business')}</h4>
-                            <div className="flex flex-wrap gap-2">
-                                {['Finansal Muhasebe', 'Dijital Pazarlama', 'İstatistik', 'Girişimcilik', 'Ekonomi'].map((course, i) => (
-                                    <span key={i} className="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-2 py-1 rounded">
-                                 {course}
-                             </span>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Yönetim */}
-                        <div className="bg-[#111827] border border-slate-800 rounded-xl p-6 hover:border-purple-500/30 transition-colors">
-                            <div className="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center text-purple-400 mb-4">
-                                <FaLightbulb />
-                            </div>
-                            <h4 className="text-white font-bold mb-4">{t('about.academic_mgmt')}</h4>
-                            <div className="flex flex-wrap gap-2">
-                                {['Sistem Analizi', 'Proje Yönetimi', 'ERP Sistemleri', 'Bilişim Hukuku', 'Karar Destek Sis.'].map((course, i) => (
-                                    <span key={i} className="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-2 py-1 rounded">
-                                 {course}
-                             </span>
-                                ))}
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </motion.div>
 
-                {/* 6. YENİ: CV İNDİRME (CTA) */}
-                <motion.div variants={itemVariants} className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-3xl p-12 text-center relative overflow-hidden">
+                {/* LİDERLİK & GÖNÜLLÜLÜK */}
+                <motion.div variants={itemVariants} className="order-6 mb-24">
+                    <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                        <FaUsers className="text-purple-500"/> Liderlik & Gönüllülük
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {leadership.map((lead, idx) => (
+                            <div key={idx} className="p-6 bg-[#111827] border border-slate-800 rounded-xl hover:border-purple-500/40 transition-colors">
+                                <div className="flex items-start gap-3 mb-3">
+                                    <div className="text-xl shrink-0">{lead.icon}</div>
+                                    <div className="flex-1">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <h4 className="text-white font-bold">{lead.title}</h4>
+                                            <time className="font-mono text-[11px] text-purple-400 bg-purple-400/10 px-2 py-1 rounded shrink-0">{lead.date}</time>
+                                        </div>
+                                        <p className="text-xs text-purple-300">{lead.org}</p>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-400">{lead.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+
+                {/* CV İNDİRME (CTA) */}
+                <motion.div variants={itemVariants} className="order-10 bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-3xl p-12 text-center relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
 
                     <div className="relative z-10">

@@ -26,7 +26,8 @@ const Projects = () => {
     const [activeFilter, setActiveFilter] = useState('All');
     const [viewMode, setViewMode] = useState('grid'); // 'grid' veya 'list'
 
-    const categories = ['All', 'React', 'Node.js', 'Python', 'Data Analysis', 'Mobile', '.NET'];
+    // Gerçek portfolyo kategorileri (seeder'daki project.category değerleriyle birebir)
+    const categories = ['All', 'AI / RAG', 'AI / ML', 'Full-Stack', 'Cybersecurity', 'IoT / Araştırma', 'Kurumsal', 'Gönüllü'];
 
     const error = queryError ? (queryError.friendlyMessage || queryError.message || 'Projeler yüklenemedi.') : null;
 
@@ -34,7 +35,7 @@ const Projects = () => {
     const filteredProjects = useMemo(() => {
         let result = projects;
         if (activeFilter !== 'All') {
-            result = result.filter(project => project.tags.some(tag => tag.toLowerCase() === activeFilter.toLowerCase()));
+            result = result.filter(project => project.category === activeFilter);
         }
         if (searchTerm) {
             result = result.filter(project =>

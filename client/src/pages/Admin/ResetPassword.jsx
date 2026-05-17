@@ -74,6 +74,7 @@ const ResetPassword = () => {
                             <input
                                 type="password"
                                 placeholder="Yeni Şifre"
+                                aria-label="Yeni Şifre"
                                 {...register('password')}
                                 className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition-all"
                             />
@@ -87,6 +88,7 @@ const ResetPassword = () => {
                             <input
                                 type="password"
                                 placeholder="Yeni Şifre (Tekrar)"
+                                aria-label="Yeni Şifre (Tekrar)"
                                 {...register('confirm')}
                                 className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition-all"
                             />

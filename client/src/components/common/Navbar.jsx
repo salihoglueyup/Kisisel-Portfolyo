@@ -34,8 +34,8 @@ const Navbar = () => {
             aria-label="Ana navigasyon"
         >
             <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-                <NavLink to="/" onClick={closeMenu} className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent font-mono">
-                    YBS.Dev
+                <NavLink to="/" onClick={closeMenu} className="text-lg md:text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent font-mono whitespace-nowrap">
+                    Eyüp Zeki Salihoğlu
                 </NavLink>
 
                 {/* Desktop Menü */}
@@ -89,7 +89,8 @@ const Navbar = () => {
                     <button
                         onClick={toggleMenu}
                         className="text-white text-xl p-2 rounded-lg hover:bg-slate-800 transition-colors z-50"
-                        aria-label="Menü"
+                        aria-label={isOpen ? 'Menüyü kapat' : 'Menüyü aç'}
+                        aria-expanded={isOpen}
                     >
                         {isOpen ? <FaTimes /> : <FaBars />}
                     </button>
@@ -140,7 +141,7 @@ const Navbar = () => {
                                 ))}
 
                                 <div className="mt-auto pt-8 border-t border-slate-800">
-                                    <p className="text-xs text-gray-600 text-center">YBS.Dev © 2025</p>
+                                    <p className="text-xs text-gray-600 text-center">Eyüp Zeki Salihoğlu © {new Date().getFullYear()}</p>
                                 </div>
                             </div>
                         </motion.div>

@@ -4,9 +4,9 @@ import { Helmet } from 'react-helmet-async';
  * @param {object[]|object} schema  Opsiyonel JSON-LD yapısal veri (tek nesne ya da dizi)
  */
 const SEO = ({ title, description, keywords, image, type = 'website', schema }) => {
-    const siteName = 'YBS.Dev';
-    const fullTitle = title ? `${title} | ${siteName}` : `${siteName} — Full Stack Developer`;
-    const desc = description || 'Eyüp Zeki Salihoğlu - Full Stack Developer portfolyosu.';
+    const siteName = 'Eyüp Zeki Salihoğlu';
+    const fullTitle = title ? `${title} | ${siteName}` : `${siteName} — Full-Stack AI Engineer`;
+    const desc = description || 'Eyüp Zeki Salihoğlu — Full-Stack AI Engineer. RAG sistemleri, LLM ve güvenli kurumsal web uygulamaları.';
     const canonical = typeof window !== 'undefined' ? window.location.href : undefined;
     const schemaList = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 

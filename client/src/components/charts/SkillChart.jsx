@@ -1,12 +1,12 @@
 import { ResponsiveContainer, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip } from 'recharts';
 
 const data = [
-    { subject: 'Frontend', A: 90, fullMark: 100 },
-    { subject: 'Backend', A: 85, fullMark: 100 },
-    { subject: 'Database', A: 80, fullMark: 100 },
-    { subject: 'Data Analysis', A: 70, fullMark: 100 },
-    { subject: 'DevOps', A: 60, fullMark: 100 },
-    { subject: 'Management', A: 75, fullMark: 100 },
+    { subject: 'AI / RAG', A: 90, fullMark: 100 },
+    { subject: 'Backend', A: 88, fullMark: 100 },
+    { subject: 'Frontend', A: 85, fullMark: 100 },
+    { subject: 'Güvenlik', A: 78, fullMark: 100 },
+    { subject: 'Veri', A: 80, fullMark: 100 },
+    { subject: 'DevOps', A: 72, fullMark: 100 },
 ];
 
 const SkillChart = () => {
