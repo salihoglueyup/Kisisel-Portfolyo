@@ -61,6 +61,11 @@ const Blog = () => {
 
     // --- ÖNE ÇIKAN YAZI (VİTRİN) — yalnız ilk sayfada ve filtre yokken ---
     const featuredPost = posts.find(p => p.featured) || posts[0];
+    const showFeatured = !isFiltering && page === 1 && !!featuredPost;
+    // Vitrin gösteriliyorsa aynı yazı alttaki listede tekrar etmesin
+    const listPosts = showFeatured
+        ? posts.filter(p => p._id !== featuredPost._id)
+        : posts;
 
     // Tarih Formatlayıcı Yardımcı Fonksiyon
     const formatDate = (dateString) => {
@@ -98,7 +103,7 @@ const Blog = () => {
                 )}
 
                 {/* --- VİTRİN BÖLÜMÜ (FEATURED POST) --- */}
-                {!loading && !error && featuredPost && !isFiltering && page === 1 && (
+                {!loading && !error && showFeatured && (
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -165,13 +170,13 @@ const Blog = () => {
 
                         {/* Yazılar Grid */}
                         <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-8">
-                            {!loading && posts.length === 0 ? (
+                            {!loading && listPosts.length === 0 && !showFeatured ? (
                                 <div className="text-center py-20 border border-dashed border-slate-800 rounded-2xl">
                                     <h3 className="text-xl font-bold text-white">{t('blog.no_posts')}</h3>
                                 </div>
                             ) : (
                                 <AnimatePresence>
-                                    {posts.map((post) => (
+                                    {listPosts.map((post) => (
                                         <motion.div layout key={post._id} variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }} exit={{ opacity: 0, scale: 0.9 }} className="group">
                                             {/* LİNK BİLEŞENİ: Tüm kartı kapsar */}
                                             <Link to={`/blog/${post._id}`} className="bg-[#111827] border border-slate-800 rounded-2xl p-6 hover:border-blue-500/30 transition-all flex flex-col md:flex-row gap-6 h-full">

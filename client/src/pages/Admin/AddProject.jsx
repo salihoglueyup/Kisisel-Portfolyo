@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import api from '../../api';
 import { FaSave, FaMagic, FaTimes, FaImage, FaBriefcase, FaCalendarAlt, FaInfoCircle, FaUpload, FaServer, FaListUl } from 'react-icons/fa';
 import ProjectCard from '../../components/project/ProjectCard';
+import { PROJECT_CATEGORIES } from '../../constants/projects';
 
 const AddProject = () => {
     // --- FORM VERİLERİ (Tüm alanlar birleştirildi) ---
@@ -13,7 +14,7 @@ const AddProject = () => {
         imageFile: null,
         tags: [],
         tagInput: '',
-        category: 'Web Geliştirme',
+        category: PROJECT_CATEGORIES[0],
         role: '',
         status: 'Tamamlandı',
         date: '',
@@ -131,7 +132,7 @@ const AddProject = () => {
 
             setFormData({
                 title: '', description: '', image: '', imageFile: null, tags: [], tagInput: '',
-                category: 'Web Geliştirme', role: '', status: 'Tamamlandı', date: '',
+                category: PROJECT_CATEGORIES[0], role: '', status: 'Tamamlandı', date: '',
                 technicalArchitecture: { frontend: '', backend: '', database: '', devops: '' },
                 featuresInput: '',
                 metrics: { complexity: 5, hoursSpent: 0, linesOfCode: 0 },
@@ -176,11 +177,9 @@ const AddProject = () => {
                                     value={formData.category} onChange={handleChange}
                                     className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
                                 >
-                                    <option>Web Geliştirme</option>
-                                    <option>Mobil Uygulama</option>
-                                    <option>Veri Analizi</option>
-                                    <option>Yapay Zeka</option>
-                                    <option>Masaüstü Yazılım</option>
+                                    {PROJECT_CATEGORIES.map(cat => (
+                                        <option key={cat} value={cat}>{cat}</option>
+                                    ))}
                                 </select>
                             </div>
                         </div>

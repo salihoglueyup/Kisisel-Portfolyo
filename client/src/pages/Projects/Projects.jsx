@@ -8,6 +8,7 @@ import ProjectCard from '../../components/project/ProjectCard';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import SEO from '../../components/common/SEO';
+import { PROJECT_FILTERS } from '../../constants/projects';
 import { useTranslation } from 'react-i18next';
 
 const Projects = () => {
@@ -27,7 +28,7 @@ const Projects = () => {
     const [viewMode, setViewMode] = useState('grid'); // 'grid' veya 'list'
 
     // Gerçek portfolyo kategorileri (seeder'daki project.category değerleriyle birebir)
-    const categories = ['All', 'AI / RAG', 'AI / ML', 'Full-Stack', 'Cybersecurity', 'IoT / Araştırma', 'Kurumsal', 'Gönüllü'];
+    const categories = PROJECT_FILTERS;
 
     const error = queryError ? (queryError.friendlyMessage || queryError.message || 'Projeler yüklenemedi.') : null;
 
