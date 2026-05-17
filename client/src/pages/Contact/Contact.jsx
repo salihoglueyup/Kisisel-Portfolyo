@@ -131,7 +131,7 @@ const Contact = () => {
             setStatus('success');
             reset();
             setTimeout(() => setStatus(null), 5000);
-        } catch (error) { setStatus('error'); }
+        } catch { setStatus('error'); }
     };
 
     return (

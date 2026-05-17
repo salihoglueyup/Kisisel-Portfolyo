@@ -137,7 +137,7 @@
         "success_desc": "Thank you. I'll get back to you as soon as possible."
     },
     "footer": {
-        "copyright": "© 2025 YBS.Dev — All rights reserved.",
+        "copyright": "© {{year}} YBS.Dev — All rights reserved.",
         "built_with": "Built with React + Node.js"
     },
     "notfound": {

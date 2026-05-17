@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import api from '../../api';
-import { motion } from 'framer-motion';
 import { FaSave, FaMagic, FaTimes, FaImage, FaBriefcase, FaCalendarAlt, FaInfoCircle, FaUpload, FaServer, FaListUl } from 'react-icons/fa';
 import ProjectCard from '../../components/project/ProjectCard';
 
@@ -139,7 +138,7 @@ const AddProject = () => {
                 links: { github: '', live: '' }
             });
 
-        } catch (error) {
+        } catch {
             // Global api handler takes care of the generic toast notification
         } finally {
             setIsSubmitting(false);

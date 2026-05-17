@@ -137,7 +137,7 @@
         "success_desc": "Teşekkürler. En kısa sürede dönüş yapacağım."
     },
     "footer": {
-        "copyright": "© 2025 YBS.Dev — Tüm hakları saklıdır.",
+        "copyright": "© {{year}} YBS.Dev — Tüm hakları saklıdır.",
         "built_with": "React + Node.js ile geliştirildi"
     },
     "notfound": {
