@@ -200,7 +200,7 @@ const About = () => {
                 animate="visible"
             >
 
-                <div className="order-1 grid grid-cols-1 md:grid-cols-12 gap-12 items-center mb-24">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center mb-24">
                     <motion.div className="md:col-span-4 relative group" variants={itemVariants}>
                         <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000"></div>
                         <div className="relative bg-[#111827] border border-slate-800 rounded-2xl overflow-hidden aspect-square shadow-2xl">
@@ -246,7 +246,7 @@ const About = () => {
                     </motion.div>
                 </div>
 
-                <motion.div variants={itemVariants} className="order-2 mb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+                <motion.div variants={itemVariants} className="mb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
                     <div className="lg:col-span-7 space-y-6 text-lg leading-relaxed text-gray-400">
                         <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                             <FaUserAstronaut className="text-blue-500" /> {t('about.journey_title')}
@@ -297,8 +297,33 @@ const About = () => {
                     </div>
                 </motion.div>
 
+                {/* EĞİTİM & KİLOMETRE TAŞLARI */}
+                <motion.div variants={itemVariants} className="mb-24">
+                    <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                        <FaCodeBranch className="text-blue-500" />
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">Eğitim & Kilometre Taşları</span>
+                    </h2>
+
+                    <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-slate-800">
+                        {timeline.map((item, index) => (
+                            <div key={index} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
+                                <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[#0B1120] bg-slate-800 group-hover:bg-blue-600 transition-colors shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                                    <span className="text-gray-400 group-hover:text-white text-sm">{item.icon}</span>
+                                </div>
+                                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-[#111827] p-6 rounded-xl border border-slate-800 hover:border-blue-500/50 transition-all shadow-sm hover:shadow-md hover:shadow-blue-900/10">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="font-bold text-white">{item.title}</div>
+                                        <time className="font-mono text-xs text-blue-400 bg-blue-400/10 px-2 py-1 rounded">{item.year}</time>
+                                    </div>
+                                    <p className="text-slate-400 text-sm">{item.desc}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+
                 {/* DENEYİM */}
-                <motion.div variants={itemVariants} className="order-4 mb-24">
+                <motion.div variants={itemVariants} className="mb-24">
                     <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                         <FaBuilding className="text-blue-500" />
                         <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">Deneyim</span>
@@ -324,33 +349,75 @@ const About = () => {
                     </div>
                 </motion.div>
 
-                {/* EĞİTİM & KİLOMETRE TAŞLARI */}
-                <motion.div variants={itemVariants} className="order-3 mb-24">
-                    <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                        <FaCodeBranch className="text-blue-500" />
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-500">Eğitim & Kilometre Taşları</span>
-                    </h2>
+                {/* SERTİFİKALAR & EĞİTİMLER */}
+                <motion.div variants={itemVariants} className="mb-24">
+                    <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
+                        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+                            <FaCertificate className="text-yellow-500"/> Sertifikalar & Eğitimler
+                        </h2>
+                        <span className="text-xs font-mono text-yellow-400 bg-yellow-400/10 border border-yellow-400/30 px-3 py-1 rounded-full">20+ Sertifika</span>
+                    </div>
 
-                    <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-slate-800">
-                        {timeline.map((item, index) => (
-                            <div key={index} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
-                                <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[#0B1120] bg-slate-800 group-hover:bg-blue-600 transition-colors shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                                    <span className="text-gray-400 group-hover:text-white text-sm">{item.icon}</span>
+                    {/* Öne çıkan: IBM AI4Future (program kabulü) */}
+                    <div className="mb-8 bg-gradient-to-r from-cyan-900/30 to-[#111827] border border-cyan-500/40 rounded-2xl p-6 flex items-center gap-5">
+                        <div className="text-3xl text-cyan-300 shrink-0"><FaShieldAlt /></div>
+                        <div className="flex-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <h3 className="text-white font-bold">{featuredCert.title}</h3>
+                                <span className="text-[10px] font-bold text-cyan-300 bg-cyan-400/10 border border-cyan-500/30 px-2 py-0.5 rounded-full">{featuredCert.tag}</span>
+                            </div>
+                            <p className="text-sm text-cyan-200/70">{featuredCert.issuer} • {featuredCert.date}</p>
+                        </div>
+                    </div>
+
+                    {/* Kategoriye göre gruplu sertifikalar */}
+                    <div className="space-y-8">
+                        {certGroups.map((grp, gi) => (
+                            <div key={gi}>
+                                <div className="flex items-center gap-2 mb-4">
+                                    <span className={`text-lg ${grp.accent}`}>{grp.icon}</span>
+                                    <h3 className={`text-sm font-bold uppercase tracking-wider ${grp.accent}`}>{grp.group}</h3>
+                                    <span className="text-[10px] font-mono text-gray-500 bg-slate-800 px-2 py-0.5 rounded-full">{grp.items.length}</span>
                                 </div>
-                                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-[#111827] p-6 rounded-xl border border-slate-800 hover:border-blue-500/50 transition-all shadow-sm hover:shadow-md hover:shadow-blue-900/10">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="font-bold text-white">{item.title}</div>
-                                        <time className="font-mono text-xs text-blue-400 bg-blue-400/10 px-2 py-1 rounded">{item.year}</time>
-                                    </div>
-                                    <p className="text-slate-400 text-sm">{item.desc}</p>
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                                    {grp.items.map((cert, idx) => (
+                                        <div key={idx} className="bg-[#111827] border border-slate-800 rounded-xl p-4 hover:border-yellow-500/40 transition-colors">
+                                            <h4 className="text-white font-bold text-sm mb-1">{cert.title}</h4>
+                                            <p className="text-xs text-gray-500">{cert.issuer} • {cert.date}</p>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         ))}
                     </div>
                 </motion.div>
 
+                {/* LİDERLİK & GÖNÜLLÜLÜK */}
+                <motion.div variants={itemVariants} className="mb-24">
+                    <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+                        <FaUsers className="text-purple-500"/> Liderlik & Gönüllülük
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {leadership.map((lead, idx) => (
+                            <div key={idx} className="p-6 bg-[#111827] border border-slate-800 rounded-xl hover:border-purple-500/40 transition-colors">
+                                <div className="flex items-start gap-3 mb-3">
+                                    <div className="text-xl shrink-0">{lead.icon}</div>
+                                    <div className="flex-1">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <h4 className="text-white font-bold">{lead.title}</h4>
+                                            <time className="font-mono text-[11px] text-purple-400 bg-purple-400/10 px-2 py-1 rounded shrink-0">{lead.date}</time>
+                                        </div>
+                                        <p className="text-xs text-purple-300">{lead.org}</p>
+                                    </div>
+                                </div>
+                                <p className="text-sm text-gray-400">{lead.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+
                 {/* TEKNOLOJİ & GELİŞTİRME ORTAMI (Tech + Gear birleşik) */}
-                <motion.div variants={itemVariants} className="order-7 mb-24">
+                <motion.div variants={itemVariants} className="mb-24">
                     <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
                         <FaCode className="text-blue-500"/> Teknoloji & Geliştirme Ortamım
                     </h2>
@@ -402,75 +469,8 @@ const About = () => {
                     </div>
                 </motion.div>
 
-                {/* SERTİFİKALAR & EĞİTİMLER */}
-                <motion.div variants={itemVariants} className="order-5 mb-24">
-                    <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
-                        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-                            <FaCertificate className="text-yellow-500"/> Sertifikalar & Eğitimler
-                        </h2>
-                        <span className="text-xs font-mono text-yellow-400 bg-yellow-400/10 border border-yellow-400/30 px-3 py-1 rounded-full">20+ Sertifika</span>
-                    </div>
-
-                    {/* Öne çıkan: IBM AI4Future (program kabulü) */}
-                    <div className="mb-8 bg-gradient-to-r from-cyan-900/30 to-[#111827] border border-cyan-500/40 rounded-2xl p-6 flex items-center gap-5">
-                        <div className="text-3xl text-cyan-300 shrink-0"><FaShieldAlt /></div>
-                        <div className="flex-1">
-                            <div className="flex items-center gap-2 flex-wrap">
-                                <h3 className="text-white font-bold">{featuredCert.title}</h3>
-                                <span className="text-[10px] font-bold text-cyan-300 bg-cyan-400/10 border border-cyan-500/30 px-2 py-0.5 rounded-full">{featuredCert.tag}</span>
-                            </div>
-                            <p className="text-sm text-cyan-200/70">{featuredCert.issuer} • {featuredCert.date}</p>
-                        </div>
-                    </div>
-
-                    {/* Kategoriye göre gruplu sertifikalar */}
-                    <div className="space-y-8">
-                        {certGroups.map((grp, gi) => (
-                            <div key={gi}>
-                                <div className="flex items-center gap-2 mb-4">
-                                    <span className={`text-lg ${grp.accent}`}>{grp.icon}</span>
-                                    <h3 className={`text-sm font-bold uppercase tracking-wider ${grp.accent}`}>{grp.group}</h3>
-                                    <span className="text-[10px] font-mono text-gray-500 bg-slate-800 px-2 py-0.5 rounded-full">{grp.items.length}</span>
-                                </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                                    {grp.items.map((cert, idx) => (
-                                        <div key={idx} className="bg-[#111827] border border-slate-800 rounded-xl p-4 hover:border-yellow-500/40 transition-colors">
-                                            <h4 className="text-white font-bold text-sm mb-1">{cert.title}</h4>
-                                            <p className="text-xs text-gray-500">{cert.issuer} • {cert.date}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </motion.div>
-
-                {/* LİDERLİK & GÖNÜLLÜLÜK */}
-                <motion.div variants={itemVariants} className="order-6 mb-24">
-                    <h2 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
-                        <FaUsers className="text-purple-500"/> Liderlik & Gönüllülük
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {leadership.map((lead, idx) => (
-                            <div key={idx} className="p-6 bg-[#111827] border border-slate-800 rounded-xl hover:border-purple-500/40 transition-colors">
-                                <div className="flex items-start gap-3 mb-3">
-                                    <div className="text-xl shrink-0">{lead.icon}</div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center justify-between gap-2">
-                                            <h4 className="text-white font-bold">{lead.title}</h4>
-                                            <time className="font-mono text-[11px] text-purple-400 bg-purple-400/10 px-2 py-1 rounded shrink-0">{lead.date}</time>
-                                        </div>
-                                        <p className="text-xs text-purple-300">{lead.org}</p>
-                                    </div>
-                                </div>
-                                <p className="text-sm text-gray-400">{lead.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-                </motion.div>
-
                 {/* CV İNDİRME (CTA) */}
-                <motion.div variants={itemVariants} className="order-10 bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-3xl p-12 text-center relative overflow-hidden">
+                <motion.div variants={itemVariants} className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-3xl p-12 text-center relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
 
                     <div className="relative z-10">
