@@ -12,6 +12,18 @@ export const useBlogs = () => {
     });
 };
 
+// Tek blog yazısı detayı — cache + retry + anlık geri gösterim
+export const useBlog = (id) => {
+    return useQuery({
+        queryKey: ['blog', id],
+        queryFn: async () => {
+            const { data } = await api.get(`/blogs/${id}`);
+            return data.data;
+        },
+        enabled: !!id
+    });
+};
+
 // Public blog sayfası — server-side arama/kategori/sayfalama
 export const useBlogList = ({ search = '', category = 'all', page = 1, limit = 6 } = {}) => {
     return useQuery({

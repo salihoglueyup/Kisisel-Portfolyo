@@ -1,31 +1,15 @@
 // client/src/pages/Projects/ProjectDetails.jsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../../api';
 import { motion } from 'framer-motion';
 import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCode, FaDatabase, FaServer, FaLayerGroup, FaCalendarAlt, FaCheckCircle } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
-import toast from 'react-hot-toast';
+import { useProject } from '../../hooks/queries/useProjects';
 
 const ProjectDetails = () => {
     const { id } = useParams();
-    const [project, setProject] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const { data: project, isLoading: loading } = useProject(id);
     const [activeTab, setActiveTab] = useState('overview');
-
-    useEffect(() => {
-        const fetchProject = async () => {
-            try {
-                const res = await api.get(`/projects/${id}`);
-                setProject(res.data.data); // ✅ Standardize response uyumu
-                setLoading(false);
-            } catch (error) {
-                toast.error(error.friendlyMessage || 'Proje yüklenemedi.');
-                setLoading(false);
-            }
-        };
-        fetchProject();
-    }, [id]);
 
     if (loading) return <div className="min-h-screen bg-[#0B1120] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div></div>;
     if (!project) return <div className="min-h-screen bg-[#0B1120] flex items-center justify-center text-white">Proje Bulunamadı.</div>;

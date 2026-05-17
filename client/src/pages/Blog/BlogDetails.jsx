@@ -1,29 +1,12 @@
 // client/src/pages/Blog/BlogDetails.jsx
-import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import api from '../../api';
 import { FaArrowLeft, FaClock, FaCalendarAlt } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
-import toast from 'react-hot-toast';
+import { useBlog } from '../../hooks/queries/useBlogs';
 
 const BlogDetails = () => {
     const { id } = useParams();
-    const [blog, setBlog] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchBlog = async () => {
-            try {
-                const res = await api.get(`/blogs/${id}`);
-                setBlog(res.data.data); // ✅ Standardize response uyumu
-            } catch (err) {
-                toast.error(err.friendlyMessage || 'Blog yazısı yüklenemedi.');
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchBlog();
-    }, [id]);
+    const { data: blog, isLoading: loading } = useBlog(id);
 
     if (loading) return (
         <div className="min-h-screen bg-[#0B1120] pt-32 flex items-center justify-center">
