@@ -162,6 +162,8 @@
         "features_title": "Key Features",
         "tech_title": "Technical Stack",
         "challenges_title": "Challenges Faced and Solutions",
+        "challenge_problem": "Problem",
+        "challenge_solution": "Solution",
         "spec_title": "Project Info",
         "spec_category": "Category",
         "spec_role": "Role",

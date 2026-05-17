@@ -32,6 +32,12 @@ const projectSchema = new mongoose.Schema({
     // Ana Özellikler (Liste halinde)
     features: [String],
 
+    // Karşılaşılan zorluklar ve çözümleri (proje detay sayfasında ayrı sekme)
+    challenges: [{
+        problem: { type: String, default: '' },
+        solution: { type: String, default: '' }
+    }],
+
     // Metrikler
     metrics: {
         complexity: { type: Number, default: 5 },

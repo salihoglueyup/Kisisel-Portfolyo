@@ -25,6 +25,10 @@ const projects = [
         date: "Oca 2026 – Şub 2026",
         technicalArchitecture: { frontend: "React 18, Vite, Tailwind (SPA)", backend: "FastAPI, SQLAlchemy ORM, Native WebSockets", database: "PostgreSQL, Vector DB", devops: "Docker, Nginx, GitHub Actions" },
         features: ["RAG tabanlı mevzuat asistanı", "Kapsam 1-2-3 + ETS fiyatlı vergi motoru", "Canlı WebSocket bildirimleri", "JWT + Pydantic + RBAC"],
+        challenges: [
+            { problem: "CBAM mevzuatı sık güncellendiği için sabit kurallarla yazılan vergi motoru kısa sürede güncelliğini yitiriyordu.", solution: "Mevzuat metinleri vektör veritabanına gömülüp RAG tabanlı asistan kuruldu; hesap motoru güncel regülasyona dinamik olarak bağlandı." },
+            { problem: "Çok sayıda eşzamanlı emisyon hesabı uzun sürüyor ve arayüz kilitleniyordu.", solution: "Hesaplama işleri asenkron kuyruğa alındı, ilerleme WebSocket ile canlı yayınlandı; arayüz bloklanmadan sonuç akışı sağlandı." }
+        ],
         metrics: { complexity: 10, hoursSpent: 180, linesOfCode: 14000 },
         links: { github: GITHUB, live: "" }
     },
@@ -38,6 +42,10 @@ const projects = [
         date: "Şub 2026 – Devam ediyor",
         technicalArchitecture: { frontend: "React, Vite, Tailwind, TradingView WebSocket", backend: "FastAPI microservices", database: "PostgreSQL, MongoDB, Redis", devops: "Docker Compose, Nginx" },
         features: ["PyTorch LSTM fiyat tahmini", "FinBERT duyarlılık analizi", "Canlı dashboard", "Mikroservis mimari"],
+        challenges: [
+            { problem: "Yüksek frekanslı veri akışında LSTM tahmin modeli gecikme (latency) yaratıyordu.", solution: "Model çıkarımı ayrı bir mikroservise taşındı; Redis önbelleği ve toplu (batch) tahminle gecikme belirgin şekilde düşürüldü." },
+            { problem: "Piyasa verisi ile FinBERT duyarlılık skorlarının zaman damgaları senkron değildi.", solution: "Ortak bir olay zaman ekseni ve tampon pencere uygulanarak iki veri akışı hizalandı." }
+        ],
         metrics: { complexity: 10, hoursSpent: 220, linesOfCode: 19000 },
         links: { github: GITHUB, live: "" }
     },
@@ -51,6 +59,10 @@ const projects = [
         date: "Şub 2026 – Mar 2026",
         technicalArchitecture: { frontend: "Streamlit Chat UI", backend: "LightRAG, LongWriter, OpenRouter (Grok 4.1)", database: "Supabase PostgreSQL (PGVector)", devops: "—" },
         features: ["Knowledge Graph ayrıştırma", "LongWriter ile hiyerarşik üretim", "Intent algılama", "20.000+ kelime otonom rehber"],
+        challenges: [
+            { problem: "Uzun otonom üretimlerde model bağlamı kaybedip tekrar ve çelişki üretiyordu.", solution: "LongWriter ile hiyerarşik bölüm planı oluşturuldu; her bölümde Knowledge Graph'tan hedefli bağlam enjeksiyonu uygulandı." },
+            { problem: "Büyük PDF'lerde tüm metni vektörlemek hem maliyetli hem gürültülüydü.", solution: "Anlamsal segmentasyon ve intent algılamayla yalnız ilgili pasajlar gömülerek sorgu isabeti artırıldı." }
+        ],
         metrics: { complexity: 9, hoursSpent: 95, linesOfCode: 7000 },
         links: { github: GITHUB, live: "" }
     },
@@ -64,6 +76,10 @@ const projects = [
         date: "Kas 2025 – Devam ediyor",
         technicalArchitecture: { frontend: "React, Vite (dashboard)", backend: "Python (Django/Flask), N8N", database: "MongoDB, Redis", devops: "—" },
         features: ["Kanban görev modülleri", "RBAC yetkilendirme", "AI API entegrasyonları (özet/metin)", "Anlık veri raporlama"],
+        challenges: [
+            { problem: "Farklı AI servisleri doğrudan çağrıldığında hata ve kota yönetimi dağınıktı.", solution: "N8N üzerinden merkezî bir entegrasyon katmanı kuruldu; retry, kota ve günlükleme tek noktadan yönetildi." },
+            { problem: "Rol bazlı görünür veri ihtiyacı arttıkça yetki kontrolü çoğaldı ve bakımı zorlaştı.", solution: "RBAC kuralları veri katmanında merkezîleştirildi; arayüz tek yetki kaynağına bağlandı." }
+        ],
         metrics: { complexity: 9, hoursSpent: 190, linesOfCode: 16000 },
         links: { github: GITHUB, live: "" }
     },
@@ -90,6 +106,10 @@ const projects = [
         date: "2026 (Bitirme)",
         technicalArchitecture: { frontend: "SOC raporlama arayüzü", backend: "Python, Local LLM RAG", database: "Vector DB", devops: "—" },
         features: ["Gerçek zamanlı log analizi", "Bağlamsal güvenlik önerileri", "Tehdit/zafiyet görselleştirme", "Otomatik raporlama"],
+        challenges: [
+            { problem: "Hassas log verisi gizlilik nedeniyle cloud LLM'e gönderilemiyordu.", solution: "Tamamen local LLM ve yerel vektör veritabanıyla RAG mimarisi kuruldu; veri kurum dışına çıkmadan bağlamsal öneri üretildi." },
+            { problem: "Gerçek zamanlı log hacmi yüksek olduğunda analiz gecikiyordu.", solution: "Kural tabanlı bir ön filtre eklendi; yalnız şüpheli olaylar LLM'e yönlendirilerek işlem yükü azaltıldı." }
+        ],
         metrics: { complexity: 9, hoursSpent: 150, linesOfCode: 9500 },
         links: { github: GITHUB, live: "" }
     },

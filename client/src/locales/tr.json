@@ -162,6 +162,8 @@
         "features_title": "Ana Özellikler",
         "tech_title": "Teknik Altyapı",
         "challenges_title": "Karşılaşılan Sorunlar ve Çözümler",
+        "challenge_problem": "Sorun",
+        "challenge_solution": "Çözüm",
         "spec_title": "Proje Künyesi",
         "spec_category": "Kategori",
         "spec_role": "Rol",

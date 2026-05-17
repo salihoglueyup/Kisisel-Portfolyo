@@ -39,6 +39,12 @@ const ProjectDetails = () => {
     };
     const statusColor = statusColors[project.status] || statusColors['Tamamlandı'];
 
+    // Zorluklar yalnız DB'de gerçek veri varsa sekme olarak gösterilir
+    const hasChallenges = Array.isArray(project.challenges) && project.challenges.length > 0;
+    const tabs = hasChallenges
+        ? ['overview', 'technical', 'challenges']
+        : ['overview', 'technical'];
+
     return (
         <div className="min-h-screen bg-[#0B1120] pt-24 pb-20 px-6 font-sans text-gray-300">
             <SEO title={`${project.title} — Proje Detay`} description={project.description} />
@@ -120,7 +126,7 @@ const ProjectDetails = () => {
                     <div className="lg:col-span-2">
                         {/* Tab Butonları */}
                         <div className="flex border-b border-slate-800 mb-8">
-                            {['overview', 'technical', 'challenges'].map((tab) => (
+                            {tabs.map((tab) => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
@@ -211,16 +217,20 @@ const ProjectDetails = () => {
                             {activeTab === 'challenges' && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                                     <h3 className="text-xl font-bold text-white">{t('projectDetails.challenges_title')}</h3>
-                                    <div className="space-y-4">
-                                        <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl">
-                                            <h4 className="text-red-400 font-bold mb-1">Sorun: Veri Tutarlılığı</h4>
-                                            <p className="text-sm">Karmaşık form yapılarında state yönetimi zorlaştı ve gereksiz render'lar oluştu.</p>
-                                        </div>
-                                        <div className="flex justify-center text-gray-500">⬇</div>
-                                        <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-xl">
-                                            <h4 className="text-green-400 font-bold mb-1">Çözüm: React Context & Memo</h4>
-                                            <p className="text-sm">Global state için Context API kullanıldı ve `useMemo`, `useCallback` ile performans optimizasyonu yapıldı.</p>
-                                        </div>
+                                    <div className="space-y-8">
+                                        {project.challenges.map((ch, idx) => (
+                                            <div key={idx} className="space-y-4">
+                                                <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl">
+                                                    <h4 className="text-red-400 font-bold mb-1">{t('projectDetails.challenge_problem')}</h4>
+                                                    <p className="text-sm">{ch.problem}</p>
+                                                </div>
+                                                <div className="flex justify-center text-gray-500">⬇</div>
+                                                <div className="bg-green-500/10 border border-green-500/20 p-4 rounded-xl">
+                                                    <h4 className="text-green-400 font-bold mb-1">{t('projectDetails.challenge_solution')}</h4>
+                                                    <p className="text-sm">{ch.solution}</p>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </motion.div>
                             )}
