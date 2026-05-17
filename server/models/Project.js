@@ -41,11 +41,7 @@ const projectSchema = new mongoose.Schema({
     links: {
         github: String,
         live: String
-    },
-    createdAt: {
-        type: Date,
-        default: Date.now
     }
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model('Project', projectSchema);

@@ -59,6 +59,18 @@ const projects = [
 ];
 
 const importData = async () => {
+    // GÜVENLİK KALKANI: deleteMany() TÜM projeleri siler.
+    // Production'da çalışmasın; kasıtlı kullanım için --force bayrağı gereksin.
+    if (process.env.NODE_ENV === 'production') {
+        console.error('❌ Seeder production ortamında çalıştırılamaz (veri kaybı riski).');
+        process.exit(1);
+    }
+    if (!process.argv.includes('--force')) {
+        console.error('⚠️  Bu işlem TÜM projeleri siler ve demo veriyle değiştirir.');
+        console.error('   Eminseniz: node seeder.js --force');
+        process.exit(1);
+    }
+
     try {
         await Project.deleteMany(); // Önce temizle (Duplicate olmasın)
         await Project.insertMany(projects); // Verileri ekle
