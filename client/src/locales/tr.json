@@ -67,7 +67,23 @@
         "total_hours": "Toplam Saat",
         "total_lines": "Toplam Satır",
         "avg_complexity": "Ort. Zorluk",
-        "tech_distribution": "Teknoloji Dağılımı"
+        "tech_distribution": "Teknoloji Dağılımı",
+        "featured_badge": "VİTRİN PROJESİ",
+        "case_study": "Vaka Analizini İncele",
+        "f_complexity": "Karmaşıklık",
+        "f_development": "Geliştirme",
+        "f_architecture": "Mimari",
+        "process_title": "Geliştirme Sürecim",
+        "process_subtitle": "Agile & Veri Odaklı Yaklaşım",
+        "step1_title": "Analiz",
+        "step1_desc": "Gereksinim & Veri Modelleme",
+        "step2_title": "Mimari",
+        "step2_desc": "DB Şeması & API Tasarımı",
+        "step3_title": "Kodlama",
+        "step3_desc": "Clean Code & Test Driven",
+        "step4_title": "Deploy",
+        "step4_desc": "CI/CD & Cloud Integration",
+        "filter_by_category": "Kategoriye Göre Filtrele"
     },
     "blog": {
         "title": "Blog",
@@ -81,7 +97,14 @@
         "views": "görüntüleme",
         "popular_tags": "Popüler Etiketler",
         "newsletter_title": "Bülten",
-        "newsletter_desc": "Yeni yazılardan haberdar olun."
+        "newsletter_desc": "Yeni yazılardan haberdar olun.",
+        "hot_topic": "HOT TOPIC",
+        "author_bio": "Teknoloji, iş dünyası ve kodlama üzerine deneyimlerimi paylaşıyorum.",
+        "follow": "Takip Et",
+        "community_title": "Topluluğa Katıl",
+        "community_desc": "YBS dünyasından en güncel haberler için bültene katılın.",
+        "prev": "Önceki",
+        "next": "Sonraki"
     },
     "contact": {
         "title": "İletişim",

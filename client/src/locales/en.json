@@ -67,7 +67,23 @@
         "total_hours": "Total Hours",
         "total_lines": "Total Lines",
         "avg_complexity": "Avg. Complexity",
-        "tech_distribution": "Tech Distribution"
+        "tech_distribution": "Tech Distribution",
+        "featured_badge": "FEATURED PROJECT",
+        "case_study": "Explore Case Study",
+        "f_complexity": "Complexity",
+        "f_development": "Development",
+        "f_architecture": "Architecture",
+        "process_title": "My Development Process",
+        "process_subtitle": "Agile & Data-Driven Approach",
+        "step1_title": "Analysis",
+        "step1_desc": "Requirements & Data Modeling",
+        "step2_title": "Architecture",
+        "step2_desc": "DB Schema & API Design",
+        "step3_title": "Coding",
+        "step3_desc": "Clean Code & Test Driven",
+        "step4_title": "Deploy",
+        "step4_desc": "CI/CD & Cloud Integration",
+        "filter_by_category": "Filter by Category"
     },
     "blog": {
         "title": "Blog",
@@ -81,7 +97,14 @@
         "views": "views",
         "popular_tags": "Popular Tags",
         "newsletter_title": "Newsletter",
-        "newsletter_desc": "Stay updated with new articles."
+        "newsletter_desc": "Stay updated with new articles.",
+        "hot_topic": "HOT TOPIC",
+        "author_bio": "I share my experiences on technology, business and coding.",
+        "follow": "Follow",
+        "community_title": "Join the Community",
+        "community_desc": "Subscribe to the newsletter for the latest from the MIS world.",
+        "prev": "Previous",
+        "next": "Next"
     },
     "contact": {
         "title": "Contact",
