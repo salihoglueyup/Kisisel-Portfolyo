@@ -4,8 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import toast from 'react-hot-toast';
 import {
-    FaPaperPlane, FaEnvelope, FaMapMarkerAlt, FaGithub, FaLinkedin,
+    FaPaperPlane, FaEnvelope, FaMapMarkerAlt, FaGithub, FaLinkedin, FaPhone, FaWhatsapp,
     FaClock, FaCheckCircle, FaCalendarAlt, FaUserTie, FaTimes,
     FaBolt, FaCalculator, FaGlobeAmericas, FaQuoteRight,
     FaSlack, FaTrello, FaVideo, FaFileInvoice, FaShieldAlt, FaQuestionCircle
@@ -21,25 +22,78 @@ const contactSchema = z.object({
   message: z.string().min(10, "Mesajınız en az 10 karakter olmalıdır"),
 });
 
-// --- MODAL (TOPLANTI) ---
+// --- MODAL (TOPLANTI TALEBİ) — gerçek talep gönderir (mesaj API + admin e-posta) ---
 const MeetingModal = ({ isOpen, onClose }) => {
+    const [form, setForm] = useState({ name: '', email: '', date: '', time: '10:00', note: '' });
+    const [loading, setLoading] = useState(false);
+
     if (!isOpen) return null;
+
+    const update = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
+
+    const submit = async (e) => {
+        e.preventDefault();
+        if (!form.name.trim() || !form.email.trim() || !form.date) {
+            toast.error('Lütfen ad, e-posta ve tarih girin.');
+            return;
+        }
+        setLoading(true);
+        try {
+            await api.post('/messages', {
+                name: form.name,
+                email: form.email,
+                subject: 'Toplantı Talebi',
+                message:
+                    `Toplantı talebi\nTarih: ${form.date} ${form.time}` +
+                    (form.note ? `\n\nNot: ${form.note}` : '')
+            });
+            toast.success('Toplantı talebiniz alındı! En kısa sürede dönüş yapılacak.');
+            onClose();
+        } catch (err) {
+            toast.error(err.friendlyMessage || 'Talep gönderilemedi. Tekrar deneyin.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm"></motion.div>
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#1f2937] border border-slate-700 w-full max-w-lg rounded-2xl p-8 relative z-50 shadow-2xl">
-                <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white"><FaTimes size={20} /></button>
+                <button onClick={onClose} aria-label="Kapat" className="absolute top-4 right-4 text-gray-400 hover:text-white"><FaTimes size={20} /></button>
                 <div className="text-center mb-6">
                     <div className="w-16 h-16 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><FaCalendarAlt /></div>
-                    <h3 className="text-2xl font-bold text-white">Toplantı Planla</h3>
+                    <h3 className="text-2xl font-bold text-white">Toplantı Talebi</h3>
                     <p className="text-gray-400 text-sm mt-2">Projeniz için 30 dakikalık ücretsiz ön görüşme.</p>
                 </div>
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={submit}>
                     <div className="grid grid-cols-2 gap-4">
-                        <div><label className="text-xs font-bold text-gray-500 uppercase">Tarih</label><input type="date" className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none" /></div>
-                        <div><label className="text-xs font-bold text-gray-500 uppercase">Saat</label><select className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none"><option>10:00</option><option>14:00</option></select></div>
+                        <div>
+                            <label htmlFor="mt-name" className="text-xs font-bold text-gray-500 uppercase">Ad Soyad</label>
+                            <input id="mt-name" type="text" value={form.name} onChange={update('name')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label htmlFor="mt-email" className="text-xs font-bold text-gray-500 uppercase">E-posta</label>
+                            <input id="mt-email" type="email" value={form.email} onChange={update('email')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label htmlFor="mt-date" className="text-xs font-bold text-gray-500 uppercase">Tarih</label>
+                            <input id="mt-date" type="date" value={form.date} onChange={update('date')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
+                        </div>
+                        <div>
+                            <label htmlFor="mt-time" className="text-xs font-bold text-gray-500 uppercase">Saat</label>
+                            <select id="mt-time" value={form.time} onChange={update('time')} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500">
+                                <option>10:00</option><option>11:00</option><option>14:00</option><option>16:00</option>
+                            </select>
+                        </div>
                     </div>
-                    <button type="button" onClick={() => { alert("Demo: Talep Alındı!"); onClose(); }} className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-colors">Randevu Oluştur</button>
+                    <div>
+                        <label htmlFor="mt-note" className="text-xs font-bold text-gray-500 uppercase">Not (opsiyonel)</label>
+                        <textarea id="mt-note" rows="2" value={form.note} onChange={update('note')} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500 resize-none" />
+                    </div>
+                    <button type="submit" disabled={loading} className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-colors disabled:opacity-50">
+                        {loading ? 'Gönderiliyor...' : 'Talep Gönder'}
+                    </button>
                 </form>
             </motion.div>
         </div>
@@ -131,12 +185,30 @@ const Contact = () => {
             setStatus('success');
             reset();
             setTimeout(() => setStatus(null), 5000);
-        } catch (error) { setStatus('error'); }
+        } catch { setStatus('error'); }
     };
 
     return (
         <div className="min-h-screen bg-[#0B1120] pt-28 pb-20 px-6 font-sans overflow-x-hidden">
-            <SEO title={t('contact.title')} description="Eyüp Zeki Salihoğlu ile iletişime geçin. Proje teklifleri, freelance çalışma ve iş birlikleri için." />
+            <SEO
+                title={t('contact.title')}
+                description="Eyüp Zeki Salihoğlu ile iletişime geçin. Proje teklifleri, freelance çalışma ve iş birlikleri için."
+                schema={{
+                    '@context': 'https://schema.org',
+                    '@type': 'ContactPage',
+                    name: 'İletişim — Eyüp Zeki Salihoğlu',
+                    description: 'Proje teklifleri, freelance çalışma ve iş birlikleri için iletişim.',
+                    mainEntity: {
+                        '@type': 'Person',
+                        name: 'Eyüp Zeki Salihoğlu',
+                        email: 'mailto:eyupzekisalihoglu@gmail.com',
+                        sameAs: [
+                            'https://github.com/salihoglueyup',
+                            'https://www.linkedin.com/in/eyupzekisalihoglu/'
+                        ]
+                    }
+                }}
+            />
             <AnimatePresence>
                 <MeetingModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
             </AnimatePresence>
@@ -171,6 +243,14 @@ const Contact = () => {
                                 <div className="flex items-center gap-4 group/item">
                                     <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 text-xl"><FaEnvelope /></div>
                                     <div><span className="block text-xs text-gray-500 font-bold uppercase tracking-wider">Email</span><a href="mailto:eyupzekisalihoglu@gmail.com" className="text-white hover:text-blue-400 transition-colors font-medium">eyupzekisalihoglu@gmail.com</a></div>
+                                </div>
+                                <div className="flex items-center gap-4 group/item">
+                                    <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center text-green-400 text-xl"><FaPhone /></div>
+                                    <div>
+                                        <span className="block text-xs text-gray-500 font-bold uppercase tracking-wider">Telefon</span>
+                                        <a href="tel:+905537102461" className="text-white hover:text-green-400 transition-colors font-medium">+90 553 710 24 61</a>
+                                        <a href="https://wa.me/905537102461" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="ml-3 inline-flex items-center gap-1 text-green-500 hover:text-green-400 text-sm"><FaWhatsapp /> WhatsApp</a>
+                                    </div>
                                 </div>
                                 <div className="flex items-center gap-4 group/item">
                                     <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-xl"><FaMapMarkerAlt /></div>
@@ -216,7 +296,7 @@ const Contact = () => {
                             <FaUserTie className="text-3xl text-blue-400 mx-auto mb-3" />
                             <h3 className="text-white font-bold mb-2">Yüz Yüze Görüşelim?</h3>
                             <p className="text-sm text-gray-400 mb-4">Projenizi detaylandırmak için 30 dakikalık bir görüşme.</p>
-                            <button onClick={() => setIsModalOpen(true)} className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20">Takvimime Bak</button>
+                            <button onClick={() => setIsModalOpen(true)} className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20">Toplantı Talep Et</button>
                         </div>
 
                         {/* 4. MALİYET HESAPLAYICI */}
@@ -293,10 +373,10 @@ const Contact = () => {
                             </div>
                             <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 flex flex-col justify-center relative">
                                 <FaQuoteRight className="absolute top-4 right-4 text-slate-700 text-4xl" />
-                                <p className="text-gray-300 text-sm italic mb-4 z-10">"YBS vizyonu sayesinde sadece kod yazmadı, iş süreçlerimizi de optimize etti. Harika bir ortak."</p>
+                                <p className="text-gray-300 text-sm italic mb-4 z-10">"Sadece çalışan kod değil; güvenli, ölçeklenebilir ve gerçekten değer üreten sistemler kurarım. Production'a giden her satırı sahiplenirim."</p>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xs">MK</div>
-                                    <div><h5 className="text-white text-xs font-bold">Mehmet K.</h5><p className="text-[10px] text-gray-500">Tech Lead, StartUp A.Ş.</p></div>
+                                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xs">EZ</div>
+                                    <div><h5 className="text-white text-xs font-bold">Eyüp Zeki Salihoğlu</h5><p className="text-[10px] text-gray-500">Full-Stack AI Engineer</p></div>
                                 </div>
                             </div>
                         </div>

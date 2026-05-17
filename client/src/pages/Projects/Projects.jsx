@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useProjects } from '../../hooks/queries/useProjects';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch, FaCode, FaClock, FaLayerGroup, FaStar, FaArrowRight, FaChartPie, FaThLarge, FaList } from 'react-icons/fa';
@@ -21,22 +21,21 @@ const Projects = () => {
             transition: { staggerChildren: 0.1 }
         }
     };
-    const [filteredProjects, setFilteredProjects] = useState([]);
-
     // Filtre ve Görünüm State'leri
     const [searchTerm, setSearchTerm] = useState('');
     const [activeFilter, setActiveFilter] = useState('All');
     const [viewMode, setViewMode] = useState('grid'); // 'grid' veya 'list'
 
-    const categories = ['All', 'React', 'Node.js', 'Python', 'Data Analysis', 'Mobile', '.NET'];
+    // Gerçek portfolyo kategorileri (seeder'daki project.category değerleriyle birebir)
+    const categories = ['All', 'AI / RAG', 'AI / ML', 'Full-Stack', 'Cybersecurity', 'IoT / Araştırma', 'Kurumsal', 'Gönüllü'];
 
     const error = queryError ? (queryError.friendlyMessage || queryError.message || 'Projeler yüklenemedi.') : null;
 
-    // Filtreleme Mantığı
-    useEffect(() => {
+    // Filtreleme Mantığı — türetilmiş değer (state + effect değil; cascading render önlenir)
+    const filteredProjects = useMemo(() => {
         let result = projects;
         if (activeFilter !== 'All') {
-            result = result.filter(project => project.tags.some(tag => tag.toLowerCase() === activeFilter.toLowerCase()));
+            result = result.filter(project => project.category === activeFilter);
         }
         if (searchTerm) {
             result = result.filter(project =>
@@ -44,7 +43,7 @@ const Projects = () => {
                 project.description.toLowerCase().includes(searchTerm.toLowerCase())
             );
         }
-        setFilteredProjects(result);
+        return result;
     }, [searchTerm, activeFilter, projects]);
 
     // --- 1. ANALİTİK HESAPLAMALARI ---

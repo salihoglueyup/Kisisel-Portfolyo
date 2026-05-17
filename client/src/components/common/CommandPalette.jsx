@@ -124,7 +124,7 @@ const CommandPalette = () => {
                                 </div>
                             ) : (
                                 <div className="space-y-1">
-                                    {filteredItems.map((item, idx) => (
+                                    {filteredItems.map((item) => (
                                         <button
                                             key={item.id}
                                             onClick={() => handleSelect(item.path)}

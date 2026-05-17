@@ -3,22 +3,24 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../../api';
 import { motion } from 'framer-motion';
-import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCode, FaDatabase, FaServer, FaLayerGroup, FaCalendarAlt } from 'react-icons/fa';
+import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCode, FaDatabase, FaServer, FaLayerGroup, FaCalendarAlt, FaCheckCircle } from 'react-icons/fa';
+import SEO from '../../components/common/SEO';
+import toast from 'react-hot-toast';
 
 const ProjectDetails = () => {
-    const { id } = useParams(); // URL'den ID'yi al
+    const { id } = useParams();
     const [project, setProject] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [activeTab, setActiveTab] = useState('overview'); // Tab kontrolü
+    const [activeTab, setActiveTab] = useState('overview');
 
     useEffect(() => {
         const fetchProject = async () => {
             try {
                 const res = await api.get(`/projects/${id}`);
-                setProject(res.data);
+                setProject(res.data.data); // ✅ Standardize response uyumu
                 setLoading(false);
             } catch (error) {
-                console.error("Hata:", error);
+                toast.error(error.friendlyMessage || 'Proje yüklenemedi.');
                 setLoading(false);
             }
         };
@@ -28,8 +30,32 @@ const ProjectDetails = () => {
     if (loading) return <div className="min-h-screen bg-[#0B1120] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div></div>;
     if (!project) return <div className="min-h-screen bg-[#0B1120] flex items-center justify-center text-white">Proje Bulunamadı.</div>;
 
+    // Teknik mimari verisi (DB'den veya fallback)
+    const techArch = project.technicalArchitecture || {};
+    const techCards = [
+        { key: 'frontend', icon: <FaCode size={24} />, label: 'Frontend', color: 'text-blue-400', value: techArch.frontend },
+        { key: 'backend', icon: <FaServer size={24} />, label: 'Backend', color: 'text-green-400', value: techArch.backend },
+        { key: 'database', icon: <FaDatabase size={24} />, label: 'Database', color: 'text-yellow-400', value: techArch.database },
+        { key: 'devops', icon: <FaLayerGroup size={24} />, label: 'DevOps', color: 'text-purple-400', value: techArch.devops },
+    ].filter(card => card.value); // Sadece dolu olanları göster
+
+    // Proje yılı (DB'den date veya createdAt)
+    const projectYear = project.date
+        ? new Date(project.date).getFullYear()
+        : new Date(project.createdAt).getFullYear();
+
+    // Durum badge rengi
+    const statusColors = {
+        'Tamamlandı': 'text-green-400 bg-green-400',
+        'Devam Ediyor': 'text-yellow-400 bg-yellow-400',
+        'Bakım Modunda': 'text-blue-400 bg-blue-400',
+        'Prototip': 'text-purple-400 bg-purple-400',
+    };
+    const statusColor = statusColors[project.status] || statusColors['Tamamlandı'];
+
     return (
         <div className="min-h-screen bg-[#0B1120] pt-24 pb-20 px-6 font-sans text-gray-300">
+            <SEO title={`${project.title} — Proje Detay`} description={project.description} />
 
             {/* 1. ÜST NAVİGASYON */}
             <div className="max-w-6xl mx-auto mb-8">
@@ -43,11 +69,11 @@ const ProjectDetails = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="max-w-6xl mx-auto"
             >
-                {/* 2. HERO BÖLÜMÜ (Başlık & Görsel) */}
+                {/* 2. HERO BÖLÜMÜ */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
                     <div className="flex flex-col justify-center">
                         <div className="flex flex-wrap gap-2 mb-4">
-                            {project.tags.map(tag => (
+                            {project.tags?.map(tag => (
                                 <span key={tag} className="px-3 py-1 bg-blue-500/10 text-blue-400 rounded-full text-xs font-bold border border-blue-500/20">
                                     {tag}
                                 </span>
@@ -58,12 +84,12 @@ const ProjectDetails = () => {
 
                         <div className="flex gap-4">
                             {project.links?.github && (
-                                <a href={project.links.github} target="_blank" className="px-6 py-3 bg-[#1f2937] text-white rounded-lg flex items-center gap-2 hover:bg-[#374151] transition-all border border-slate-700">
+                                <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-[#1f2937] text-white rounded-lg flex items-center gap-2 hover:bg-[#374151] transition-all border border-slate-700">
                                     <FaGithub /> Kaynak Kod
                                 </a>
                             )}
                             {project.links?.live && (
-                                <a href={project.links.live} target="_blank" className="px-6 py-3 bg-blue-600 text-white rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20">
+                                <a href={project.links.live} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-blue-600 text-white rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20">
                                     <FaExternalLinkAlt /> Canlı Demo
                                 </a>
                             )}
@@ -81,22 +107,22 @@ const ProjectDetails = () => {
                     </div>
                 </div>
 
-                {/* 3. İSTATİSTİK ŞERİDİ (YBS METRİKLERİ) */}
+                {/* 3. İSTATİSTİK ŞERİDİ */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16 border-y border-slate-800 py-8">
                     <div className="text-center border-r border-slate-800 last:border-0">
-                        <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.complexity}/10</span>
+                        <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.complexity || 0}/10</span>
                         <span className="text-xs text-gray-500 uppercase tracking-wider">Karmaşıklık</span>
                     </div>
                     <div className="text-center border-r border-slate-800 last:border-0">
-                        <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.hoursSpent}h</span>
+                        <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.hoursSpent || 0}h</span>
                         <span className="text-xs text-gray-500 uppercase tracking-wider">Geliştirme Süresi</span>
                     </div>
                     <div className="text-center border-r border-slate-800 last:border-0">
-                        <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.linesOfCode}</span>
+                        <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.linesOfCode || 0}</span>
                         <span className="text-xs text-gray-500 uppercase tracking-wider">Satır Kod</span>
                     </div>
                     <div className="text-center">
-                        <span className="block text-3xl font-bold text-white mb-1 flex justify-center items-center gap-2"><FaCalendarAlt className="text-sm text-blue-500" /> 2025</span>
+                        <span className="block text-3xl font-bold text-white mb-1 flex justify-center items-center gap-2"><FaCalendarAlt className="text-sm text-blue-500" /> {projectYear}</span>
                         <span className="text-xs text-gray-500 uppercase tracking-wider">Yıl</span>
                     </div>
                 </div>
@@ -130,20 +156,35 @@ const ProjectDetails = () => {
                             {activeTab === 'overview' && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                                     <h3 className="text-xl font-bold text-white">Proje Hakkında</h3>
-                                    <p className="leading-relaxed">
-                                        {project.description} <br /><br />
-                                        Bu proje, modern web geliştirme standartlarına uygun olarak tasarlanmıştır.
-                                        Kullanıcı deneyimini (UX) ön planda tutarken, arka planda güvenli ve ölçeklenebilir bir yapı kurulmuştur.
-                                    </p>
-                                    <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
-                                        <h4 className="font-bold text-white mb-2">🚀 Ana Özellikler</h4>
-                                        <ul className="list-disc list-inside space-y-2 text-gray-400">
-                                            <li>Responsive (Mobil Uyumlu) Tasarım</li>
-                                            <li>RESTful API Entegrasyonu</li>
-                                            <li>Admin Yönetim Paneli</li>
-                                            <li>Gerçek Zamanlı Veri Akışı</li>
-                                        </ul>
-                                    </div>
+                                    <p className="leading-relaxed">{project.description}</p>
+
+                                    {/* Ana Özellikler — DB'den */}
+                                    {project.features && project.features.length > 0 && (
+                                        <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
+                                            <h4 className="font-bold text-white mb-3">🚀 Ana Özellikler</h4>
+                                            <ul className="space-y-2 text-gray-400">
+                                                {project.features.map((feature, idx) => (
+                                                    <li key={idx} className="flex items-start gap-2">
+                                                        <FaCheckCircle className="text-green-500 mt-1 shrink-0" />
+                                                        <span>{feature}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
+                                    {/* Fallback: DB'de features yoksa varsayılan */}
+                                    {(!project.features || project.features.length === 0) && (
+                                        <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
+                                            <h4 className="font-bold text-white mb-2">🚀 Ana Özellikler</h4>
+                                            <ul className="list-disc list-inside space-y-2 text-gray-400">
+                                                <li>Responsive (Mobil Uyumlu) Tasarım</li>
+                                                <li>RESTful API Entegrasyonu</li>
+                                                <li>Admin Yönetim Paneli</li>
+                                                <li>Gerçek Zamanlı Veri Akışı</li>
+                                            </ul>
+                                        </div>
+                                    )}
                                 </motion.div>
                             )}
 
@@ -151,22 +192,32 @@ const ProjectDetails = () => {
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                                     <h3 className="text-xl font-bold text-white">Teknik Altyapı</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="p-4 border border-slate-800 rounded-xl">
-                                            <div className="flex items-center gap-3 mb-3 text-blue-400"><FaCode size={24} /> <span className="font-bold">Frontend</span></div>
-                                            <p className="text-sm">React.js, Tailwind CSS, Framer Motion kullanılarak dinamik ve hızlı bir arayüz oluşturuldu.</p>
-                                        </div>
-                                        <div className="p-4 border border-slate-800 rounded-xl">
-                                            <div className="flex items-center gap-3 mb-3 text-green-400"><FaServer size={24} /> <span className="font-bold">Backend</span></div>
-                                            <p className="text-sm">Node.js ve Express.js ile REST API mimarisi kuruldu. JWT ile güvenlik sağlandı.</p>
-                                        </div>
-                                        <div className="p-4 border border-slate-800 rounded-xl">
-                                            <div className="flex items-center gap-3 mb-3 text-yellow-400"><FaDatabase size={24} /> <span className="font-bold">Database</span></div>
-                                            <p className="text-sm">MongoDB kullanılarak esnek ve performanslı NoSQL veri yapısı oluşturuldu.</p>
-                                        </div>
-                                        <div className="p-4 border border-slate-800 rounded-xl">
-                                            <div className="flex items-center gap-3 mb-3 text-purple-400"><FaLayerGroup size={24} /> <span className="font-bold">DevOps</span></div>
-                                            <p className="text-sm">Git versiyon kontrolü ve Vercel/Render üzerinde deployment süreçleri yönetildi.</p>
-                                        </div>
+                                        {techCards.length > 0 ? techCards.map(card => (
+                                            <div key={card.key} className="p-4 border border-slate-800 rounded-xl">
+                                                <div className={`flex items-center gap-3 mb-3 ${card.color}`}>{card.icon} <span className="font-bold">{card.label}</span></div>
+                                                <p className="text-sm">{card.value}</p>
+                                            </div>
+                                        )) : (
+                                            /* Fallback: DB'de technicalArchitecture yoksa */
+                                            <>
+                                                <div className="p-4 border border-slate-800 rounded-xl">
+                                                    <div className="flex items-center gap-3 mb-3 text-blue-400"><FaCode size={24} /> <span className="font-bold">Frontend</span></div>
+                                                    <p className="text-sm">React.js, Tailwind CSS, Framer Motion</p>
+                                                </div>
+                                                <div className="p-4 border border-slate-800 rounded-xl">
+                                                    <div className="flex items-center gap-3 mb-3 text-green-400"><FaServer size={24} /> <span className="font-bold">Backend</span></div>
+                                                    <p className="text-sm">Node.js, Express.js, JWT</p>
+                                                </div>
+                                                <div className="p-4 border border-slate-800 rounded-xl">
+                                                    <div className="flex items-center gap-3 mb-3 text-yellow-400"><FaDatabase size={24} /> <span className="font-bold">Database</span></div>
+                                                    <p className="text-sm">MongoDB, NoSQL</p>
+                                                </div>
+                                                <div className="p-4 border border-slate-800 rounded-xl">
+                                                    <div className="flex items-center gap-3 mb-3 text-purple-400"><FaLayerGroup size={24} /> <span className="font-bold">DevOps</span></div>
+                                                    <p className="text-sm">Git, Vercel/Render</p>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </motion.div>
                             )}
@@ -197,21 +248,26 @@ const ProjectDetails = () => {
                             <div className="space-y-4 text-sm">
                                 <div className="flex justify-between border-b border-slate-800 pb-2">
                                     <span className="text-gray-500">Kategori</span>
-                                    <span className="text-white font-medium">{project.tags[0]}</span>
+                                    <span className="text-white font-medium">{project.category || project.tags?.[0]}</span>
                                 </div>
-                                <div className="flex justify-between border-b border-slate-800 pb-2">
-                                    <span className="text-gray-500">Müşteri / Tip</span>
-                                    <span className="text-white font-medium">Kişisel Proje</span>
-                                </div>
+                                {project.role && (
+                                    <div className="flex justify-between border-b border-slate-800 pb-2">
+                                        <span className="text-gray-500">Rol</span>
+                                        <span className="text-white font-medium">{project.role}</span>
+                                    </div>
+                                )}
                                 <div className="flex justify-between border-b border-slate-800 pb-2">
                                     <span className="text-gray-500">Durum</span>
-                                    <span className="text-green-400 font-medium flex items-center gap-1"><span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span> Tamamlandı</span>
+                                    <span className={`font-medium flex items-center gap-1 ${statusColor.split(' ')[0]}`}>
+                                        <span className={`w-2 h-2 rounded-full animate-pulse ${statusColor.split(' ')[1]}`}></span>
+                                        {project.status || 'Tamamlandı'}
+                                    </span>
                                 </div>
 
                                 <div className="pt-4">
                                     <h4 className="text-gray-500 mb-2">Kullanılan Teknolojiler</h4>
                                     <div className="flex flex-wrap gap-2">
-                                        {project.tags.map(t => (
+                                        {project.tags?.map(t => (
                                             <span key={t} className="px-2 py-1 bg-slate-800 rounded text-xs text-gray-300 border border-slate-700">{t}</span>
                                         ))}
                                     </div>

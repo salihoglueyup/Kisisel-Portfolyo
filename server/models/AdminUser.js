@@ -29,24 +29,67 @@ const adminUserSchema = new mongoose.Schema({
     lastLogin: {
         type: Date
     },
-    createdAt: {
+    // Brute-force koruması
+    failedLoginAttempts: {
+        type: Number,
+        default: 0
+    },
+    lockUntil: {
+        type: Date
+    },
+    // Şifre sıfırlama (token DB'de hash'li tutulur, ham token sadece e-postada)
+    resetPasswordToken: {
+        type: String,
+        select: false
+    },
+    resetPasswordExpire: {
         type: Date,
-        default: Date.now
+        select: false
     }
-});
+}, { timestamps: true });
+
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCK_TIME = 15 * 60 * 1000; // 15 dakika
+
+// Hesap şu an kilitli mi?
+adminUserSchema.methods.isLocked = function () {
+    return !!(this.lockUntil && this.lockUntil > Date.now());
+};
+
+// Başarısız denemeyi atomik olarak artır; eşik aşılırsa kilitle
+adminUserSchema.methods.registerFailedLogin = async function () {
+    // Kilit süresi dolmuşsa sayacı sıfırla
+    if (this.lockUntil && this.lockUntil < Date.now()) {
+        return this.updateOne({
+            $set: { failedLoginAttempts: 1 },
+            $unset: { lockUntil: 1 }
+        });
+    }
+    const update = { $inc: { failedLoginAttempts: 1 } };
+    if (this.failedLoginAttempts + 1 >= MAX_LOGIN_ATTEMPTS && !this.isLocked()) {
+        update.$set = { lockUntil: new Date(Date.now() + LOCK_TIME) };
+    }
+    return this.updateOne(update);
+};
+
+// Başarılı girişte sayaç/kilit temizle
+adminUserSchema.methods.resetLoginAttempts = async function () {
+    return this.updateOne({
+        $set: { failedLoginAttempts: 0, lastLogin: new Date() },
+        $unset: { lockUntil: 1 }
+    });
+};
 
 // Kaydetmeden önce şifreyi hashle
-adminUserSchema.pre('save', async function (next) {
+// Mongoose 9: async middleware `next` callback'i ALMAZ — sadece
+// işini yapıp döner, hata fırlatırsa Mongoose yakalar. (Eski `next()`
+// kullanımı "next is not a function" hatası veriyordu.)
+adminUserSchema.pre('save', async function () {
     // Şifre değişmediyse hashleme
-    if (!this.isModified('password')) return next();
+    if (!this.isModified('password')) return;
 
-    try {
-        const salt = await bcrypt.genSalt(12);
-        this.password = await bcrypt.hash(this.password, salt);
-        next();
-    } catch (error) {
-        next(error);
-    }
+    const salt = await bcrypt.genSalt(12);
+    this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Şifre karşılaştırma metodu

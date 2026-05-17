@@ -1,20 +1,70 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const AdminUser = require('../models/AdminUser');
 const asyncHandler = require('express-async-handler');
+const { sendMail } = require('../utils/mailer');
 
 // JWT Token üretme yardımcı fonksiyonu
 const generateAccessToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '15m' });
 };
 
 const generateRefreshToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
 };
 
-// @desc    Yeni admin kayıt
+const REFRESH_COOKIE = 'refreshToken';
+const CSRF_COOKIE = 'csrfToken';
+const isProd = process.env.NODE_ENV === 'production';
+
+// CSRF double-submit token'ı: JS'in okuyabilmesi için httpOnly DEĞİL.
+// Güvenlik, cross-site saldırganın bu değeri okuyup header'a koyamamasından gelir.
+const setCsrfCookie = (res) => {
+    const csrfToken = crypto.randomBytes(32).toString('hex');
+    res.cookie(CSRF_COOKIE, csrfToken, {
+        httpOnly: false,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+        path: '/api/auth',
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+    return csrfToken;
+};
+
+const clearCsrfCookie = (res) => {
+    res.clearCookie(CSRF_COOKIE, {
+        httpOnly: false,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+        path: '/api/auth'
+    });
+};
+
+// Refresh token'ı httpOnly cookie olarak ayarla (XSS'e karşı JS erişemez)
+const setRefreshCookie = (res, token) => {
+    res.cookie(REFRESH_COOKIE, token, {
+        httpOnly: true,
+        secure: isProd,                       // production'da yalnız HTTPS
+        sameSite: isProd ? 'none' : 'lax',    // farklı domain (prod) için 'none'
+        path: '/api/auth',                    // yalnız auth route'larına gönderilir
+        maxAge: 7 * 24 * 60 * 60 * 1000       // 7 gün
+    });
+};
+
+const clearRefreshCookie = (res) => {
+    res.clearCookie(REFRESH_COOKIE, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+        path: '/api/auth'
+    });
+};
+
+// @desc    Yeni admin kayıt (yalnızca superadmin — route'ta protect + superAdminOnly ile korunur)
 // @route   POST /api/auth/register
+// Not: İlk superadmin hesabı bu endpoint'ten DEĞİL, `node seedAdmin.js` ile oluşturulur.
 const register = asyncHandler(async (req, res) => {
-    const { email, password, displayName } = req.body;
+    const { email, password, displayName, role: requestedRole } = req.body;
 
     const existingUser = await AdminUser.findOne({ email });
     if (existingUser) {
@@ -22,15 +72,8 @@ const register = asyncHandler(async (req, res) => {
         throw new Error('Bu email adresi zaten kayıtlı.');
     }
 
-    const userCount = await AdminUser.countDocuments();
-    const role = userCount === 0 ? 'superadmin' : 'admin';
-
-    if (userCount > 0) {
-        if (!req.user || req.user.role !== 'superadmin') {
-            res.status(403);
-            throw new Error('Yeni admin oluşturmak için superadmin yetkisi gereklidir.');
-        }
-    }
+    // Varsayılan 'admin'; superadmin açıkça isterse 'superadmin' verilebilir.
+    const role = requestedRole === 'superadmin' ? 'superadmin' : 'admin';
 
     const user = await AdminUser.create({
         email,
@@ -39,9 +82,8 @@ const register = asyncHandler(async (req, res) => {
         role
     });
 
-    const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
-
+    // Not: Token DÖNDÜRÜLMEZ — superadmin yeni kullanıcı oluşturur,
+    // o kullanıcı olarak oturum açmaz.
     res.status(201).json({
         success: true,
         message: `${role === 'superadmin' ? 'Superadmin' : 'Admin'} hesabı oluşturuldu.`,
@@ -49,9 +91,7 @@ const register = asyncHandler(async (req, res) => {
             id: user._id,
             email: user.email,
             displayName: user.displayName,
-            role: user.role,
-            accessToken,
-            refreshToken
+            role: user.role
         }
     });
 });
@@ -68,17 +108,29 @@ const login = asyncHandler(async (req, res) => {
         throw new Error('Geçersiz email veya şifre.');
     }
 
+    // Hesap kilitli mi? (brute-force koruması)
+    if (user.isLocked()) {
+        const remainingMin = Math.ceil((user.lockUntil - Date.now()) / 60000);
+        res.status(429);
+        throw new Error(`Çok fazla başarısız deneme. Hesap ${remainingMin} dakika kilitli.`);
+    }
+
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
+        await user.registerFailedLogin();
         res.status(401);
         throw new Error('Geçersiz email veya şifre.');
     }
 
-    user.lastLogin = new Date();
-    await user.save({ validateBeforeSave: false });
+    // Başarılı giriş — sayaç/kilit temizle, lastLogin güncelle
+    await user.resetLoginAttempts();
 
     const accessToken = generateAccessToken(user._id);
     const refreshToken = generateRefreshToken(user._id);
+
+    // Refresh token httpOnly cookie'de; access token yanıt gövdesinde (kısa ömürlü)
+    setRefreshCookie(res, refreshToken);
+    const csrfToken = setCsrfCookie(res);
 
     res.json({
         success: true,
@@ -89,7 +141,7 @@ const login = asyncHandler(async (req, res) => {
             displayName: user.displayName,
             role: user.role,
             accessToken,
-            refreshToken
+            csrfToken
         }
     });
 });
@@ -171,42 +223,124 @@ const changePassword = asyncHandler(async (req, res) => {
     });
 });
 
-// @desc    Token yenile
+// @desc    Token yenile (refresh token httpOnly cookie'den okunur)
 // @route   POST /api/auth/refresh
 const refreshToken = asyncHandler(async (req, res) => {
-    const { refreshToken: token } = req.body;
+    const token = req.cookies?.[REFRESH_COOKIE];
 
     if (!token) {
-        res.status(400);
-        throw new Error('Refresh token gereklidir.');
+        res.status(401);
+        throw new Error('Refresh token bulunamadı. Lütfen tekrar giriş yapın.');
     }
 
+    let decoded;
     try {
-        const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
-        const user = await AdminUser.findById(decoded.id);
-
-        if (!user) {
-            res.status(401);
-            throw new Error('Geçersiz refresh token.');
-        }
-
-        const newAccessToken = generateAccessToken(user._id);
-
-        res.json({
-            success: true,
-            data: { accessToken: newAccessToken }
-        });
-    } catch (error) {
+        decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    } catch {
+        clearRefreshCookie(res);
+        clearCsrfCookie(res);
         res.status(401);
         throw new Error('Geçersiz veya süresi dolmuş refresh token.');
     }
+
+    const user = await AdminUser.findById(decoded.id);
+    if (!user) {
+        clearRefreshCookie(res);
+        clearCsrfCookie(res);
+        res.status(401);
+        throw new Error('Geçersiz refresh token.');
+    }
+
+    const newAccessToken = generateAccessToken(user._id);
+    res.json({
+        success: true,
+        data: { accessToken: newAccessToken }
+    });
+});
+
+// @desc    Çıkış — refresh cookie'sini temizle
+// @route   POST /api/auth/logout
+const logout = asyncHandler(async (req, res) => {
+    clearRefreshCookie(res);
+    clearCsrfCookie(res);
+    res.json({ success: true, message: 'Çıkış yapıldı.' });
+});
+
+const hashResetToken = (raw) =>
+    crypto.createHash('sha256').update(raw).digest('hex');
+
+// @desc    Şifre sıfırlama isteği — e-postaya link gönderir
+// @route   POST /api/auth/forgot-password
+const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    // Kullanıcı sızıntısını önlemek için HER ZAMAN aynı generic yanıt
+    const genericResponse = () => res.json({
+        success: true,
+        message: 'Eğer bu e-posta kayıtlıysa, şifre sıfırlama bağlantısı gönderildi.'
+    });
+
+    const user = await AdminUser.findOne({ email });
+    if (!user) return genericResponse();
+
+    const rawToken = crypto.randomBytes(32).toString('hex');
+    user.resetPasswordToken = hashResetToken(rawToken);
+    user.resetPasswordExpire = new Date(Date.now() + 60 * 60 * 1000); // 1 saat
+    await user.save({ validateBeforeSave: false });
+
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+    const resetUrl = `${clientUrl}/admin/reset-password/${rawToken}`;
+
+    await sendMail({
+        to: user.email,
+        subject: '🔑 Şifre Sıfırlama İsteği',
+        text: `Şifrenizi sıfırlamak için: ${resetUrl}\n\nBağlantı 1 saat geçerlidir. Bu isteği siz yapmadıysanız yok sayın.`,
+        html: `
+            <h2>Şifre Sıfırlama</h2>
+            <p>Şifrenizi sıfırlamak için aşağıdaki bağlantıya tıklayın (1 saat geçerli):</p>
+            <p><a href="${resetUrl}">${resetUrl}</a></p>
+            <p>Bu isteği siz yapmadıysanız bu e-postayı yok sayın.</p>
+        `
+    });
+
+    return genericResponse();
+});
+
+// @desc    Yeni şifre belirle (token ile)
+// @route   POST /api/auth/reset-password/:token
+const resetPassword = asyncHandler(async (req, res) => {
+    const { password } = req.body;
+    const hashed = hashResetToken(req.params.token || '');
+
+    const user = await AdminUser.findOne({
+        resetPasswordToken: hashed,
+        resetPasswordExpire: { $gt: new Date() }
+    }).select('+resetPasswordToken +resetPasswordExpire +password');
+
+    if (!user) {
+        res.status(400);
+        throw new Error('Geçersiz veya süresi dolmuş sıfırlama bağlantısı.');
+    }
+
+    user.password = password; // pre-save hook hash'ler
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    // Sıfırlama başarılıysa olası kilidi de kaldır
+    user.failedLoginAttempts = 0;
+    user.lockUntil = undefined;
+    await user.save();
+
+    res.json({ success: true, message: 'Şifre başarıyla sıfırlandı. Giriş yapabilirsiniz.' });
 });
 
 module.exports = {
     register,
     login,
+    logout,
     getProfile,
     updateProfile,
     changePassword,
-    refreshToken
+    refreshToken,
+    forgotPassword,
+    resetPassword
 };

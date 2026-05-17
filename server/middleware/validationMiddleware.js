@@ -53,6 +53,29 @@ const validatePasswordChange = [
     handleValidationErrors
 ];
 
+const validateForgotPassword = [
+    body('email')
+        .isEmail().withMessage('Geçerli bir email adresi giriniz')
+        .normalizeEmail(),
+    handleValidationErrors
+];
+
+const validateResetPassword = [
+    body('password')
+        .isLength({ min: 8 }).withMessage('Şifre en az 8 karakter olmalıdır')
+        .matches(/[A-Z]/).withMessage('Şifre en az bir büyük harf içermelidir')
+        .matches(/[a-z]/).withMessage('Şifre en az bir küçük harf içermelidir')
+        .matches(/[0-9]/).withMessage('Şifre en az bir rakam içermelidir'),
+    handleValidationErrors
+];
+
+const validateSubscribe = [
+    body('email')
+        .isEmail().withMessage('Geçerli bir e-posta adresi giriniz')
+        .normalizeEmail(),
+    handleValidationErrors
+];
+
 // --- PROJE VALİDASYONLARI ---
 const validateProject = [
     body('title')
@@ -104,6 +127,9 @@ module.exports = {
     validateRegister,
     validateLogin,
     validatePasswordChange,
+    validateForgotPassword,
+    validateResetPassword,
+    validateSubscribe,
     validateProject,
     validateBlog,
     validateMessage

@@ -39,12 +39,24 @@ const techs = [
         className: "invert"
     },
     {
-        name: "TensorFlow",
-        img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg"
+        name: "FastAPI",
+        img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg"
     },
     {
-        name: "Scikit-learn",
-        img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/scikitlearn/scikitlearn-original.svg"
+        name: "PyTorch",
+        img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg"
+    },
+    {
+        name: "LangChain / RAG",
+        img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/langchain/langchain-original.svg"
+    },
+    {
+        name: "Redis",
+        img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg"
+    },
+    {
+        name: "Nginx",
+        img: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nginx/nginx-original.svg"
     },
     {
         name: "MongoDB",

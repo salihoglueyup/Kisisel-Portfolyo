@@ -8,8 +8,7 @@ const blogSchema = new mongoose.Schema({
     image: { type: String, default: '' },
     readTime: { type: String, default: '5 dk' },
     featured: { type: Boolean, default: false },
-    views: { type: Number, default: 0 },
-    createdAt: { type: Date, default: Date.now }
-});
+    views: { type: Number, default: 0 }
+}, { timestamps: true });
 
 module.exports = mongoose.model('Blog', blogSchema);

@@ -1,8 +1,8 @@
 # Dependency directories
 node_modules/
+# Not: package-lock.json BİLEREK takip edilir — tekrarlanabilir build + `npm ci` (CI) için gerekli
 pnpm-lock.yaml
 yarn.lock
-package-lock.json
 
 # Environment variables (ŞİFRELER GİTMESİN!)
 .env
@@ -16,6 +16,9 @@ dist/
 build/
 
 # Logs
+logs/
+server/logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -29,3 +32,6 @@ yarn-error.log*
 # OS files
 .DS_Store
 Thumbs.db
+
+# Claude Code tooling
+.claude/

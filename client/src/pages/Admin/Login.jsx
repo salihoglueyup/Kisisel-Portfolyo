@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FaLock, FaFingerprint, FaEnvelope, FaUserPlus } from 'react-icons/fa';
+import { useNavigate, Link } from 'react-router-dom';
+import { FaLock, FaFingerprint, FaEnvelope } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,16 +12,9 @@ const loginSchema = z.object({
   password: z.string().min(6, "Şifre en az 6 karakter olmalıdır")
 });
 
-const registerSchema = z.object({
-  displayName: z.string().min(2, "İsim en az 2 karakter olmalı"),
-  email: z.string().email("Geçerli bir e-posta adresi giriniz"),
-  password: z.string().min(8, "Şifre en az 8 karakter, büyük/küçük harf ve sayı içermeli")
-});
-
 const Login = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
-    const [isRegisterMode, setIsRegisterMode] = useState(false);
     const navigate = useNavigate();
 
     const {
@@ -29,11 +22,10 @@ const Login = () => {
         handleSubmit,
         formState: { errors }
     } = useForm({
-        resolver: zodResolver(isRegisterMode ? registerSchema : loginSchema),
+        resolver: zodResolver(loginSchema),
         defaultValues: {
             email: '',
-            password: '',
-            displayName: ''
+            password: ''
         }
     });
 
@@ -42,28 +34,17 @@ const Login = () => {
         setLoading(true);
 
         try {
-            if (isRegisterMode) {
-                const res = await api.post('/auth/register', {
-                    email: data.email,
-                    password: data.password,
-                    displayName: data.displayName || 'Admin'
-                });
-                localStorage.setItem('adminToken', res.data.data.accessToken);
-                localStorage.setItem('refreshToken', res.data.data.refreshToken);
-                navigate('/admin/dashboard');
-            } else {
-                const res = await api.post('/auth/login', {
-                    email: data.email,
-                    password: data.password
-                });
-                localStorage.setItem('adminToken', res.data.data.accessToken);
-                localStorage.setItem('refreshToken', res.data.data.refreshToken);
-                navigate('/admin/dashboard');
-            }
+            const res = await api.post('/auth/login', {
+                email: data.email,
+                password: data.password
+            });
+            localStorage.setItem('adminToken', res.data.data.accessToken);
+            localStorage.setItem('csrfToken', res.data.data.csrfToken);
+            navigate('/admin/dashboard');
         } catch (err) {
             const message = err.response?.data?.message
                 || err.response?.data?.errors?.map(e => e.message).join(', ')
-                || 'İşlem başarısız.';
+                || 'Giriş başarısız.';
             setError(message);
         } finally {
             setLoading(false);
@@ -84,35 +65,13 @@ const Login = () => {
                     <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl text-blue-500">
                         <FaLock />
                     </div>
-                    <h2 className="text-2xl font-bold text-white">
-                        {isRegisterMode ? 'Hesap Oluştur' : 'Admin Girişi'}
-                    </h2>
+                    <h2 className="text-2xl font-bold text-white">Admin Girişi</h2>
                     <p className="text-gray-500 text-sm mt-2">
-                        {isRegisterMode
-                            ? 'Yönetim paneli için yeni hesap oluşturun.'
-                            : 'Yönetim paneline erişmek için giriş yapın.'}
+                        Yönetim paneline erişmek için giriş yapın.
                     </p>
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
-                    {/* Kayıt modunda isim alanı */}
-                    {isRegisterMode && (
-                        <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            className="relative"
-                        >
-                            <FaUserPlus className="absolute left-4 top-3.5 text-gray-500" />
-                            <input
-                                type="text"
-                                placeholder="Görüntülenen İsim"
-                                {...register('displayName')}
-                                className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition-all"
-                            />
-                            {errors.displayName && <p className="text-red-400 text-xs mt-1">{errors.displayName.message}</p>}
-                        </motion.div>
-                    )}
 
                     {/* Email */}
                     <div>
@@ -121,6 +80,7 @@ const Login = () => {
                             <input
                                 type="email"
                                 placeholder="Email Adresi"
+                                aria-label="Email Adresi"
                                 {...register('email')}
                                 className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition-all"
                             />
@@ -134,7 +94,8 @@ const Login = () => {
                             <FaFingerprint className="absolute left-4 top-3.5 text-gray-500" />
                             <input
                                 type="password"
-                                placeholder={isRegisterMode ? 'Şifre (min 8 karakter, büyük/küçük harf + rakam)' : 'Şifre'}
+                                placeholder="Şifre"
+                                aria-label="Şifre"
                                 {...register('password')}
                                 className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition-all"
                             />
@@ -160,25 +121,18 @@ const Login = () => {
                     >
                         {loading ? (
                             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        ) : isRegisterMode ? (
-                            'Hesap Oluştur'
                         ) : (
                             'Sisteme Giriş Yap'
                         )}
                     </button>
-                </form>
 
-                {/* Login/Register geçişi */}
-                <div className="mt-6 text-center">
-                    <button
-                        onClick={() => { setIsRegisterMode(!isRegisterMode); setError(''); }}
-                        className="text-sm text-gray-400 hover:text-blue-400 transition-colors"
+                    <Link
+                        to="/admin/forgot-password"
+                        className="block text-center text-gray-500 hover:text-blue-400 text-xs transition-colors"
                     >
-                        {isRegisterMode
-                            ? 'Zaten hesabın var mı? Giriş Yap'
-                            : 'Henüz hesabın yok mu? Kayıt Ol'}
-                    </button>
-                </div>
+                        Şifremi unuttum?
+                    </Link>
+                </form>
             </motion.div>
         </div>
     );

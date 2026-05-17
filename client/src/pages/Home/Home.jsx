@@ -33,14 +33,37 @@ const Home = () => {
     const { t } = useTranslation();
 
     const insights = [
-        { title: "Node.js ile mikroservisler", tag: "Architecture", color: "text-blue-400" },
-        { title: "Python for Data Science", tag: "Veri", color: "text-green-400" },
-        { title: "Modern React Tabloları", tag: "Frontend", color: "text-purple-400" },
+        { title: "Production RAG sistemleri & Vector DB", tag: "AI Engineering", color: "text-blue-400" },
+        { title: "Local LLM & LangChain pipeline'ları", tag: "LLM", color: "text-green-400" },
+        { title: "JWT / RBAC / OWASP ile güvenli mimari", tag: "Security", color: "text-purple-400" },
     ];
 
     return (
         <div className="min-h-screen w-full overflow-x-hidden bg-[#0B1120]">
-            <SEO title={t('navbar.home')} description="Eyüp Zeki Salihoğlu - Full Stack Developer. MERN Stack, veri analizi ve modern web çözümleri." />
+            <SEO
+                title={t('navbar.home')}
+                description="Eyüp Zeki Salihoğlu — Full-Stack AI Engineer. Production seviyesinde RAG sistemleri, LLM ve güvenli kurumsal web uygulamaları."
+                schema={[
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'Person',
+                        name: 'Eyüp Zeki Salihoğlu',
+                        jobTitle: 'Full-Stack AI Engineer',
+                        url: 'https://salihoglueyup.vercel.app',
+                        knowsAbout: ['RAG', 'LLM', 'LangChain', 'FastAPI', 'React', 'Cybersecurity'],
+                        sameAs: [
+                            'https://github.com/salihoglueyup',
+                            'https://www.linkedin.com/in/eyupzekisalihoglu/'
+                        ]
+                    },
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'WebSite',
+                        name: 'Eyüp Zeki Salihoğlu — Full-Stack AI Engineer',
+                        url: typeof window !== 'undefined' ? window.location.origin : undefined
+                    }
+                ]}
+            />
 
             {/* 1. HERO BÖLÜMÜ */}
             <section className="relative min-h-[85vh] flex flex-col justify-center items-center px-6 pt-20 pb-10">
@@ -91,9 +114,8 @@ const Home = () => {
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="hidden md:block"
                     >
-                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 shadow-2xl">
+                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl">
                             <SkillChart />
                         </div>
                     </motion.div>
@@ -118,15 +140,15 @@ const Home = () => {
                 <div className="flex flex-col gap-6">
 
                     {/* ROW 0: Terminal & Monitor (Başlangıç Paneli) */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[400px]">
-                        <div className="lg:col-span-2 h-full">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[400px]">
+                        <div className="lg:col-span-2 min-h-[320px] lg:h-full">
                             <DashboardCard title="Terminal Access" icon={<FaServer />} className="h-full">
                                 <div className="-m-4 h-full">
                                     <Terminal />
                                 </div>
                             </DashboardCard>
                         </div>
-                        <div className="lg:col-span-1 h-full">
+                        <div className="lg:col-span-1 min-h-[320px] lg:h-full">
                             <DashboardCard title="System Status" icon={<FaServer />} className="h-full">
                                 <SystemMonitor />
                             </DashboardCard>
@@ -140,13 +162,13 @@ const Home = () => {
                         <DashboardCard title="Teknik Notlar" icon={<FaBook />}>
                             <div className="flex flex-col gap-3">
                                 {insights.map((item, idx) => (
-                                    <div key={idx} className="p-3 bg-slate-800/50 rounded-lg border border-slate-700 hover:border-blue-500/50 transition-colors group cursor-pointer">
+                                    <Link to="/blog" key={idx} className="block p-3 bg-slate-800/50 rounded-lg border border-slate-700 hover:border-blue-500/50 transition-colors group">
                                         <div className="flex justify-between items-center mb-1">
                                             <span className={`text-xs font-bold ${item.color}`}>{item.tag}</span>
                                             <FaArrowRight className="text-[10px] text-gray-500 group-hover:text-white transition-colors"/>
                                         </div>
                                         <h4 className="text-sm text-gray-200 font-medium group-hover:text-white">{item.title}</h4>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         </DashboardCard>

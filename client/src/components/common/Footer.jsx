@@ -17,15 +17,16 @@ const Footer = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
 
                     <div className="col-span-1 md:col-span-1">
-                        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4">
-                            YBS.Dev
+                        <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-2">
+                            Eyüp Zeki Salihoğlu
                         </h2>
+                        <p className="text-xs text-blue-400 font-mono mb-4">Full-Stack AI Engineer</p>
                         <p className="text-gray-500 leading-relaxed mb-6">
-                            Yönetim Bilişim Sistemleri vizyonuyla geliştirilmiş, veri odaklı ve modern web çözümleri.
+                            Production seviyesinde RAG sistemleri, LLM ve güvenli kurumsal web uygulamaları geliştiriyorum.
                         </p>
                         <div className="flex gap-4">
-                            <a href="https://github.com/salihoglueyup" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-gray-400 hover:text-white hover:bg-slate-800 transition-all"><FaGithub /></a>
-                            <a href="https://linkedin.com/in/eyupzekisalihoglu" target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-gray-400 hover:text-blue-400 hover:bg-slate-800 transition-all"><FaLinkedin /></a>
+                            <a href="https://github.com/salihoglueyup" target="_blank" rel="noopener noreferrer" aria-label="GitHub profili" className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-gray-400 hover:text-white hover:bg-slate-800 transition-all"><FaGithub /></a>
+                            <a href="https://linkedin.com/in/eyupzekisalihoglu" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profili" className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-gray-400 hover:text-blue-400 hover:bg-slate-800 transition-all"><FaLinkedin /></a>
                         </div>
                     </div>
 
@@ -40,12 +41,12 @@ const Footer = () => {
                     </div>
 
                     <div>
-                        <h3 className="text-white font-bold mb-6">Hizmetler</h3>
+                        <h3 className="text-white font-bold mb-6">Uzmanlık</h3>
                         <ul className="space-y-3 text-gray-500">
-                            <li className="hover:text-blue-400 transition-colors cursor-pointer">Web Geliştirme</li>
-                            <li className="hover:text-blue-400 transition-colors cursor-pointer">Veri Analizi</li>
-                            <li className="hover:text-blue-400 transition-colors cursor-pointer">UI/UX Tasarım</li>
-                            <li className="hover:text-blue-400 transition-colors cursor-pointer">SEO Optimizasyonu</li>
+                            <li className="hover:text-blue-400 transition-colors">AI / RAG Sistemleri</li>
+                            <li className="hover:text-blue-400 transition-colors">Full-Stack Geliştirme</li>
+                            <li className="hover:text-blue-400 transition-colors">Siber Güvenlik</li>
+                            <li className="hover:text-blue-400 transition-colors">LLM & Otomasyon</li>
                         </ul>
                     </div>
 
@@ -62,7 +63,7 @@ const Footer = () => {
 
                 <div className="border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-gray-600 text-xs">
-                        {t('footer.copyright')} <FaHeart className="inline text-red-500 mx-1" /> {t('footer.built_with')}
+                        {t('footer.copyright', { year: currentYear })} <FaHeart className="inline text-red-500 mx-1" /> {t('footer.built_with')}
                     </p>
 
 

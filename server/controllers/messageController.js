@@ -1,11 +1,37 @@
 const Message = require('../models/Message');
 const asyncHandler = require('express-async-handler');
+const { sendMail } = require('../utils/mailer');
+
+const escapeHtml = (s = '') =>
+    String(s).replace(/[&<>"']/g, (c) =>
+        ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 // @desc    Ziyaretçi mesaj gönderir
 // @route   POST /api/messages
 const sendMessage = asyncHandler(async (req, res) => {
-    const newMessage = await Message.create(req.body);
+    // Yalnız izin verilen alanlar — mass-assignment'a karşı (public endpoint).
+    // Aksi halde saldırgan isRead/createdAt enjekte edebilir.
+    const { name, email, subject, message } = req.body;
+    const newMessage = await Message.create({ name, email, subject, message });
     res.status(201).json({ success: true, data: newMessage });
+
+    // Admin'e bildirim — yanıtı bloke etmez, hatası akışı bozmaz (sendMail içte yutar)
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (adminEmail) {
+        sendMail({
+            to: adminEmail,
+            subject: `📬 Yeni iletişim mesajı: ${subject}`,
+            text: `${name} <${email}>\n\n${message}`,
+            html: `
+                <h2>Yeni İletişim Mesajı</h2>
+                <p><strong>İsim:</strong> ${escapeHtml(name)}</p>
+                <p><strong>E-posta:</strong> ${escapeHtml(email)}</p>
+                <p><strong>Konu:</strong> ${escapeHtml(subject)}</p>
+                <hr/>
+                <p>${escapeHtml(message).replace(/\n/g, '<br/>')}</p>
+            `
+        });
+    }
 });
 
 // @desc    Tüm mesajları getir (Admin)
