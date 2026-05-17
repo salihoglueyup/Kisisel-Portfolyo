@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Toaster } from 'react-hot-toast';
 
-// Bileşenler
+// Bileşenler (her zaman yüklenir)
 import Navbar from './components/common/Navbar';
 import ScrollProgress from './components/common/ScrollProgress';
 import CustomCursor from './components/common/CustomCursor';
@@ -11,21 +11,24 @@ import ScrollToTop from './components/common/ScrollToTop';
 import Footer from './components/common/Footer';
 import Preloader from './components/common/PreLoader';
 import CommandPalette from './components/common/CommandPalette';
-
-// Sayfalar
-import Home from './pages/Home/Home';
-import About from './pages/About/About';
-import Projects from './pages/Projects/Projects';
-import Blog from './pages/Blog/Blog';
-import Contact from './pages/Contact/Contact';
-import ProjectDetails from './pages/Projects/ProjectDetails';
-import AddProject from './pages/Admin/AddProject';
-import AdminDashboard from './pages/Admin/AdminDashboard';
-import BlogDetails from './pages/Blog/BlogDetails';
-import NotFound from './pages/NotFound';
-import Login from './pages/Admin/Login';
-import ProtectedRoute from './components/common/ProtectedRoute';
+import LoadingSpinner from './components/common/LoadingSpinner';
 import ErrorBoundary from './components/common/ErrorBoundary';
+import ProtectedRoute from './components/common/ProtectedRoute';
+
+// Sayfalar (lazy loading — code-splitting ile ilk yükleme hızını artırır)
+const Home = lazy(() => import('./pages/Home/Home'));
+const About = lazy(() => import('./pages/About/About'));
+const Projects = lazy(() => import('./pages/Projects/Projects'));
+const ProjectDetails = lazy(() => import('./pages/Projects/ProjectDetails'));
+const Blog = lazy(() => import('./pages/Blog/Blog'));
+const BlogDetails = lazy(() => import('./pages/Blog/BlogDetails'));
+const Contact = lazy(() => import('./pages/Contact/Contact'));
+const Login = lazy(() => import('./pages/Admin/Login'));
+const ForgotPassword = lazy(() => import('./pages/Admin/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/Admin/ResetPassword'));
+const AdminDashboard = lazy(() => import('./pages/Admin/AdminDashboard'));
+const AddProject = lazy(() => import('./pages/Admin/AddProject'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 
 // Animasyon Sarmalayıcısı
 const PageWrapper = ({ children }) => {
@@ -59,6 +62,8 @@ const AnimatedRoutes = () => {
 
                 {/* Login Sayfası (Herkese Açık) */}
                 <Route path="/admin/login" element={<PageWrapper><Login /></PageWrapper>} />
+                <Route path="/admin/forgot-password" element={<PageWrapper><ForgotPassword /></PageWrapper>} />
+                <Route path="/admin/reset-password/:token" element={<PageWrapper><ResetPassword /></PageWrapper>} />
 
                 {/* Dashboard (Korumalı) */}
                 <Route
@@ -72,7 +77,7 @@ const AnimatedRoutes = () => {
                     }
                 />
 
-                {/* Eski Proje Ekleme Sayfası (Bunu da korumaya alalım varsa) */}
+                {/* Proje Ekleme Sayfası (Korumalı) */}
                 <Route
                     path="/admin/add-project"
                     element={
@@ -116,7 +121,9 @@ function App() {
                 <Navbar />
                 <div className="pt-20">
                     <ErrorBoundary>
-                        <AnimatedRoutes />
+                        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>}>
+                            <AnimatedRoutes />
+                        </Suspense>
                     </ErrorBoundary>
                 </div>
                 <Footer />

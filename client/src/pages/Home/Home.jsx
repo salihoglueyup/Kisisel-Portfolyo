@@ -40,7 +40,29 @@ const Home = () => {
 
     return (
         <div className="min-h-screen w-full overflow-x-hidden bg-[#0B1120]">
-            <SEO title={t('navbar.home')} description="Eyüp Zeki Salihoğlu - Full Stack Developer. MERN Stack, veri analizi ve modern web çözümleri." />
+            <SEO
+                title={t('navbar.home')}
+                description="Eyüp Zeki Salihoğlu - Full Stack Developer. MERN Stack, veri analizi ve modern web çözümleri."
+                schema={[
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'Person',
+                        name: 'Eyüp Zeki Salihoğlu',
+                        jobTitle: 'Full Stack Developer',
+                        url: typeof window !== 'undefined' ? window.location.origin : undefined,
+                        sameAs: [
+                            'https://github.com/salihoglueyup',
+                            'https://linkedin.com/in/eyupzekisalihoglu'
+                        ]
+                    },
+                    {
+                        '@context': 'https://schema.org',
+                        '@type': 'WebSite',
+                        name: 'YBS.Dev',
+                        url: typeof window !== 'undefined' ? window.location.origin : undefined
+                    }
+                ]}
+            />
 
             {/* 1. HERO BÖLÜMÜ */}
             <section className="relative min-h-[85vh] flex flex-col justify-center items-center px-6 pt-20 pb-10">

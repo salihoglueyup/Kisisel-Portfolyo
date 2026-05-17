@@ -4,17 +4,22 @@ import toast from 'react-hot-toast';
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
     timeout: 15000,
+    withCredentials: true, // httpOnly refresh cookie'sinin gönderilmesi için
     headers: {
         'Content-Type': 'application/json'
     }
 });
 
-// Request interceptor — token varsa header'a ekle
+// Request interceptor — access token + CSRF token header'larını ekle
 api.interceptors.request.use(
     (config) => {
         const token = localStorage.getItem('adminToken');
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+        }
+        const csrfToken = localStorage.getItem('csrfToken');
+        if (csrfToken) {
+            config.headers['X-CSRF-Token'] = csrfToken;
         }
         return config;
     },
@@ -37,14 +42,15 @@ api.interceptors.response.use(
 
         switch (status) {
             case 401:
-                // Token süresi dolmuş — refresh dene
-                if (!error.config._retry && localStorage.getItem('refreshToken')) {
+                // Access token süresi dolmuş — refresh cookie ile yenilemeyi dene.
+                // Refresh endpoint'inin kendisi 401 dönerse tekrar deneme (sonsuz döngü olmasın).
+                if (!error.config._retry && !error.config.url?.includes('/auth/refresh')) {
                     error.config._retry = true;
                     return handleTokenRefresh(error.config);
                 }
-                // Refresh de başarısız — logout
+                // Refresh de başarısız — oturumu kapat
                 localStorage.removeItem('adminToken');
-                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('csrfToken');
                 if (window.location.pathname.startsWith('/admin')) {
                     window.location.href = '/admin/login';
                 }
@@ -83,13 +89,16 @@ api.interceptors.response.use(
     }
 );
 
-// Token yenileme fonksiyonu
+// Token yenileme — refresh token httpOnly cookie'de, gövdeye gerek yok
 const handleTokenRefresh = async (failedConfig) => {
     try {
-        const refreshToken = localStorage.getItem('refreshToken');
         const res = await axios.post(
             `${api.defaults.baseURL}/auth/refresh`,
-            { refreshToken }
+            {},
+            {
+                withCredentials: true,
+                headers: { 'X-CSRF-Token': localStorage.getItem('csrfToken') || '' }
+            }
         );
         const { accessToken } = res.data.data;
         localStorage.setItem('adminToken', accessToken);
@@ -97,7 +106,7 @@ const handleTokenRefresh = async (failedConfig) => {
         return api(failedConfig);
     } catch (refreshError) {
         localStorage.removeItem('adminToken');
-        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('csrfToken');
         if (window.location.pathname.startsWith('/admin')) {
             window.location.href = '/admin/login';
         }
