@@ -4,6 +4,8 @@ import { FaArrowLeft, FaClock, FaCalendarAlt } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
 import { useBlog } from '../../hooks/queries/useBlogs';
 import { useTranslation } from 'react-i18next';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const BlogDetails = () => {
     const { t } = useTranslation();
@@ -65,8 +67,8 @@ const BlogDetails = () => {
                 )}
 
                 {/* İçerik Alanı */}
-                <div className="prose prose-invert prose-lg max-w-none text-gray-300 leading-loose whitespace-pre-wrap">
-                    {blog.content}
+                <div className="prose prose-invert prose-lg max-w-none">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{blog.content}</ReactMarkdown>
                 </div>
 
                 {/* Yazar Kutusu */}
