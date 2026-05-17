@@ -5,14 +5,16 @@ import { motion } from 'framer-motion';
 import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCode, FaDatabase, FaServer, FaLayerGroup, FaCalendarAlt, FaCheckCircle } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
 import { useProject } from '../../hooks/queries/useProjects';
+import { useTranslation } from 'react-i18next';
 
 const ProjectDetails = () => {
+    const { t } = useTranslation();
     const { id } = useParams();
     const { data: project, isLoading: loading } = useProject(id);
     const [activeTab, setActiveTab] = useState('overview');
 
     if (loading) return <div className="min-h-screen bg-[#0B1120] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div></div>;
-    if (!project) return <div className="min-h-screen bg-[#0B1120] flex items-center justify-center text-white">Proje Bulunamadı.</div>;
+    if (!project) return <div className="min-h-screen bg-[#0B1120] flex items-center justify-center text-white">{t('projectDetails.not_found')}</div>;
 
     // Teknik mimari verisi (DB'den veya fallback)
     const techArch = project.technicalArchitecture || {};
@@ -44,7 +46,7 @@ const ProjectDetails = () => {
             {/* 1. ÜST NAVİGASYON */}
             <div className="max-w-6xl mx-auto mb-8">
                 <Link to="/projects" className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors mb-6">
-                    <FaArrowLeft /> Projelere Dön
+                    <FaArrowLeft /> {t('projectDetails.back')}
                 </Link>
             </div>
 
@@ -69,12 +71,12 @@ const ProjectDetails = () => {
                         <div className="flex gap-4">
                             {project.links?.github && (
                                 <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-[#1f2937] text-white rounded-lg flex items-center gap-2 hover:bg-[#374151] transition-all border border-slate-700">
-                                    <FaGithub /> Kaynak Kod
+                                    <FaGithub /> {t('projectDetails.source_code')}
                                 </a>
                             )}
                             {project.links?.live && (
                                 <a href={project.links.live} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-blue-600 text-white rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20">
-                                    <FaExternalLinkAlt /> Canlı Demo
+                                    <FaExternalLinkAlt /> {t('projectDetails.live_demo')}
                                 </a>
                             )}
                         </div>
@@ -95,19 +97,19 @@ const ProjectDetails = () => {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16 border-y border-slate-800 py-8">
                     <div className="text-center border-r border-slate-800 last:border-0">
                         <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.complexity || 0}/10</span>
-                        <span className="text-xs text-gray-500 uppercase tracking-wider">Karmaşıklık</span>
+                        <span className="text-xs text-gray-500 uppercase tracking-wider">{t('projectDetails.stat_complexity')}</span>
                     </div>
                     <div className="text-center border-r border-slate-800 last:border-0">
                         <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.hoursSpent || 0}h</span>
-                        <span className="text-xs text-gray-500 uppercase tracking-wider">Geliştirme Süresi</span>
+                        <span className="text-xs text-gray-500 uppercase tracking-wider">{t('projectDetails.stat_hours')}</span>
                     </div>
                     <div className="text-center border-r border-slate-800 last:border-0">
                         <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.linesOfCode || 0}</span>
-                        <span className="text-xs text-gray-500 uppercase tracking-wider">Satır Kod</span>
+                        <span className="text-xs text-gray-500 uppercase tracking-wider">{t('projectDetails.stat_lines')}</span>
                     </div>
                     <div className="text-center">
                         <span className="block text-3xl font-bold text-white mb-1 flex justify-center items-center gap-2"><FaCalendarAlt className="text-sm text-blue-500" /> {projectYear}</span>
-                        <span className="text-xs text-gray-500 uppercase tracking-wider">Yıl</span>
+                        <span className="text-xs text-gray-500 uppercase tracking-wider">{t('projectDetails.stat_year')}</span>
                     </div>
                 </div>
 
@@ -125,9 +127,9 @@ const ProjectDetails = () => {
                                     className={`pb-4 px-4 text-sm font-bold uppercase tracking-wider transition-all relative ${activeTab === tab ? 'text-blue-400' : 'text-gray-500 hover:text-gray-300'
                                         }`}
                                 >
-                                    {tab === 'overview' && 'Genel Bakış'}
-                                    {tab === 'technical' && 'Teknik Mimari'}
-                                    {tab === 'challenges' && 'Zorluklar & Çözümler'}
+                                    {tab === 'overview' && t('projectDetails.tab_overview')}
+                                    {tab === 'technical' && t('projectDetails.tab_technical')}
+                                    {tab === 'challenges' && t('projectDetails.tab_challenges')}
                                     {activeTab === tab && (
                                         <motion.div layoutId="underline" className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400" />
                                     )}
@@ -139,13 +141,13 @@ const ProjectDetails = () => {
                         <div className="min-h-[300px]">
                             {activeTab === 'overview' && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                                    <h3 className="text-xl font-bold text-white">Proje Hakkında</h3>
+                                    <h3 className="text-xl font-bold text-white">{t('projectDetails.about_title')}</h3>
                                     <p className="leading-relaxed">{project.description}</p>
 
                                     {/* Ana Özellikler — DB'den */}
                                     {project.features && project.features.length > 0 && (
                                         <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
-                                            <h4 className="font-bold text-white mb-3">🚀 Ana Özellikler</h4>
+                                            <h4 className="font-bold text-white mb-3">🚀 {t('projectDetails.features_title')}</h4>
                                             <ul className="space-y-2 text-gray-400">
                                                 {project.features.map((feature, idx) => (
                                                     <li key={idx} className="flex items-start gap-2">
@@ -160,7 +162,7 @@ const ProjectDetails = () => {
                                     {/* Fallback: DB'de features yoksa varsayılan */}
                                     {(!project.features || project.features.length === 0) && (
                                         <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
-                                            <h4 className="font-bold text-white mb-2">🚀 Ana Özellikler</h4>
+                                            <h4 className="font-bold text-white mb-2">🚀 {t('projectDetails.features_title')}</h4>
                                             <ul className="list-disc list-inside space-y-2 text-gray-400">
                                                 <li>Responsive (Mobil Uyumlu) Tasarım</li>
                                                 <li>RESTful API Entegrasyonu</li>
@@ -174,7 +176,7 @@ const ProjectDetails = () => {
 
                             {activeTab === 'technical' && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                                    <h3 className="text-xl font-bold text-white">Teknik Altyapı</h3>
+                                    <h3 className="text-xl font-bold text-white">{t('projectDetails.tech_title')}</h3>
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         {techCards.length > 0 ? techCards.map(card => (
                                             <div key={card.key} className="p-4 border border-slate-800 rounded-xl">
@@ -208,7 +210,7 @@ const ProjectDetails = () => {
 
                             {activeTab === 'challenges' && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
-                                    <h3 className="text-xl font-bold text-white">Karşılaşılan Sorunlar ve Çözümler</h3>
+                                    <h3 className="text-xl font-bold text-white">{t('projectDetails.challenges_title')}</h3>
                                     <div className="space-y-4">
                                         <div className="bg-red-500/10 border border-red-500/20 p-4 rounded-xl">
                                             <h4 className="text-red-400 font-bold mb-1">Sorun: Veri Tutarlılığı</h4>
@@ -228,20 +230,20 @@ const ProjectDetails = () => {
                     {/* SAĞ: SİDEBAR BİLGİ (1/3) */}
                     <div className="lg:col-span-1">
                         <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 sticky top-28">
-                            <h3 className="text-lg font-bold text-white mb-4">Proje Künyesi</h3>
+                            <h3 className="text-lg font-bold text-white mb-4">{t('projectDetails.spec_title')}</h3>
                             <div className="space-y-4 text-sm">
                                 <div className="flex justify-between border-b border-slate-800 pb-2">
-                                    <span className="text-gray-500">Kategori</span>
+                                    <span className="text-gray-500">{t('projectDetails.spec_category')}</span>
                                     <span className="text-white font-medium">{project.category || project.tags?.[0]}</span>
                                 </div>
                                 {project.role && (
                                     <div className="flex justify-between border-b border-slate-800 pb-2">
-                                        <span className="text-gray-500">Rol</span>
+                                        <span className="text-gray-500">{t('projectDetails.spec_role')}</span>
                                         <span className="text-white font-medium">{project.role}</span>
                                     </div>
                                 )}
                                 <div className="flex justify-between border-b border-slate-800 pb-2">
-                                    <span className="text-gray-500">Durum</span>
+                                    <span className="text-gray-500">{t('projectDetails.spec_status')}</span>
                                     <span className={`font-medium flex items-center gap-1 ${statusColor.split(' ')[0]}`}>
                                         <span className={`w-2 h-2 rounded-full animate-pulse ${statusColor.split(' ')[1]}`}></span>
                                         {project.status || 'Tamamlandı'}
@@ -249,7 +251,7 @@ const ProjectDetails = () => {
                                 </div>
 
                                 <div className="pt-4">
-                                    <h4 className="text-gray-500 mb-2">Kullanılan Teknolojiler</h4>
+                                    <h4 className="text-gray-500 mb-2">{t('projectDetails.spec_tech')}</h4>
                                     <div className="flex flex-wrap gap-2">
                                         {project.tags?.map(t => (
                                             <span key={t} className="px-2 py-1 bg-slate-800 rounded text-xs text-gray-300 border border-slate-700">{t}</span>

@@ -123,6 +123,34 @@
         "success_title": "Mesajın İletildi!",
         "success_desc": "Teşekkürler. En kısa sürede dönüş yapacağım."
     },
+    "projectDetails": {
+        "back": "Projelere Dön",
+        "not_found": "Proje Bulunamadı.",
+        "source_code": "Kaynak Kod",
+        "live_demo": "Canlı Demo",
+        "stat_complexity": "Karmaşıklık",
+        "stat_hours": "Geliştirme Süresi",
+        "stat_lines": "Satır Kod",
+        "stat_year": "Yıl",
+        "tab_overview": "Genel Bakış",
+        "tab_technical": "Teknik Mimari",
+        "tab_challenges": "Zorluklar & Çözümler",
+        "about_title": "Proje Hakkında",
+        "features_title": "Ana Özellikler",
+        "tech_title": "Teknik Altyapı",
+        "challenges_title": "Karşılaşılan Sorunlar ve Çözümler",
+        "spec_title": "Proje Künyesi",
+        "spec_category": "Kategori",
+        "spec_role": "Rol",
+        "spec_status": "Durum",
+        "spec_tech": "Kullanılan Teknolojiler"
+    },
+    "blogDetails": {
+        "back": "Tüm Yazılara Dön",
+        "not_found": "Blog yazısı bulunamadı.",
+        "back_short": "Bloga Dön",
+        "author_note": "Teknoloji ve iş dünyası üzerine notlar."
+    },
     "footer": {
         "copyright": "© {{year}} Eyüp Zeki Salihoğlu — Tüm hakları saklıdır.",
         "built_with": "React + Node.js ile geliştirildi"

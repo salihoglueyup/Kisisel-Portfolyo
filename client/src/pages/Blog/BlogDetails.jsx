@@ -3,8 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import { FaArrowLeft, FaClock, FaCalendarAlt } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
 import { useBlog } from '../../hooks/queries/useBlogs';
+import { useTranslation } from 'react-i18next';
 
 const BlogDetails = () => {
+    const { t } = useTranslation();
     const { id } = useParams();
     const { data: blog, isLoading: loading } = useBlog(id);
 
@@ -16,8 +18,8 @@ const BlogDetails = () => {
 
     if (!blog) return (
         <div className="min-h-screen bg-[#0B1120] pt-32 text-center text-white">
-            <p className="text-gray-400">Blog yazısı bulunamadı.</p>
-            <Link to="/blog" className="text-blue-400 hover:underline mt-4 inline-block">← Bloga Dön</Link>
+            <p className="text-gray-400">{t('blogDetails.not_found')}</p>
+            <Link to="/blog" className="text-blue-400 hover:underline mt-4 inline-block">← {t('blogDetails.back_short')}</Link>
         </div>
     );
 
@@ -44,7 +46,7 @@ const BlogDetails = () => {
             <div className="max-w-3xl mx-auto">
 
                 <Link to="/blog" className="text-gray-400 hover:text-white flex items-center gap-2 mb-8 transition-colors">
-                    <FaArrowLeft /> Tüm Yazılara Dön
+                    <FaArrowLeft /> {t('blogDetails.back')}
                 </Link>
 
                 {/* Meta Veriler */}
@@ -72,7 +74,7 @@ const BlogDetails = () => {
                     <div className="w-16 h-16 bg-slate-800 rounded-full flex items-center justify-center text-3xl">👨‍💻</div>
                     <div>
                         <h4 className="text-white font-bold">Eyüp Zeki Salihoğlu</h4>
-                        <p className="text-sm text-gray-500">Teknoloji ve iş dünyası üzerine notlar.</p>
+                        <p className="text-sm text-gray-500">{t('blogDetails.author_note')}</p>
                     </div>
                 </div>
 
