@@ -14,6 +14,7 @@ import CommandPalette from './components/common/CommandPalette';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import { CommandPaletteProvider } from './context/CommandPaletteContext';
 
 // Sayfalar (lazy loading — code-splitting ile ilk yükleme hızını artırır)
 const Home = lazy(() => import('./pages/Home/Home'));
@@ -98,7 +99,7 @@ function App() {
     const [loading, setLoading] = useState(true);
 
     return (
-        <div className="min-h-screen bg-[#0B1120] text-gray-100 font-sans selection:bg-blue-500 selection:text-white cursor-none md:cursor-auto">
+        <div className="min-h-screen bg-base text-gray-100 font-sans selection:bg-blue-500 selection:text-white cursor-none md:cursor-auto">
             <Toaster 
                 position="top-right" 
                 toastOptions={{ 
@@ -116,17 +117,19 @@ function App() {
             <CustomCursor />
 
             <Router>
-                <ScrollToTop />
-                <CommandPalette />
-                <Navbar />
-                <div className="pt-20">
-                    <ErrorBoundary>
-                        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>}>
-                            <AnimatedRoutes />
-                        </Suspense>
-                    </ErrorBoundary>
-                </div>
-                <Footer />
+                <CommandPaletteProvider>
+                    <ScrollToTop />
+                    <CommandPalette />
+                    <Navbar />
+                    <div className="pt-20">
+                        <ErrorBoundary>
+                            <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><LoadingSpinner /></div>}>
+                                <AnimatedRoutes />
+                            </Suspense>
+                        </ErrorBoundary>
+                    </div>
+                    <Footer />
+                </CommandPaletteProvider>
             </Router>
         </div>
     );

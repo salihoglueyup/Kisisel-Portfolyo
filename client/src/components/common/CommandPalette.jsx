@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaSearch, FaHome, FaProjectDiagram, FaUser, FaEnvelope, FaPenNib, FaArrowRight, FaSignInAlt } from 'react-icons/fa';
 import { useProjects } from '../../hooks/queries/useProjects';
 import { useBlogs } from '../../hooks/queries/useBlogs';
+import { useCommandPalette } from '../../context/commandPalette';
 
 const CommandPalette = () => {
-    const [isOpen, setIsOpen] = useState(false);
+    const { isOpen, close, toggle } = useCommandPalette();
     const [search, setSearch] = useState('');
     const navigate = useNavigate();
     const inputRef = useRef(null);
@@ -20,16 +21,16 @@ const CommandPalette = () => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
                 setSearch(''); // açılış/kapanışta aramayı sıfırla (effect'te değil)
-                setIsOpen(prev => !prev);
+                toggle();
             }
             if (e.key === 'Escape') {
-                setIsOpen(false);
+                close();
             }
         };
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
+    }, [toggle, close]);
 
     useEffect(() => {
         if (isOpen && inputRef.current) {
@@ -39,7 +40,7 @@ const CommandPalette = () => {
 
     const handleSelect = (path) => {
         navigate(path);
-        setIsOpen(false);
+        close();
     };
 
     // --- Search Logic ---
@@ -88,7 +89,7 @@ const CommandPalette = () => {
                         initial={{ opacity: 0 }} 
                         animate={{ opacity: 1 }} 
                         exit={{ opacity: 0 }} 
-                        onClick={() => setIsOpen(false)} 
+                        onClick={close}
                         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
                     />
 
@@ -98,7 +99,7 @@ const CommandPalette = () => {
                         animate={{ opacity: 1, scale: 1, y: 0 }} 
                         exit={{ opacity: 0, scale: 0.95, y: -20 }}
                         transition={{ duration: 0.15 }}
-                        className="relative w-full max-w-2xl bg-[#111827] border border-slate-700/60 rounded-2xl shadow-2xl overflow-hidden mx-4"
+                        className="relative w-full max-w-2xl bg-surface border border-slate-700/60 rounded-2xl shadow-2xl overflow-hidden mx-4"
                     >
                         {/* Search Input */}
                         <div className="relative flex items-center px-4 border-b border-slate-700/60">

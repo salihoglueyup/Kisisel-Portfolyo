@@ -4,7 +4,8 @@
         "about": "Hakkımda",
         "projects": "Projeler",
         "blog": "Blog",
-        "contact": "İletişim"
+        "contact": "İletişim",
+        "search": "Arama"
     },
     "home": {
         "hero_line1": "Veriyi",
@@ -235,7 +236,18 @@
     },
     "footer": {
         "copyright": "© {{year}} Eyüp Zeki Salihoğlu — Tüm hakları saklıdır.",
-        "built_with": "React + Node.js ile geliştirildi"
+        "built_with": "React + Node.js ile geliştirildi",
+        "menu": "Menü",
+        "expertise_title": "Uzmanlık",
+        "contact_title": "İletişim",
+        "tagline": "Production seviyesinde RAG sistemleri, LLM ve güvenli kurumsal web uygulamaları geliştiriyorum.",
+        "exp_ai": "AI / RAG Sistemleri",
+        "exp_fullstack": "Full-Stack Geliştirme",
+        "exp_security": "Siber Güvenlik",
+        "exp_llm": "LLM & Otomasyon",
+        "location": "İstanbul, Türkiye",
+        "available": "Freelance için müsait",
+        "back_to_top": "Yukarı Çık"
     },
     "notfound": {
         "title": "404",

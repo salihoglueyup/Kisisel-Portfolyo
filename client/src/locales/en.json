@@ -4,7 +4,8 @@
         "about": "About",
         "projects": "Projects",
         "blog": "Blog",
-        "contact": "Contact"
+        "contact": "Contact",
+        "search": "Search"
     },
     "home": {
         "hero_line1": "The Mind",
@@ -235,7 +236,18 @@
     },
     "footer": {
         "copyright": "© {{year}} Eyüp Zeki Salihoğlu — All rights reserved.",
-        "built_with": "Built with React + Node.js"
+        "built_with": "Built with React + Node.js",
+        "menu": "Menu",
+        "expertise_title": "Expertise",
+        "contact_title": "Contact",
+        "tagline": "I build production-grade RAG systems, LLM and secure enterprise web applications.",
+        "exp_ai": "AI / RAG Systems",
+        "exp_fullstack": "Full-Stack Development",
+        "exp_security": "Cybersecurity",
+        "exp_llm": "LLM & Automation",
+        "location": "Istanbul, Turkey",
+        "available": "Available for Freelance",
+        "back_to_top": "Back to Top"
     },
     "notfound": {
         "title": "404",
