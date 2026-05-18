@@ -68,7 +68,7 @@ const MeetingModal = ({ isOpen, onClose }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm"></motion.div>
-            <motion.div role="dialog" aria-modal="true" aria-label={t('contact.modal_title')} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#1f2937] border border-slate-700 w-full max-w-lg rounded-2xl p-8 relative z-50 shadow-2xl">
+            <motion.div role="dialog" aria-modal="true" aria-label={t('contact.modal_title')} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-surface-raised border border-slate-700 w-full max-w-lg rounded-2xl p-8 relative z-50 shadow-2xl">
                 <button onClick={onClose} aria-label={t('common.close')} className="absolute top-4 right-4 text-gray-400 hover:text-white"><FaTimes size={20} /></button>
                 <div className="text-center mb-6">
                     <div className="w-16 h-16 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><FaCalendarAlt /></div>
@@ -124,7 +124,7 @@ const CostEstimator = () => {
     };
 
     return (
-        <div className="bg-[#1f2937] border border-slate-700 rounded-2xl p-6 mt-6">
+        <div className="bg-surface-raised border border-slate-700 rounded-2xl p-6 mt-6">
             <div className="flex items-center gap-2 mb-4 border-b border-slate-700 pb-2">
                 <FaCalculator className="text-green-400" />
                 <h3 className="text-white font-bold">{t('contact.cost_title')}</h3>
@@ -162,6 +162,7 @@ const Contact = () => {
     const { t } = useTranslation();
     const [status, setStatus] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [contactTab, setContactTab] = useState('collab'); // 'collab' | 'freelance'
     const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
 
     const contactSchema = useMemo(() => buildContactSchema(t), [t]);
@@ -201,7 +202,7 @@ const Contact = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0B1120] pt-28 pb-20 px-6 font-sans overflow-x-hidden">
+        <div className="min-h-screen bg-base pt-28 pb-20 px-6 font-sans overflow-x-hidden">
             <SEO
                 title={t('contact.title')}
                 description="Eyüp Zeki Salihoğlu ile iletişime geçin. Proje teklifleri, freelance çalışma ve iş birlikleri için."
@@ -248,7 +249,7 @@ const Contact = () => {
                     <motion.div className="lg:col-span-5 flex flex-col gap-6" initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }}>
 
                         {/* 1. İletişim Kartı */}
-                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-8 shadow-2xl relative overflow-hidden group">
+                        <div className="bg-surface border border-slate-800 rounded-2xl p-8 shadow-2xl relative overflow-hidden group">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full blur-3xl -z-10"></div>
                             <h3 className="text-xl font-bold text-white mb-6">{t('contact.channels')}</h3>
                             <div className="space-y-6">
@@ -291,37 +292,15 @@ const Contact = () => {
 
                         {/* 2. CANLI OPERASYON PANELİ */}
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-[#1f2937] border border-slate-700 p-4 rounded-xl flex flex-col items-center justify-center text-center">
+                            <div className="bg-surface-raised border border-slate-700 p-4 rounded-xl flex flex-col items-center justify-center text-center">
                                 <FaBolt className="text-yellow-400 text-xl mb-2" />
                                 <span className="text-2xl font-bold text-white">{t('contact.response_value')}</span>
                                 <span className="text-[10px] text-gray-400 uppercase font-bold">{t('contact.response_time')}</span>
                             </div>
-                            <div className="bg-[#1f2937] border border-slate-700 p-4 rounded-xl flex flex-col items-center justify-center text-center">
+                            <div className="bg-surface-raised border border-slate-700 p-4 rounded-xl flex flex-col items-center justify-center text-center">
                                 <FaClock className="text-blue-400 text-xl mb-2" />
                                 <span className="text-2xl font-bold text-white">{currentTime}</span>
                                 <span className="text-[10px] text-gray-400 uppercase font-bold">{t('contact.local_time')}</span>
-                            </div>
-                        </div>
-
-                        {/* 3. CTA: Toplantı */}
-                        <div className="bg-gradient-to-r from-blue-900/40 to-slate-900 border border-blue-500/30 rounded-2xl p-6 text-center">
-                            <FaUserTie className="text-3xl text-blue-400 mx-auto mb-3" />
-                            <h3 className="text-white font-bold mb-2">{t('contact.meeting_title')}</h3>
-                            <p className="text-sm text-gray-400 mb-4">{t('contact.meeting_desc')}</p>
-                            <button onClick={() => setIsModalOpen(true)} className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20">{t('contact.meeting_request_btn')}</button>
-                        </div>
-
-                        {/* 4. MALİYET HESAPLAYICI */}
-                        <CostEstimator />
-
-                        {/* 5. YENİ: İLETİŞİM TOOL STACK (İşbirliği Araçları) */}
-                        <div className="bg-[#1f2937] border border-slate-700 rounded-2xl p-6">
-                            <h4 className="text-xs font-bold text-gray-500 uppercase mb-4 text-center">{t('contact.collab_tools')}</h4>
-                            <div className="flex justify-between items-center px-2">
-                                <div className="text-center group"><FaSlack className="text-2xl text-gray-400 group-hover:text-white transition-colors mb-1 mx-auto" /><span className="text-[10px] text-gray-600">Slack</span></div>
-                                <div className="text-center group"><SiJira className="text-2xl text-gray-400 group-hover:text-blue-400 transition-colors mb-1 mx-auto" /><span className="text-[10px] text-gray-600">Jira</span></div>
-                                <div className="text-center group"><SiNotion className="text-2xl text-gray-400 group-hover:text-white transition-colors mb-1 mx-auto" /><span className="text-[10px] text-gray-600">Notion</span></div>
-                                <div className="text-center group"><FaVideo className="text-2xl text-gray-400 group-hover:text-blue-500 transition-colors mb-1 mx-auto" /><span className="text-[10px] text-gray-600">Zoom</span></div>
                             </div>
                         </div>
 
@@ -329,7 +308,7 @@ const Contact = () => {
 
                     {/* --- SAĞ KOLON --- */}
                     <motion.div className="lg:col-span-7" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }}>
-                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-8 lg:p-10 relative shadow-2xl">
+                        <div className="bg-surface border border-slate-800 rounded-2xl p-8 lg:p-10 relative shadow-2xl">
                             <div className="flex justify-between items-center mb-8">
                                 <h3 className="text-2xl font-bold text-white">{t('contact.form_title')}</h3>
                                 <FaPaperPlane className="text-slate-700 text-2xl rotate-12" />
@@ -346,12 +325,12 @@ const Contact = () => {
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
                                             <label htmlFor="contact-name" className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.name')}</label>
-                                            <input id="contact-name" type="text" {...register('name')} aria-invalid={!!errors.name} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder={t('contact.name')} />
+                                            <input id="contact-name" type="text" {...register('name')} aria-invalid={!!errors.name} className="w-full bg-surface-raised border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder={t('contact.name')} />
                                             {errors.name && <p className="text-red-400 text-xs mt-1 ml-1">{errors.name.message}</p>}
                                         </div>
                                         <div className="space-y-2">
                                             <label htmlFor="contact-email" className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.email')}</label>
-                                            <input id="contact-email" type="email" {...register('email')} aria-invalid={!!errors.email} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder="ornek@email.com" />
+                                            <input id="contact-email" type="email" {...register('email')} aria-invalid={!!errors.email} className="w-full bg-surface-raised border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder="ornek@email.com" />
                                             {errors.email && <p className="text-red-400 text-xs mt-1 ml-1">{errors.email.message}</p>}
                                         </div>
                                     </div>
@@ -359,14 +338,14 @@ const Contact = () => {
                                         <span id="contact-subject-label" className="block text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.subject')}</span>
                                         <div role="group" aria-labelledby="contact-subject-label" className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                             {[t('contact.subject_offer'), t('contact.subject_freelance'), t('contact.subject_job'), t('contact.subject_other')].map(opt => (
-                                                <button type="button" key={opt} aria-pressed={watchSubject === opt} onClick={() => setValue('subject', opt)} className={`py-2 text-xs font-bold rounded-lg border transition-all ${watchSubject === opt ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-[#1f2937] border-slate-700 text-gray-400 hover:border-gray-500'}`}>{opt}</button>
+                                                <button type="button" key={opt} aria-pressed={watchSubject === opt} onClick={() => setValue('subject', opt)} className={`py-2 text-xs font-bold rounded-lg border transition-all ${watchSubject === opt ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-surface-raised border-slate-700 text-gray-400 hover:border-gray-500'}`}>{opt}</button>
                                             ))}
                                         </div>
                                         {errors.subject && <p className="text-red-400 text-xs mt-1 ml-1">{errors.subject.message}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <label htmlFor="contact-message" className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.message')}</label>
-                                        <textarea id="contact-message" rows="6" {...register('message')} aria-invalid={!!errors.message} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all resize-none" placeholder={t('contact.form_placeholder')}></textarea>
+                                        <textarea id="contact-message" rows="6" {...register('message')} aria-invalid={!!errors.message} className="w-full bg-surface-raised border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all resize-none" placeholder={t('contact.form_placeholder')}></textarea>
                                         {errors.message && <p className="text-red-400 text-xs mt-1 ml-1">{errors.message.message}</p>}
                                     </div>
                                     <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-1">{isSubmitting ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : <><FaPaperPlane /> {t('contact.send')}</>}</button>
@@ -375,7 +354,7 @@ const Contact = () => {
                         </div>
 
                         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-center items-center min-h-[200px]">
+                            <div className="bg-surface border border-slate-800 rounded-2xl p-6 relative overflow-hidden flex flex-col justify-center items-center min-h-[200px]">
                                 <div className="absolute inset-0 opacity-20"><div className="w-full h-full bg-[radial-gradient(circle,_#3b82f6_1px,_transparent_1px)] bg-[size:20px_20px]"></div></div>
                                 <div className="relative z-10 text-center">
                                     <div className="w-12 h-12 bg-blue-500/20 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-2 animate-pulse"><FaGlobeAmericas size={24} /></div>
@@ -383,7 +362,7 @@ const Contact = () => {
                                     <p className="text-xs text-gray-500">{t('contact.global_desc')}</p>
                                 </div>
                             </div>
-                            <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 flex flex-col justify-center relative">
+                            <div className="bg-surface border border-slate-800 rounded-2xl p-6 flex flex-col justify-center relative">
                                 <FaQuoteRight className="absolute top-4 right-4 text-slate-700 text-4xl" />
                                 <p className="text-gray-300 text-sm italic mb-4 z-10">"{t('contact.quote_text')}"</p>
                                 <div className="flex items-center gap-3">
@@ -395,14 +374,59 @@ const Contact = () => {
                     </motion.div>
                 </div>
 
-                {/* --- YENİ ALT BÖLÜM: DESTEK VE BİLGİ MERKEZİ --- */}
+                {/* --- ALT BÖLÜM: SEKMELİ (karma kitle: İş Birliği / Freelance) --- */}
                 <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border-t border-slate-800 pt-16">
-                    <h2 className="text-3xl font-bold text-white mb-10 text-center">{t('contact.standards_title')}</h2>
+                    <h2 className="text-3xl font-bold text-white mb-8 text-center">{t('contact.standards_title')}</h2>
 
+                    {/* Sekme bar */}
+                    <div role="tablist" aria-label={t('contact.standards_title')} className="flex justify-center gap-2 mb-10">
+                        <button
+                            role="tab"
+                            aria-selected={contactTab === 'collab'}
+                            onClick={() => setContactTab('collab')}
+                            className={`px-5 py-2 rounded-lg text-sm font-bold border transition-all ${contactTab === 'collab' ? 'bg-blue-600 border-blue-500 text-white' : 'bg-surface-raised border-slate-700 text-gray-400 hover:border-gray-500'}`}
+                        >
+                            {t('contact.tab_collab')}
+                        </button>
+                        <button
+                            role="tab"
+                            aria-selected={contactTab === 'freelance'}
+                            onClick={() => setContactTab('freelance')}
+                            className={`px-5 py-2 rounded-lg text-sm font-bold border transition-all ${contactTab === 'freelance' ? 'bg-blue-600 border-blue-500 text-white' : 'bg-surface-raised border-slate-700 text-gray-400 hover:border-gray-500'}`}
+                        >
+                            {t('contact.tab_freelance')}
+                        </button>
+                    </div>
+
+                    {/* İŞ BİRLİĞİ sekmesi — her iki kitle için nötr varsayılan */}
+                    {contactTab === 'collab' && (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                            <div className="bg-gradient-to-r from-blue-900/40 to-slate-900 border border-blue-500/30 rounded-2xl p-8 text-center flex flex-col justify-center">
+                                <FaUserTie className="text-3xl text-blue-400 mx-auto mb-3" />
+                                <h3 className="text-white font-bold mb-2">{t('contact.meeting_title')}</h3>
+                                <p className="text-sm text-gray-400 mb-4">{t('contact.meeting_desc')}</p>
+                                <button onClick={() => setIsModalOpen(true)} className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20">{t('contact.meeting_request_btn')}</button>
+                            </div>
+                            <div className="bg-surface border border-slate-800 rounded-2xl p-8 flex flex-col justify-center">
+                                <h4 className="text-xs font-bold text-gray-500 uppercase mb-6 text-center">{t('contact.collab_tools')}</h4>
+                                <div className="flex justify-between items-center px-2">
+                                    <div className="text-center group"><FaSlack className="text-2xl text-gray-400 group-hover:text-white transition-colors mb-1 mx-auto" /><span className="text-[10px] text-gray-500">Slack</span></div>
+                                    <div className="text-center group"><SiJira className="text-2xl text-gray-400 group-hover:text-blue-400 transition-colors mb-1 mx-auto" /><span className="text-[10px] text-gray-500">Jira</span></div>
+                                    <div className="text-center group"><SiNotion className="text-2xl text-gray-400 group-hover:text-white transition-colors mb-1 mx-auto" /><span className="text-[10px] text-gray-500">Notion</span></div>
+                                    <div className="text-center group"><FaVideo className="text-2xl text-gray-400 group-hover:text-blue-500 transition-colors mb-1 mx-auto" /><span className="text-[10px] text-gray-500">Zoom</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* FREELANCE sekmesi — maliyet + SLA + FAQ */}
+                    {contactTab === 'freelance' && (
+                    <div className="space-y-10">
+                    <div className="max-w-md mx-auto"><CostEstimator /></div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
                         {/* SOL: SLA TABLOSU (Veri Odaklı) */}
-                        <div className="bg-[#111827] border border-slate-800 rounded-2xl overflow-hidden">
+                        <div className="bg-surface border border-slate-800 rounded-2xl overflow-hidden">
                             <div className="p-6 border-b border-slate-800 bg-slate-900/50 flex items-center gap-3">
                                 <FaShieldAlt className="text-green-500" />
                                 <h3 className="font-bold text-white">{t('contact.sla_title')}</h3>
@@ -439,7 +463,7 @@ const Contact = () => {
                         </div>
 
                         {/* SAĞ: SIKÇA SORULANLAR (Accordion) */}
-                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+                        <div className="bg-surface border border-slate-800 rounded-2xl p-6">
                             <div className="flex items-center gap-3 mb-6">
                                 <FaQuestionCircle className="text-blue-500" />
                                 <h3 className="font-bold text-white text-lg">{t('contact.faq_title')}</h3>
@@ -476,6 +500,8 @@ const Contact = () => {
                         </div>
 
                     </div>
+                    </div>
+                    )}
                 </motion.div>
 
             </div>

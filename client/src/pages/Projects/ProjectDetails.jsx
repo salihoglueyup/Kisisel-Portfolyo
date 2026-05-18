@@ -13,8 +13,8 @@ const ProjectDetails = () => {
     const { data: project, isLoading: loading } = useProject(id);
     const [activeTab, setActiveTab] = useState('overview');
 
-    if (loading) return <div className="min-h-screen bg-[#0B1120] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div></div>;
-    if (!project) return <div className="min-h-screen bg-[#0B1120] flex items-center justify-center text-white">{t('projectDetails.not_found')}</div>;
+    if (loading) return <div className="min-h-screen bg-base flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div></div>;
+    if (!project) return <div className="min-h-screen bg-base flex items-center justify-center text-white">{t('projectDetails.not_found')}</div>;
 
     // Teknik mimari verisi (DB'den veya fallback)
     const techArch = project.technicalArchitecture || {};
@@ -46,6 +46,22 @@ const ProjectDetails = () => {
         'Prototip': 'status_prototype',
     }[project.status] || 'status_completed';
 
+    // İstatistik şeridi — yalnız gerçek (sıfır olmayan) metrikler;
+    // yıl her zaman gösterilir. "0/10, 0h, 0" bozuk görünmesin.
+    const statItems = [
+        project.metrics?.complexity
+            ? { key: 'complexity', value: `${project.metrics.complexity}/10`, label: t('projectDetails.stat_complexity') }
+            : null,
+        project.metrics?.hoursSpent
+            ? { key: 'hours', value: `${project.metrics.hoursSpent}h`, label: t('projectDetails.stat_hours') }
+            : null,
+        project.metrics?.linesOfCode
+            ? { key: 'lines', value: project.metrics.linesOfCode, label: t('projectDetails.stat_lines') }
+            : null,
+        { key: 'year', value: projectYear, label: t('projectDetails.stat_year'), isYear: true },
+    ].filter(Boolean);
+    const statCols = { 1: 'md:grid-cols-1', 2: 'md:grid-cols-2', 3: 'md:grid-cols-3', 4: 'md:grid-cols-4' }[statItems.length];
+
     // Zorluklar yalnız DB'de gerçek veri varsa sekme olarak gösterilir
     const hasChallenges = Array.isArray(project.challenges) && project.challenges.length > 0;
     const tabs = hasChallenges
@@ -53,7 +69,7 @@ const ProjectDetails = () => {
         : ['overview', 'technical'];
 
     return (
-        <div className="min-h-screen bg-[#0B1120] pt-24 pb-20 px-6 font-sans text-gray-300">
+        <div className="min-h-screen bg-base pt-24 pb-20 px-6 font-sans text-gray-300">
             <SEO title={`${project.title} — Proje Detay`} description={project.description} />
 
             {/* 1. ÜST NAVİGASYON */}
@@ -106,24 +122,17 @@ const ProjectDetails = () => {
                     </div>
                 </div>
 
-                {/* 3. İSTATİSTİK ŞERİDİ */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16 border-y border-slate-800 py-8">
-                    <div className="text-center border-r border-slate-800 last:border-0">
-                        <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.complexity || 0}/10</span>
-                        <span className="text-xs text-gray-500 uppercase tracking-wider">{t('projectDetails.stat_complexity')}</span>
-                    </div>
-                    <div className="text-center border-r border-slate-800 last:border-0">
-                        <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.hoursSpent || 0}h</span>
-                        <span className="text-xs text-gray-500 uppercase tracking-wider">{t('projectDetails.stat_hours')}</span>
-                    </div>
-                    <div className="text-center border-r border-slate-800 last:border-0">
-                        <span className="block text-3xl font-bold text-white mb-1">{project.metrics?.linesOfCode || 0}</span>
-                        <span className="text-xs text-gray-500 uppercase tracking-wider">{t('projectDetails.stat_lines')}</span>
-                    </div>
-                    <div className="text-center">
-                        <span className="block text-3xl font-bold text-white mb-1 flex justify-center items-center gap-2"><FaCalendarAlt className="text-sm text-blue-500" /> {projectYear}</span>
-                        <span className="text-xs text-gray-500 uppercase tracking-wider">{t('projectDetails.stat_year')}</span>
-                    </div>
+                {/* 3. İSTATİSTİK ŞERİDİ — sadece gerçek metrikler */}
+                <div className={`grid grid-cols-2 ${statCols} gap-4 mb-16 border-y border-slate-800 py-8`}>
+                    {statItems.map((item) => (
+                        <div key={item.key} className="text-center border-r border-slate-800 last:border-0">
+                            <span className="block text-3xl font-bold text-white mb-1 flex justify-center items-center gap-2">
+                                {item.isYear && <FaCalendarAlt className="text-sm text-blue-500" />}
+                                {item.value}
+                            </span>
+                            <span className="text-xs text-gray-500 uppercase tracking-wider">{item.label}</span>
+                        </div>
+                    ))}
                 </div>
 
                 {/* 4. TAB MENÜ VE İÇERİK */}
@@ -172,52 +181,26 @@ const ProjectDetails = () => {
                                         </div>
                                     )}
 
-                                    {/* Fallback: DB'de features yoksa varsayılan */}
-                                    {(!project.features || project.features.length === 0) && (
-                                        <div className="bg-slate-900/50 p-6 rounded-xl border border-slate-800">
-                                            <h4 className="font-bold text-white mb-2">🚀 {t('projectDetails.features_title')}</h4>
-                                            <ul className="list-disc list-inside space-y-2 text-gray-400">
-                                                <li>Responsive (Mobil Uyumlu) Tasarım</li>
-                                                <li>RESTful API Entegrasyonu</li>
-                                                <li>Admin Yönetim Paneli</li>
-                                                <li>Gerçek Zamanlı Veri Akışı</li>
-                                            </ul>
-                                        </div>
-                                    )}
                                 </motion.div>
                             )}
 
                             {activeTab === 'technical' && (
                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
                                     <h3 className="text-xl font-bold text-white">{t('projectDetails.tech_title')}</h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {techCards.length > 0 ? techCards.map(card => (
-                                            <div key={card.key} className="p-4 border border-slate-800 rounded-xl">
-                                                <div className={`flex items-center gap-3 mb-3 ${card.color}`}>{card.icon} <span className="font-bold">{card.label}</span></div>
-                                                <p className="text-sm">{card.value}</p>
-                                            </div>
-                                        )) : (
-                                            /* Fallback: DB'de technicalArchitecture yoksa */
-                                            <>
-                                                <div className="p-4 border border-slate-800 rounded-xl">
-                                                    <div className="flex items-center gap-3 mb-3 text-blue-400"><FaCode size={24} /> <span className="font-bold">Frontend</span></div>
-                                                    <p className="text-sm">React.js, Tailwind CSS, Framer Motion</p>
+                                    {techCards.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            {techCards.map(card => (
+                                                <div key={card.key} className="p-4 border border-slate-800 rounded-xl">
+                                                    <div className={`flex items-center gap-3 mb-3 ${card.color}`}>{card.icon} <span className="font-bold">{card.label}</span></div>
+                                                    <p className="text-sm">{card.value}</p>
                                                 </div>
-                                                <div className="p-4 border border-slate-800 rounded-xl">
-                                                    <div className="flex items-center gap-3 mb-3 text-green-400"><FaServer size={24} /> <span className="font-bold">Backend</span></div>
-                                                    <p className="text-sm">Node.js, Express.js, JWT</p>
-                                                </div>
-                                                <div className="p-4 border border-slate-800 rounded-xl">
-                                                    <div className="flex items-center gap-3 mb-3 text-yellow-400"><FaDatabase size={24} /> <span className="font-bold">Database</span></div>
-                                                    <p className="text-sm">MongoDB, NoSQL</p>
-                                                </div>
-                                                <div className="p-4 border border-slate-800 rounded-xl">
-                                                    <div className="flex items-center gap-3 mb-3 text-purple-400"><FaLayerGroup size={24} /> <span className="font-bold">DevOps</span></div>
-                                                    <p className="text-sm">Git, Vercel/Render</p>
-                                                </div>
-                                            </>
-                                        )}
-                                    </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-gray-500">
+                                            {project.tags?.join(' · ') || '—'}
+                                        </p>
+                                    )}
                                 </motion.div>
                             )}
 
@@ -246,7 +229,7 @@ const ProjectDetails = () => {
 
                     {/* SAĞ: SİDEBAR BİLGİ (1/3) */}
                     <div className="lg:col-span-1">
-                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 sticky top-28">
+                        <div className="bg-surface border border-slate-800 rounded-2xl p-6 sticky top-28">
                             <h3 className="text-lg font-bold text-white mb-4">{t('projectDetails.spec_title')}</h3>
                             <div className="space-y-4 text-sm">
                                 <div className="flex justify-between border-b border-slate-800 pb-2">

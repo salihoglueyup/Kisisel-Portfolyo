@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { FaGithub, FaLinkedin, FaTwitter, FaHeart, FaArrowUp } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaHeart, FaArrowUp } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
@@ -11,7 +11,7 @@ const Footer = () => {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="bg-[#050a14] border-t border-slate-900 pt-16 pb-8 text-sm font-sans">
+        <footer className="bg-sunken border-t border-slate-900 pt-16 pb-8 text-sm font-sans">
             <div className="max-w-7xl mx-auto px-6">
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
@@ -21,8 +21,8 @@ const Footer = () => {
                             Eyüp Zeki Salihoğlu
                         </h2>
                         <p className="text-xs text-blue-400 font-mono mb-4">Full-Stack AI Engineer</p>
-                        <p className="text-gray-500 leading-relaxed mb-6">
-                            Production seviyesinde RAG sistemleri, LLM ve güvenli kurumsal web uygulamaları geliştiriyorum.
+                        <p className="text-gray-400 leading-relaxed mb-6">
+                            {t('footer.tagline')}
                         </p>
                         <div className="flex gap-4">
                             <a href="https://github.com/salihoglueyup" target="_blank" rel="noopener noreferrer" aria-label="GitHub profili" className="w-8 h-8 rounded bg-slate-900 flex items-center justify-center text-gray-400 hover:text-white hover:bg-slate-800 transition-all"><FaGithub /></a>
@@ -31,8 +31,8 @@ const Footer = () => {
                     </div>
 
                     <div>
-                        <h3 className="text-white font-bold mb-6">{t('navbar.home').includes('Home') ? 'Menu' : 'Menü'}</h3>
-                        <ul className="space-y-3 text-gray-500">
+                        <h3 className="text-white font-bold mb-6">{t('footer.menu')}</h3>
+                        <ul className="space-y-3 text-gray-400">
                             <li><Link to="/" className="hover:text-blue-400 transition-colors">{t('navbar.home')}</Link></li>
                             <li><Link to="/about" className="hover:text-blue-400 transition-colors">{t('navbar.about')}</Link></li>
                             <li><Link to="/projects" className="hover:text-blue-400 transition-colors">{t('navbar.projects')}</Link></li>
@@ -41,37 +41,36 @@ const Footer = () => {
                     </div>
 
                     <div>
-                        <h3 className="text-white font-bold mb-6">Uzmanlık</h3>
-                        <ul className="space-y-3 text-gray-500">
-                            <li className="hover:text-blue-400 transition-colors">AI / RAG Sistemleri</li>
-                            <li className="hover:text-blue-400 transition-colors">Full-Stack Geliştirme</li>
-                            <li className="hover:text-blue-400 transition-colors">Siber Güvenlik</li>
-                            <li className="hover:text-blue-400 transition-colors">LLM & Otomasyon</li>
+                        <h3 className="text-white font-bold mb-6">{t('footer.expertise_title')}</h3>
+                        <ul className="space-y-3 text-gray-400">
+                            <li className="hover:text-blue-400 transition-colors">{t('footer.exp_ai')}</li>
+                            <li className="hover:text-blue-400 transition-colors">{t('footer.exp_fullstack')}</li>
+                            <li className="hover:text-blue-400 transition-colors">{t('footer.exp_security')}</li>
+                            <li className="hover:text-blue-400 transition-colors">{t('footer.exp_llm')}</li>
                         </ul>
                     </div>
 
                     <div>
-                        <h3 className="text-white font-bold mb-6">İletişim</h3>
-                        <ul className="space-y-3 text-gray-500">
-                            <li>İstanbul, Türkiye</li>
+                        <h3 className="text-white font-bold mb-6">{t('navbar.contact')}</h3>
+                        <ul className="space-y-3 text-gray-400">
+                            <li>{t('footer.location')}</li>
                             <li>eyupzekisalihoglu@gmail.com</li>
-                            <li className="text-green-500 flex items-center gap-2"><span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Available for Freelance</li>
+                            <li className="text-green-500 flex items-center gap-2"><span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> {t('footer.available')}</li>
                         </ul>
                     </div>
 
                 </div>
 
                 <div className="border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-gray-600 text-xs">
+                    <p className="text-gray-500 text-xs">
                         {t('footer.copyright', { year: currentYear })} <FaHeart className="inline text-red-500 mx-1" /> {t('footer.built_with')}
                     </p>
 
-
                     <button
                         onClick={scrollToTop}
-                        className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider"
+                        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-xs font-bold uppercase tracking-wider"
                     >
-                        Yukarı Çık <FaArrowUp />
+                        {t('footer.back_to_top')} <FaArrowUp />
                     </button>
                 </div>
 

@@ -1,9 +1,11 @@
+import { useMemo } from 'react';
 import { TypeAnimation } from 'react-type-animation';
 import { motion } from 'framer-motion';
-import { FaGithub, FaServer, FaNetworkWired, FaCodeBranch, FaBook, FaPaperPlane, FaArrowRight } from 'react-icons/fa';
+import { FaGithub, FaServer, FaNetworkWired, FaCodeBranch, FaBook, FaPaperPlane, FaArrowRight, FaStar } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEO from '../../components/common/SEO';
+import { useProjects } from '../../hooks/queries/useProjects';
 
 // Bileşen Importları
 import TechTicker from '../../components/common/TechTicker';
@@ -14,11 +16,10 @@ import SystemMonitor from '../../components/features/SystemMonitor';
 import ActivityMap from '../../components/features/ActivityMap';
 import TrafficLogs from '../../components/features/TrafficLogs';
 import LearningPath from '../../components/features/LearningPath';
-import LatestInsights from '../../components/features/LatestInsights';
 
 // Ortak Kart Tasarımı
 const DashboardCard = ({ title, icon, children, className = "" }) => (
-    <div className={`bg-[#111827] border border-slate-800 rounded-xl overflow-hidden flex flex-col h-full ${className}`}>
+    <div className={`bg-surface border border-slate-800 rounded-xl overflow-hidden flex flex-col h-full ${className}`}>
         <div className="px-5 py-3 border-b border-slate-800 bg-slate-900/50 flex items-center gap-3">
             <span className="text-blue-500">{icon}</span>
             <h3 className="text-xs font-bold text-gray-300 uppercase tracking-wider">{title}</h3>
@@ -31,6 +32,15 @@ const DashboardCard = ({ title, icon, children, className = "" }) => (
 
 const Home = () => {
     const { t } = useTranslation();
+    const { data: projects = [] } = useProjects();
+
+    // Öne çıkan proje = en yüksek karmaşıklık (Projects sayfasıyla aynı mantık)
+    const featured = useMemo(() => {
+        if (!projects.length) return null;
+        return projects.reduce(
+            (prev, cur) => ((prev.metrics?.complexity || 0) > (cur.metrics?.complexity || 0) ? prev : cur)
+        );
+    }, [projects]);
 
     const insights = [
         { title: "Production RAG sistemleri & Vector DB", tag: "AI Engineering", color: "text-blue-400" },
@@ -39,7 +49,7 @@ const Home = () => {
     ];
 
     return (
-        <div className="min-h-screen w-full overflow-x-hidden bg-[#0B1120]">
+        <div className="min-h-screen w-full overflow-x-hidden bg-base">
             <SEO
                 title={t('navbar.home')}
                 description="Eyüp Zeki Salihoğlu — Full-Stack AI Engineer. Production seviyesinde RAG sistemleri, LLM ve güvenli kurumsal web uygulamaları."
@@ -92,13 +102,18 @@ const Home = () => {
                             {t('home.hero_line3')}
                         </h1>
 
-                        <div className="text-xl text-gray-400 mb-8 font-mono h-8">
+                        <div className="text-xl text-gray-400 mb-4 font-mono h-8">
                             <TypeAnimation
                                 sequence={[t('home.typing1'), 1500, t('home.typing2'), 1500]}
                                 speed={50}
                                 repeat={Infinity}
                             />
                         </div>
+
+                        {/* Tek cümle değer önermesi — tarayıcılabilir */}
+                        <p className="text-gray-400 mb-8 max-w-md leading-relaxed">
+                            {t('home.value_prop')}
+                        </p>
 
                         <div className="flex gap-4">
                             <Link to="/projects" className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
@@ -115,7 +130,7 @@ const Home = () => {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
                     >
-                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl">
+                        <div className="bg-surface border border-slate-800 rounded-2xl p-4 sm:p-6 shadow-2xl">
                             <SkillChart />
                         </div>
                     </motion.div>
@@ -124,13 +139,56 @@ const Home = () => {
 
             {/* 2. KPI & TICKER */}
             <TechTicker />
-            <div className="border-b border-slate-800 bg-[#0f172a]/50">
+            <div className="border-b border-slate-800 bg-surface-overlay/50">
                 <div className="max-w-7xl mx-auto px-6 py-16">
                     <StatCards />
                 </div>
             </div>
 
-            {/* 3. KOMUTA MERKEZİ (GRID DÜZENİ) */}
+            {/* 3. ÖNE ÇIKAN PROJE (kanıt — recruiter ayağı) */}
+            {featured && (
+                <section className="py-16 px-6 max-w-7xl mx-auto">
+                    <div className="mb-8 flex items-end justify-between gap-4">
+                        <div>
+                            <h2 className="text-2xl font-bold text-white">{t('home.featured_title')}</h2>
+                            <p className="text-gray-400 text-sm mt-1">{t('home.featured_desc')}</p>
+                        </div>
+                        <Link to="/projects" className="shrink-0 text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1 font-medium">
+                            {t('projects.view_all')} <FaArrowRight className="text-xs" />
+                        </Link>
+                    </div>
+
+                    <Link
+                        to={`/projects/${featured._id}`}
+                        className="group relative grid grid-cols-1 md:grid-cols-2 bg-surface border border-slate-800 rounded-2xl overflow-hidden hover:border-blue-500/40 transition-colors"
+                    >
+                        <div className="h-56 md:h-auto bg-slate-900 relative overflow-hidden">
+                            <span className="absolute top-4 left-4 z-10 px-3 py-1 bg-yellow-500 text-black text-xs font-bold rounded-full flex items-center gap-1 shadow-lg">
+                                <FaStar /> {t('projects.featured_badge')}
+                            </span>
+                            {featured.image ? (
+                                <img src={featured.image} alt={featured.title} loading="lazy" decoding="async" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900"><FaCodeBranch className="text-7xl text-slate-700" /></div>
+                            )}
+                        </div>
+                        <div className="p-8 md:p-10 flex flex-col justify-center">
+                            <div className="flex flex-wrap gap-2 mb-4">
+                                {featured.tags?.slice(0, 4).map(tag => (
+                                    <span key={tag} className="text-xs font-mono text-blue-400 bg-blue-400/10 px-2 py-1 rounded">{tag}</span>
+                                ))}
+                            </div>
+                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">{featured.title}</h3>
+                            <p className="text-gray-400 mb-6 line-clamp-3">{featured.description}</p>
+                            <span className="w-max text-sm font-bold text-white flex items-center gap-2 group-hover:gap-3 transition-all">
+                                {t('projects.case_study')} <FaArrowRight />
+                            </span>
+                        </div>
+                    </Link>
+                </section>
+            )}
+
+            {/* 4. KOMUTA MERKEZİ (sadeleştirilmiş) */}
             <section className="py-16 px-6 max-w-7xl mx-auto">
                 <div className="mb-8">
                     <h2 className="text-2xl font-bold text-white">{t('home.command_center')}</h2>
@@ -139,7 +197,7 @@ const Home = () => {
 
                 <div className="flex flex-col gap-6">
 
-                    {/* ROW 0: Terminal & Monitor (Başlangıç Paneli) */}
+                    {/* Terminal & Monitor */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:h-[400px]">
                         <div className="lg:col-span-2 min-h-[320px] lg:h-full">
                             <DashboardCard title="Terminal Access" icon={<FaServer />} className="h-full">
@@ -155,45 +213,50 @@ const Home = () => {
                         </div>
                     </div>
 
-                    {/* ROW 1: Teknik Notlar - Loglar - Learning (Senin İstediğin Kısım) */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    {/* Teknik Notlar */}
+                    <DashboardCard title={t('home.tech_notes')} icon={<FaBook />}>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            {insights.map((item, idx) => (
+                                <Link to="/blog" key={idx} className="block p-3 bg-slate-800/50 rounded-lg border border-slate-700 hover:border-blue-500/50 transition-colors group">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className={`text-xs font-bold ${item.color}`}>{item.tag}</span>
+                                        <FaArrowRight className="text-[10px] text-gray-500 group-hover:text-white transition-colors"/>
+                                    </div>
+                                    <h4 className="text-sm text-gray-200 font-medium group-hover:text-white">{item.title}</h4>
+                                </Link>
+                            ))}
+                        </div>
+                    </DashboardCard>
 
-                        {/* SOL: Teknik Notlar (Dikey Liste) */}
-                        <DashboardCard title="Teknik Notlar" icon={<FaBook />}>
-                            <div className="flex flex-col gap-3">
-                                {insights.map((item, idx) => (
-                                    <Link to="/blog" key={idx} className="block p-3 bg-slate-800/50 rounded-lg border border-slate-700 hover:border-blue-500/50 transition-colors group">
-                                        <div className="flex justify-between items-center mb-1">
-                                            <span className={`text-xs font-bold ${item.color}`}>{item.tag}</span>
-                                            <FaArrowRight className="text-[10px] text-gray-500 group-hover:text-white transition-colors"/>
-                                        </div>
-                                        <h4 className="text-sm text-gray-200 font-medium group-hover:text-white">{item.title}</h4>
-                                    </Link>
-                                ))}
+                    {/* Git Contributions (gerçek veri) */}
+                    <DashboardCard title={t('home.git_activity')} icon={<FaGithub />}>
+                        <div className="flex items-center justify-center w-full overflow-x-auto">
+                            <ActivityMap />
+                        </div>
+                    </DashboardCard>
+
+                    {/* Canlı sistem paneli — varsayılan kapalı (görsel yükü azaltır) */}
+                    <details className="group bg-surface border border-slate-800 rounded-xl overflow-hidden">
+                        <summary className="px-5 py-3 border-b border-slate-800 bg-slate-900/50 flex items-center justify-between gap-3 cursor-pointer list-none">
+                            <span className="flex items-center gap-3">
+                                <FaNetworkWired className="text-blue-500" />
+                                <h3 className="text-xs font-bold text-gray-300 uppercase tracking-wider">{t('home.live_panel')}</h3>
+                            </span>
+                            <FaArrowRight className="text-xs text-gray-500 transition-transform group-open:rotate-90" />
+                        </summary>
+                        <div className="p-5 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div>
+                                <h4 className="text-xs font-bold text-gray-500 uppercase mb-3">{t('home.live_traffic')}</h4>
+                                <TrafficLogs />
                             </div>
-                        </DashboardCard>
-
-                        {/* ORTA: Live Network Logs */}
-                        <DashboardCard title="Live Network Traffic" icon={<FaNetworkWired />}>
-                            <TrafficLogs />
-                        </DashboardCard>
-
-                        {/* SAĞ: Learning Path */}
-                        <DashboardCard title="Current Learning Path" icon={<FaCodeBranch />}>
-                            <LearningPath />
-                        </DashboardCard>
-                    </div>
-
-                    {/* ROW 2: Git Contributions (Tam Genişlik) */}
-                    <div className="w-full">
-                        <DashboardCard title="Git Contribution Activity" icon={<FaGithub />}>
-                            <div className="flex items-center justify-center w-full overflow-x-auto">
-                                <ActivityMap />
+                            <div>
+                                <h4 className="text-xs font-bold text-gray-500 uppercase mb-3">{t('home.learning_path')}</h4>
+                                <LearningPath />
                             </div>
-                        </DashboardCard>
-                    </div>
+                        </div>
+                    </details>
 
-                    {/* ROW 3: İletişim (Tam Genişlik) */}
+                    {/* İletişim CTA */}
                     <div className="w-full">
                         <div className="bg-gradient-to-r from-blue-900/40 to-slate-900 border border-blue-500/30 rounded-xl p-8 text-center relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -z-10"></div>

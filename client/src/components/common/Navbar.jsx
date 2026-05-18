@@ -3,10 +3,12 @@ import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaTimes, FaBars, FaSearch } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import { useCommandPalette } from '../../context/commandPalette';
 
 const Navbar = () => {
     const [isOpen, setIsOpen] = useState(false);
     const { t, i18n } = useTranslation();
+    const { open: openCommandPalette } = useCommandPalette();
 
     const links = [
         { name: t('navbar.home'), path: '/' },
@@ -29,7 +31,7 @@ const Navbar = () => {
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             transition={{ duration: 0.5 }}
-            className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-[#0B1120]/80 border-b border-slate-800"
+            className="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-base/80 border-b border-slate-800"
             role="navigation"
             aria-label="Ana navigasyon"
         >
@@ -56,12 +58,13 @@ const Navbar = () => {
 
                     {/* Command Palette Trigger */}
                     <button
-                        onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }))}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-[#0f172a] border border-slate-700/60 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:border-slate-500 transition-all group"
-                        title="Arama veya Komut (Ctrl+K)"
+                        onClick={openCommandPalette}
+                        className="flex items-center gap-2 px-3 py-1.5 bg-surface-overlay border border-slate-700/60 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:border-slate-500 transition-all group"
+                        title={`${t('navbar.search')} (Ctrl+K)`}
+                        aria-label={t('navbar.search')}
                     >
                         <FaSearch className="text-slate-500 group-hover:text-blue-400 transition-colors" />
-                        <span className="hidden lg:inline">Arama</span>
+                        <span className="hidden lg:inline">{t('navbar.search')}</span>
                         <kbd className="ml-1 font-mono text-[10px] bg-slate-800 text-slate-400 px-1.5 rounded border border-slate-700 group-hover:border-slate-500 transition-colors">Ctrl K</kbd>
                     </button>
 
@@ -114,7 +117,7 @@ const Navbar = () => {
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                            className="fixed top-0 right-0 w-72 h-full bg-[#0f172a] border-l border-slate-800 shadow-2xl md:hidden z-40"
+                            className="fixed top-0 right-0 w-72 h-full bg-surface-overlay border-l border-slate-800 shadow-2xl md:hidden z-40"
                         >
                             <div className="flex flex-col pt-24 px-6">
                                 {links.map((link, idx) => (

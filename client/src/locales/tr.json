@@ -4,7 +4,8 @@
         "about": "Hakkımda",
         "projects": "Projeler",
         "blog": "Blog",
-        "contact": "İletişim"
+        "contact": "İletişim",
+        "search": "Arama"
     },
     "home": {
         "hero_line1": "Veriyi",
@@ -23,7 +24,11 @@
         "tech_notes": "Teknik Notlar",
         "live_traffic": "Live Network Traffic",
         "learning_path": "Current Learning Path",
-        "git_activity": "Git Contribution Activity"
+        "git_activity": "Git Contribution Activity",
+        "value_prop": "RAG sistemleri, LLM pipeline'ları ve güvenli kurumsal web uygulamalarını uçtan uca tasarlayıp production'a taşırım.",
+        "featured_title": "Öne Çıkan Proje",
+        "featured_desc": "En kapsamlı çalışmam — tek bakışta teknik derinlik.",
+        "live_panel": "Canlı Sistem Paneli"
     },
     "about": {
         "title": "Hakkımda",
@@ -197,7 +202,9 @@
         "val_name_min": "İsim en az 2 karakter olmalıdır",
         "val_email": "Geçerli bir e-posta adresi giriniz",
         "val_subject": "Lütfen bir konu seçiniz",
-        "val_message_min": "Mesajınız en az 10 karakter olmalıdır"
+        "val_message_min": "Mesajınız en az 10 karakter olmalıdır",
+        "tab_collab": "İş Birliği",
+        "tab_freelance": "Freelance"
     },
     "projectDetails": {
         "back": "Projelere Dön",
@@ -231,11 +238,26 @@
         "back": "Tüm Yazılara Dön",
         "not_found": "Blog yazısı bulunamadı.",
         "back_short": "Bloga Dön",
-        "author_note": "Teknoloji ve iş dünyası üzerine notlar."
+        "author_note": "Teknoloji ve iş dünyası üzerine notlar.",
+        "share": "Paylaş",
+        "share_copy": "Bağlantıyı kopyala",
+        "share_copied": "Bağlantı kopyalandı!",
+        "share_failed": "Kopyalanamadı."
     },
     "footer": {
         "copyright": "© {{year}} Eyüp Zeki Salihoğlu — Tüm hakları saklıdır.",
-        "built_with": "React + Node.js ile geliştirildi"
+        "built_with": "React + Node.js ile geliştirildi",
+        "menu": "Menü",
+        "expertise_title": "Uzmanlık",
+        "contact_title": "İletişim",
+        "tagline": "Production seviyesinde RAG sistemleri, LLM ve güvenli kurumsal web uygulamaları geliştiriyorum.",
+        "exp_ai": "AI / RAG Sistemleri",
+        "exp_fullstack": "Full-Stack Geliştirme",
+        "exp_security": "Siber Güvenlik",
+        "exp_llm": "LLM & Otomasyon",
+        "location": "İstanbul, Türkiye",
+        "available": "Freelance için müsait",
+        "back_to_top": "Yukarı Çık"
     },
     "notfound": {
         "title": "404",

@@ -2,4 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Genel font ve arka plan ayarını sonra buraya ekleyeceğiz */
+@layer base {
+    /* Sayfa zemini — overscroll'da beyaz parlamayı önler,
+       mevcut sayfa arka planıyla (bg-base) birebir aynı. */
+    html,
+    body {
+        background-color: #0B1120; /* token: base */
+    }
+
+    /* Görünür klavye odak halkası — birçok input `outline-none`
+       kullandığından box-shadow ile veririz (utility outline'ı ezmez).
+       Sadece klavye ile odaklanınca görünür, mouse tıklamada değil. */
+    :where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"]))::-moz-focus-inner {
+        border: 0;
+    }
+    :where(a, button, input, select, textarea, summary, [tabindex]:not([tabindex="-1"])):focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px #0B1120, 0 0 0 4px #3b82f6;
+        border-radius: 4px;
+    }
+}
+
+/* Erişilebilirlik: kullanıcı azaltılmış hareket tercih ettiyse tüm
+   animasyon/geçişleri etkin biçimde kapat. Yalnız bu tercihi yapan
+   kullanıcıları etkiler — varsayılan görsel çıktı değişmez. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
