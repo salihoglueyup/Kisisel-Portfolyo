@@ -202,7 +202,9 @@
         "val_name_min": "Name must be at least 2 characters",
         "val_email": "Enter a valid email address",
         "val_subject": "Please select a subject",
-        "val_message_min": "Your message must be at least 10 characters"
+        "val_message_min": "Your message must be at least 10 characters",
+        "tab_collab": "Collaboration",
+        "tab_freelance": "Freelance"
     },
     "projectDetails": {
         "back": "Back to Projects",

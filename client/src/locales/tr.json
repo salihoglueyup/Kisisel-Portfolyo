@@ -202,7 +202,9 @@
         "val_name_min": "İsim en az 2 karakter olmalıdır",
         "val_email": "Geçerli bir e-posta adresi giriniz",
         "val_subject": "Lütfen bir konu seçiniz",
-        "val_message_min": "Mesajınız en az 10 karakter olmalıdır"
+        "val_message_min": "Mesajınız en az 10 karakter olmalıdır",
+        "tab_collab": "İş Birliği",
+        "tab_freelance": "Freelance"
     },
     "projectDetails": {
         "back": "Projelere Dön",
