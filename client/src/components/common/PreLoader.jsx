@@ -2,21 +2,23 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FaTerminal } from "react-icons/fa";
 
+// Bileşen dışında sabit — her render'da yeniden oluşmaz, effect bağımlılığı stabil
+const BOOT_LINES = [
+    "> Initializing System...",
+    "> Loading Modules...",
+    "> Connecting to Database...",
+    "> Verifying Security Protocols...",
+    "> System Online. Welcome User."
+];
+
 const Preloader = ({ onComplete }) => {
     const [text, setText] = useState("");
-    const fullText = [
-        "> Initializing System...",
-        "> Loading Modules...",
-        "> Connecting to Database...",
-        "> Verifying Security Protocols...",
-        "> System Online. Welcome User."
-    ];
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
-        if (index < fullText.length) {
+        if (index < BOOT_LINES.length) {
             const timeout = setTimeout(() => {
-                setText((prev) => prev + "\n" + fullText[index]);
+                setText((prev) => prev + "\n" + BOOT_LINES[index]);
                 setIndex(index + 1);
             }, 500);
             return () => clearTimeout(timeout);

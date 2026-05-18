@@ -25,7 +25,7 @@ const ProjectCard = ({ project }) => {
 
             <div className="h-48 bg-slate-800 relative overflow-hidden">
                 {project.image && project.image !== 'no-image.jpg' ? (
-                    <img src={project.image} alt={project.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    <img src={project.image} alt={project.title} loading="lazy" decoding="async" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-br from-blue-900/40 to-slate-900 flex items-center justify-center">
                         <FaCode className="text-6xl text-slate-700/50" />

@@ -12,6 +12,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 import SEO from '../../components/common/SEO';
 import NewsletterForm from '../../components/common/NewsletterForm';
 import { useTranslation } from 'react-i18next';
+import { formatDate } from '../../utils/formatDate';
 
 const Blog = () => {
     const { t } = useTranslation();
@@ -32,11 +33,11 @@ const Blog = () => {
     // Kategori key → DB value eşleşmesi (i18n-safe)
     const categories = [
         { key: 'all', label: t('blog.all_categories'), value: 'all' },
-        { key: 'tech', label: 'Teknoloji', value: 'Teknoloji' },
-        { key: 'career', label: 'Kariyer', value: 'Kariyer' },
-        { key: 'data', label: 'Data', value: 'Data' },
-        { key: 'ybs', label: 'YBS', value: 'YBS' },
-        { key: 'personal', label: 'Kişisel Gelişim', value: 'Kişisel Gelişim' },
+        { key: 'tech', label: t('blog.cat_tech'), value: 'Teknoloji' },
+        { key: 'career', label: t('blog.cat_career'), value: 'Kariyer' },
+        { key: 'data', label: t('blog.cat_data'), value: 'Data' },
+        { key: 'ybs', label: t('blog.cat_ybs'), value: 'YBS' },
+        { key: 'personal', label: t('blog.cat_personal'), value: 'Kişisel Gelişim' },
     ];
     const popularTags = ['React', 'Node.js', 'YBS', 'Freelance', 'Data Science', 'Python'];
 
@@ -67,10 +68,6 @@ const Blog = () => {
         ? posts.filter(p => p._id !== featuredPost._id)
         : posts;
 
-    // Tarih Formatlayıcı Yardımcı Fonksiyon
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' });
-    };
 
     return (
         <div className="min-h-screen bg-[#0B1120] pt-28 pb-20 px-6 font-sans text-gray-300">
@@ -118,7 +115,7 @@ const Blog = () => {
                                 </div>
                                 {/* Resim Yoksa Placeholder */}
                                 {featuredPost.image ? (
-                                    <img src={featuredPost.image} alt={featuredPost.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                                    <img src={featuredPost.image} alt={featuredPost.title} decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                                 ) : (
                                     <div className="w-full h-full bg-gradient-to-br from-slate-800 to-black flex items-center justify-center text-6xl">📝</div>
                                 )}
@@ -159,12 +156,12 @@ const Blog = () => {
                         <div className="flex flex-wrap gap-4 mb-8 items-center justify-between bg-[#1f2937]/50 p-2 rounded-xl border border-slate-800">
                             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
                                 {categories.map(cat => (
-                                    <button key={cat.key} onClick={() => changeCategory(cat.key)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeCat === cat.key ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-400 hover:text-white hover:bg-slate-700'}`}>{cat.label}</button>
+                                    <button key={cat.key} aria-pressed={activeCat === cat.key} onClick={() => changeCategory(cat.key)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeCat === cat.key ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-400 hover:text-white hover:bg-slate-700'}`}>{cat.label}</button>
                                 ))}
                             </div>
                             <div className="relative w-full md:w-48">
                                 <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-                                <input type="text" placeholder={t('blog.search')} value={searchTerm} onChange={(e) => changeSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-black/20 border border-slate-700 rounded-lg text-gray-200 text-sm focus:outline-none focus:border-blue-500" />
+                                <input type="text" aria-label={t('blog.search')} placeholder={t('blog.search')} value={searchTerm} onChange={(e) => changeSearch(e.target.value)} className="w-full pl-10 pr-4 py-2 bg-black/20 border border-slate-700 rounded-lg text-gray-200 text-sm focus:outline-none focus:border-blue-500" />
                             </div>
                         </div>
 
@@ -182,7 +179,7 @@ const Blog = () => {
                                             <Link to={`/blog/${post._id}`} className="bg-[#111827] border border-slate-800 rounded-2xl p-6 hover:border-blue-500/30 transition-all flex flex-col md:flex-row gap-6 h-full">
                                                 <div className="w-full md:w-48 h-48 rounded-xl overflow-hidden shrink-0 bg-slate-800">
                                                     {post.image ? (
-                                                        <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                        <img src={post.image} alt={post.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                                     ) : (
                                                         <div className="w-full h-full flex items-center justify-center text-4xl">📝</div>
                                                     )}

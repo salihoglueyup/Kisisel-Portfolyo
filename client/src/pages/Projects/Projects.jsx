@@ -142,7 +142,7 @@ const Projects = () => {
                                     <span className="px-3 py-1 bg-yellow-500 text-black text-xs font-bold rounded-full flex items-center gap-1 shadow-lg"><FaStar /> {t('projects.featured_badge')}</span>
                                 </div>
                                 {featuredProject.image ? (
-                                    <img src={featuredProject.image} alt="Featured" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                                    <img src={featuredProject.image} alt={featuredProject.title} decoding="async" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900"><FaCode className="text-8xl text-slate-700" /></div>
                                 )}

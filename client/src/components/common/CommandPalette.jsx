@@ -19,6 +19,7 @@ const CommandPalette = () => {
         const handleKeyDown = (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
                 e.preventDefault();
+                setSearch(''); // açılış/kapanışta aramayı sıfırla (effect'te değil)
                 setIsOpen(prev => !prev);
             }
             if (e.key === 'Escape') {
@@ -33,7 +34,6 @@ const CommandPalette = () => {
     useEffect(() => {
         if (isOpen && inputRef.current) {
             inputRef.current.focus();
-            setSearch(''); // Reset search on open
         }
     }, [isOpen]);
 

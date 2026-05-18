@@ -92,7 +92,7 @@ const BlogTab = ({ blogs }) => {
                     {blogs.map((blog) => (
                         <div key={blog._id} className="bg-[#111827] border border-slate-800 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center gap-4 hover:border-pink-500/50 transition-all group">
                             {blog.image ? (
-                                <img src={blog.image} className="w-16 h-16 rounded-lg object-cover bg-slate-900" alt="cover" />
+                                <img src={blog.image} loading="lazy" decoding="async" className="w-16 h-16 rounded-lg object-cover bg-slate-900" alt="cover" />
                             ) : (
                                 <div className="w-16 h-16 rounded-lg bg-slate-800 flex items-center justify-center text-2xl">📝</div>
                             )}
@@ -149,7 +149,7 @@ const BlogTab = ({ blogs }) => {
                                 <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleFileChange} />
                             </span></label>
                             <input type="text" placeholder="veya URL yapıştır..." value={form.image && !form.image.startsWith('data:') ? form.image : ''} onChange={e => setForm({ ...form, image: e.target.value })} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white text-xs outline-none focus:border-pink-500" />
-                            {form.image && <div className="mt-2 h-20 w-full bg-slate-800 rounded-lg overflow-hidden"><img src={form.image} className="w-full h-full object-cover opacity-50" /></div>}
+                            {form.image && <div className="mt-2 h-20 w-full bg-slate-800 rounded-lg overflow-hidden"><img src={form.image} alt="" loading="lazy" decoding="async" className="w-full h-full object-cover opacity-50" /></div>}
                         </div>
 
                         <div>

@@ -85,7 +85,7 @@ const ProjectTab = ({ projects }) => {
                 <div className="space-y-3">
                     {projects.map((project) => (
                         <div key={project._id} className="bg-[#111827] border border-slate-800 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center gap-4 hover:border-blue-500/50 transition-all group">
-                            <img src={project.image || '/no-image.svg'} className="w-16 h-16 rounded-lg object-cover bg-slate-900" alt="cover" onError={(e) => { e.target.style.display='none'; }} />
+                            <img src={project.image || '/no-image.svg'} loading="lazy" decoding="async" className="w-16 h-16 rounded-lg object-cover bg-slate-900" alt="cover" onError={(e) => { e.target.style.display='none'; }} />
                             <div className="flex-1">
                                 <h4 className="text-white font-bold">{project.title}</h4>
                                 <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">

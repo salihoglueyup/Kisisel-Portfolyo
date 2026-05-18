@@ -38,6 +38,13 @@ const ProjectDetails = () => {
         'Prototip': 'text-purple-400 bg-purple-400',
     };
     const statusColor = statusColors[project.status] || statusColors['Tamamlandı'];
+    // DB değeri (TR) → i18n anahtarı; etiket aktif dile göre gösterilir
+    const statusKey = {
+        'Tamamlandı': 'status_completed',
+        'Devam Ediyor': 'status_in_progress',
+        'Bakım Modunda': 'status_maintenance',
+        'Prototip': 'status_prototype',
+    }[project.status] || 'status_completed';
 
     // Zorluklar yalnız DB'de gerçek veri varsa sekme olarak gösterilir
     const hasChallenges = Array.isArray(project.challenges) && project.challenges.length > 0;
@@ -90,7 +97,7 @@ const ProjectDetails = () => {
 
                     <div className="relative group rounded-2xl overflow-hidden border border-slate-800 bg-slate-900 aspect-video">
                         {project.image ? (
-                            <img src={project.image} alt={project.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                            <img src={project.image} alt={project.title} decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
                                 <FaCode className="text-6xl text-slate-700" />
@@ -256,7 +263,7 @@ const ProjectDetails = () => {
                                     <span className="text-gray-500">{t('projectDetails.spec_status')}</span>
                                     <span className={`font-medium flex items-center gap-1 ${statusColor.split(' ')[0]}`}>
                                         <span className={`w-2 h-2 rounded-full animate-pulse ${statusColor.split(' ')[1]}`}></span>
-                                        {project.status || 'Tamamlandı'}
+                                        {t(`projectDetails.${statusKey}`)}
                                     </span>
                                 </div>
 
