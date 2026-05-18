@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'; // Link bileşeni eklendi
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     FaSearch, FaClock, FaHashtag, FaArrowRight, FaRegNewspaper, FaFire,
-    FaHeart, FaRegComment, FaBookmark, FaTag, FaLinkedin, FaGithub
+    FaRegEye, FaTag, FaLinkedin, FaGithub
 } from 'react-icons/fa';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
@@ -70,7 +70,7 @@ const Blog = () => {
 
 
     return (
-        <div className="min-h-screen bg-[#0B1120] pt-28 pb-20 px-6 font-sans text-gray-300">
+        <div className="min-h-screen bg-base pt-28 pb-20 px-6 font-sans text-gray-300">
             <SEO title={t('blog.title')} description={t('blog.subtitle')} />
             <div className="max-w-7xl mx-auto">
 
@@ -104,7 +104,7 @@ const Blog = () => {
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="mb-16 relative group rounded-3xl overflow-hidden border border-slate-800 bg-[#111827]"
+                        className="mb-16 relative group rounded-3xl overflow-hidden border border-slate-800 bg-surface"
                     >
                         <Link to={`/blog/${featuredPost._id}`} className="grid grid-cols-1 md:grid-cols-2 h-full md:h-[450px]">
                             <div className="relative h-64 md:h-full overflow-hidden">
@@ -119,7 +119,7 @@ const Blog = () => {
                                 ) : (
                                     <div className="w-full h-full bg-gradient-to-br from-slate-800 to-black flex items-center justify-center text-6xl">📝</div>
                                 )}
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#111827] to-transparent md:bg-gradient-to-r"></div>
+                                <div className="absolute inset-0 bg-gradient-to-t from-surface to-transparent md:bg-gradient-to-r"></div>
                             </div>
                             <div className="p-8 md:p-12 flex flex-col justify-center relative">
                                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl"></div>
@@ -136,7 +136,7 @@ const Blog = () => {
                                 </p>
 
                                 <div className="flex items-center gap-6 text-gray-500 text-sm font-medium mt-auto">
-                                    <div className="flex items-center gap-2"><FaHeart className="text-red-500" /> {featuredPost.views || 0} {t('blog.views')}</div>
+                                    <div className="flex items-center gap-2"><FaRegEye className="text-blue-400" /> {featuredPost.views || 0} {t('blog.views')}</div>
                                     <div className="flex items-center gap-2 ml-auto text-white group-hover:translate-x-2 transition-transform">
                                         {t('blog.read_more')} <FaArrowRight />
                                     </div>
@@ -153,7 +153,7 @@ const Blog = () => {
                     <div className="lg:col-span-8">
 
                         {/* Filtre Bar */}
-                        <div className="flex flex-wrap gap-4 mb-8 items-center justify-between bg-[#1f2937]/50 p-2 rounded-xl border border-slate-800">
+                        <div className="flex flex-wrap gap-4 mb-8 items-center justify-between bg-surface-raised/50 p-2 rounded-xl border border-slate-800">
                             <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 md:pb-0">
                                 {categories.map(cat => (
                                     <button key={cat.key} aria-pressed={activeCat === cat.key} onClick={() => changeCategory(cat.key)} className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${activeCat === cat.key ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-400 hover:text-white hover:bg-slate-700'}`}>{cat.label}</button>
@@ -176,7 +176,7 @@ const Blog = () => {
                                     {listPosts.map((post) => (
                                         <motion.div layout key={post._id} variants={{ hidden: { opacity: 0, x: -20 }, show: { opacity: 1, x: 0 } }} exit={{ opacity: 0, scale: 0.9 }} className="group">
                                             {/* LİNK BİLEŞENİ: Tüm kartı kapsar */}
-                                            <Link to={`/blog/${post._id}`} className="bg-[#111827] border border-slate-800 rounded-2xl p-6 hover:border-blue-500/30 transition-all flex flex-col md:flex-row gap-6 h-full">
+                                            <Link to={`/blog/${post._id}`} className="bg-surface border border-slate-800 rounded-2xl p-6 hover:border-blue-500/30 transition-all flex flex-col md:flex-row gap-6 h-full">
                                                 <div className="w-full md:w-48 h-48 rounded-xl overflow-hidden shrink-0 bg-slate-800">
                                                     {post.image ? (
                                                         <img src={post.image} alt={post.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
@@ -187,7 +187,7 @@ const Blog = () => {
                                                 <div className="flex flex-col flex-1">
                                                     <div className="flex justify-between items-start mb-2">
                                                         <span className="text-blue-400 text-xs font-bold uppercase tracking-wider bg-blue-500/10 px-2 py-1 rounded">{post.category}</span>
-                                                        <FaBookmark className="text-gray-600 hover:text-white transition-colors" />
+                                                        {post.views > 0 && <span className="flex items-center gap-1 text-gray-500 text-xs"><FaRegEye /> {post.views}</span>}
                                                     </div>
                                                     <h3 className="text-xl font-bold text-white mb-2 group-hover:text-blue-400 transition-colors line-clamp-2">
                                                         {post.title}
@@ -219,7 +219,7 @@ const Blog = () => {
                                 <button
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
                                     disabled={pagination.page <= 1}
-                                    className="px-4 py-2 rounded-lg text-sm font-medium bg-[#1f2937] border border-slate-700 text-gray-300 hover:border-blue-500 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="px-4 py-2 rounded-lg text-sm font-medium bg-surface-raised border border-slate-700 text-gray-300 hover:border-blue-500 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     ← {t('blog.prev')}
                                 </button>
@@ -229,7 +229,7 @@ const Blog = () => {
                                 <button
                                     onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))}
                                     disabled={pagination.page >= pagination.totalPages}
-                                    className="px-4 py-2 rounded-lg text-sm font-medium bg-[#1f2937] border border-slate-700 text-gray-300 hover:border-blue-500 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                    className="px-4 py-2 rounded-lg text-sm font-medium bg-surface-raised border border-slate-700 text-gray-300 hover:border-blue-500 hover:text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                     {t('blog.next')} →
                                 </button>
@@ -241,10 +241,10 @@ const Blog = () => {
                     <div className="lg:col-span-4 space-y-8 hidden lg:block">
 
                         {/* Yazar Kartı */}
-                        <div className="bg-[#1f2937] border border-slate-700 rounded-2xl p-6 text-center sticky top-28">
+                        <div className="bg-surface-raised border border-slate-700 rounded-2xl p-6 text-center sticky top-28">
                             <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full p-1 mx-auto mb-4">
                                 <div className="w-full h-full bg-slate-900 rounded-full flex items-center justify-center overflow-hidden">
-                                    <span className="text-4xl">👨‍💻</span>
+                                    <span className="text-3xl font-bold bg-gradient-to-br from-blue-400 to-purple-400 bg-clip-text text-transparent">EZ</span>
                                 </div>
                             </div>
                             <h3 className="text-white font-bold text-lg">Eyüp Zeki Salihoğlu</h3>
@@ -257,13 +257,19 @@ const Blog = () => {
                         </div>
 
                         {/* Popüler Etiketler */}
-                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+                        <div className="bg-surface border border-slate-800 rounded-2xl p-6">
                             <h4 className="text-white font-bold mb-4 flex items-center gap-2"><FaTag className="text-blue-500" /> {t('blog.popular_tags')}</h4>
                             <div className="flex flex-wrap gap-2">
                                 {popularTags.map(tag => (
-                                    <span key={tag} className="text-xs text-gray-400 bg-slate-800 border border-slate-700 px-3 py-1 rounded-full hover:border-blue-500 hover:text-white cursor-pointer transition-all">
+                                    <button
+                                        key={tag}
+                                        type="button"
+                                        onClick={() => changeSearch(tag)}
+                                        aria-pressed={searchTerm === tag}
+                                        className={`text-xs border px-3 py-1 rounded-full transition-all ${searchTerm === tag ? 'bg-blue-600 border-blue-500 text-white' : 'text-gray-400 bg-slate-800 border-slate-700 hover:border-blue-500 hover:text-white'}`}
+                                    >
                                         #{tag}
-                                    </span>
+                                    </button>
                                 ))}
                             </div>
                         </div>

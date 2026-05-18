@@ -238,7 +238,11 @@
         "back": "Back to All Posts",
         "not_found": "Blog post not found.",
         "back_short": "Back to Blog",
-        "author_note": "Notes on technology and business."
+        "author_note": "Notes on technology and business.",
+        "share": "Share",
+        "share_copy": "Copy link",
+        "share_copied": "Link copied!",
+        "share_failed": "Could not copy."
     },
     "footer": {
         "copyright": "© {{year}} Eyüp Zeki Salihoğlu — All rights reserved.",

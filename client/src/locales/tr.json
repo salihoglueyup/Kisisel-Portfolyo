@@ -238,7 +238,11 @@
         "back": "Tüm Yazılara Dön",
         "not_found": "Blog yazısı bulunamadı.",
         "back_short": "Bloga Dön",
-        "author_note": "Teknoloji ve iş dünyası üzerine notlar."
+        "author_note": "Teknoloji ve iş dünyası üzerine notlar.",
+        "share": "Paylaş",
+        "share_copy": "Bağlantıyı kopyala",
+        "share_copied": "Bağlantı kopyalandı!",
+        "share_failed": "Kopyalanamadı."
     },
     "footer": {
         "copyright": "© {{year}} Eyüp Zeki Salihoğlu — Tüm hakları saklıdır.",
