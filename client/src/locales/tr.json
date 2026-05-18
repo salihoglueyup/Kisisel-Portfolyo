@@ -24,7 +24,11 @@
         "tech_notes": "Teknik Notlar",
         "live_traffic": "Live Network Traffic",
         "learning_path": "Current Learning Path",
-        "git_activity": "Git Contribution Activity"
+        "git_activity": "Git Contribution Activity",
+        "value_prop": "RAG sistemleri, LLM pipeline'ları ve güvenli kurumsal web uygulamalarını uçtan uca tasarlayıp production'a taşırım.",
+        "featured_title": "Öne Çıkan Proje",
+        "featured_desc": "En kapsamlı çalışmam — tek bakışta teknik derinlik.",
+        "live_panel": "Canlı Sistem Paneli"
     },
     "about": {
         "title": "Hakkımda",

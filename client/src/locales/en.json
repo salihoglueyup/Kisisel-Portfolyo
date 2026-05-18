@@ -24,7 +24,11 @@
         "tech_notes": "Tech Notes",
         "live_traffic": "Live Network Traffic",
         "learning_path": "Current Learning Path",
-        "git_activity": "Git Contribution Activity"
+        "git_activity": "Git Contribution Activity",
+        "value_prop": "I design and ship RAG systems, LLM pipelines and secure enterprise web apps end-to-end — all the way to production.",
+        "featured_title": "Featured Project",
+        "featured_desc": "My most comprehensive work — technical depth at a glance.",
+        "live_panel": "Live System Panel"
     },
     "about": {
         "title": "About",
