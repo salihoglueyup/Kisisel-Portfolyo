@@ -3,7 +3,7 @@ const router = express.Router();
 const { protect, superAdminOnly } = require('../middleware/authMiddleware');
 const { verifyCsrf } = require('../middleware/csrf');
 const {
-    validateRegister, validateLogin, validatePasswordChange,
+    validateRegister, validateLogin, validateUpdateProfile, validatePasswordChange,
     validateForgotPassword, validateResetPassword
 } = require('../middleware/validationMiddleware');
 const {
@@ -29,7 +29,7 @@ router.post('/logout', verifyCsrf, logout);
 // Protected routes
 router.post('/register', protect, superAdminOnly, validateRegister, register); // Sadece superadmin yeni admin oluşturabilir
 router.get('/profile', protect, getProfile);
-router.put('/profile', protect, updateProfile);
+router.put('/profile', protect, validateUpdateProfile, updateProfile);
 router.put('/password', protect, validatePasswordChange, changePassword);
 
 module.exports = router;

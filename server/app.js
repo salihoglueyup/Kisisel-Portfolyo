@@ -3,7 +3,6 @@
 // uygulama port açmadan import edilebilir.
 const express = require('express');
 const cors = require('cors');
-const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const mongoSanitize = require('./middleware/sanitize');
 const hpp = require('hpp');
@@ -18,6 +17,7 @@ const authRoutes = require('./routes/authRoutes');
 const subscriberRoutes = require('./routes/subscriberRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const { getSitemap } = require('./controllers/sitemapController');
+const { generalLimiter, authLimiter } = require('./middleware/rateLimiters');
 
 const isTest = process.env.NODE_ENV === 'test';
 
@@ -55,26 +55,8 @@ app.use(hpp()); // HTTP Parameter Pollution (HPP) koruması
 // Statik Dosyalar (Yüklenen Görseller) — helmet başlıkları artık bunlara da uygulanır
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Rate Limiter'lar (testte devre dışı — testler limite takılmasın)
-const generalLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    message: { success: false, message: 'Çok fazla istek gönderildi. Lütfen 15 dakika sonra tekrar deneyin.' },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
-const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 5,
-    message: { success: false, message: 'Çok fazla giriş denemesi. Lütfen 15 dakika sonra tekrar deneyin.' },
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
-if (!isTest) {
-    app.use(generalLimiter);
-}
+// Rate Limiter'lar middleware/rateLimiters.js'te (testte no-op)
+app.use(generalLimiter);
 
 // Ana route
 app.get('/', (req, res) => {
@@ -94,7 +76,7 @@ app.get('/api/health', (req, res) => {
 app.get('/sitemap.xml', getSitemap);
 
 // API Routes
-app.use('/api/auth', isTest ? authRoutes : [authLimiter, authRoutes]);
+app.use('/api/auth', [authLimiter, authRoutes]);
 app.use('/api/projects', projectRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/blogs', blogRoutes);

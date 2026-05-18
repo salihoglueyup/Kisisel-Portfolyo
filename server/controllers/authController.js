@@ -4,13 +4,22 @@ const AdminUser = require('../models/AdminUser');
 const asyncHandler = require('express-async-handler');
 const { sendMail } = require('../utils/mailer');
 
-// JWT Token üretme yardımcı fonksiyonu
-const generateAccessToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '15m' });
+// JWT Token üretme — payload'a tokenVersion (tv) gömülür; şifre
+// değişimi/sıfırlamada tv artar ve eski token'lar geçersiz olur.
+const generateAccessToken = (user) => {
+    return jwt.sign(
+        { id: user._id, tv: user.tokenVersion ?? 0 },
+        process.env.JWT_SECRET,
+        { expiresIn: '15m' }
+    );
 };
 
-const generateRefreshToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' });
+const generateRefreshToken = (user) => {
+    return jwt.sign(
+        { id: user._id, tv: user.tokenVersion ?? 0 },
+        process.env.JWT_REFRESH_SECRET,
+        { expiresIn: '7d' }
+    );
 };
 
 const REFRESH_COOKIE = 'refreshToken';
@@ -125,8 +134,8 @@ const login = asyncHandler(async (req, res) => {
     // Başarılı giriş — sayaç/kilit temizle, lastLogin güncelle
     await user.resetLoginAttempts();
 
-    const accessToken = generateAccessToken(user._id);
-    const refreshToken = generateRefreshToken(user._id);
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
 
     // Refresh token httpOnly cookie'de; access token yanıt gövdesinde (kısa ömürlü)
     setRefreshCookie(res, refreshToken);
@@ -181,6 +190,11 @@ const updateProfile = asyncHandler(async (req, res) => {
         user.email = email;
     }
 
+    // Girdi doğrulaması route'taki validateUpdateProfile ile yapılır.
+    // validateBeforeSave:false ZORUNLU: password `select:false` olduğundan
+    // bu dokümana yüklenmez; şema validasyonu açık kalsa `password required`
+    // hatası verir. Eşzamanlı email çakışması ise unique index → 11000 ile
+    // errorHandler tarafından yakalanır.
     await user.save({ validateBeforeSave: false });
 
     res.json({
@@ -215,6 +229,7 @@ const changePassword = asyncHandler(async (req, res) => {
     }
 
     user.password = newPassword;
+    user.tokenVersion = (user.tokenVersion ?? 0) + 1; // diğer oturumları düşür
     await user.save();
 
     res.json({
@@ -251,7 +266,15 @@ const refreshToken = asyncHandler(async (req, res) => {
         throw new Error('Geçersiz refresh token.');
     }
 
-    const newAccessToken = generateAccessToken(user._id);
+    // Şifre değişimi/sıfırlamadan sonra eski refresh token'lar geçersiz
+    if ((decoded.tv ?? 0) !== (user.tokenVersion ?? 0)) {
+        clearRefreshCookie(res);
+        clearCsrfCookie(res);
+        res.status(401);
+        throw new Error('Oturum sonlandırıldı. Lütfen tekrar giriş yapın.');
+    }
+
+    const newAccessToken = generateAccessToken(user);
     res.json({
         success: true,
         data: { accessToken: newAccessToken }
@@ -325,6 +348,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     user.password = password; // pre-save hook hash'ler
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
+    user.tokenVersion = (user.tokenVersion ?? 0) + 1; // çalınmış oturumları geçersiz kıl
     // Sıfırlama başarılıysa olası kilidi de kaldır
     user.failedLoginAttempts = 0;
     user.lockUntil = undefined;
