@@ -16,11 +16,18 @@ const protect = async (req, res, next) => {
         });
     }
 
+    // Token doğrulama — yalnız JWT hatası 401; DB/altyapı hatası 500 olmalı
+    let decoded;
     try {
-        // Token doğrulama
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch {
+        return res.status(401).json({
+            success: false,
+            message: 'Geçersiz veya süresi dolmuş token.'
+        });
+    }
 
-        // Kullanıcıyı bul ve request'e ekle
+    try {
         const user = await AdminUser.findById(decoded.id);
 
         if (!user) {
@@ -30,13 +37,19 @@ const protect = async (req, res, next) => {
             });
         }
 
+        // Şifre değişimi/sıfırlamadan önce üretilmiş token'lar geçersiz
+        if ((decoded.tv ?? 0) !== (user.tokenVersion ?? 0)) {
+            return res.status(401).json({
+                success: false,
+                message: 'Oturum sonlandırıldı. Lütfen tekrar giriş yapın.'
+            });
+        }
+
         req.user = user;
         next();
     } catch (error) {
-        return res.status(401).json({
-            success: false,
-            message: 'Geçersiz veya süresi dolmuş token.'
-        });
+        // DB/altyapı hatası — yanlışlıkla 401 dönmesin; errorHandler 500 versin
+        next(error);
     }
 };
 
