@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import api from '../../api';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import toast from 'react-hot-toast';
@@ -15,17 +15,26 @@ import { SiJira, SiNotion, SiZoom } from 'react-icons/si';
 import SEO from '../../components/common/SEO';
 import { useTranslation } from 'react-i18next';
 
-const contactSchema = z.object({
-  name: z.string().min(2, "İsim en az 2 karakter olmalıdır"),
-  email: z.string().email("Geçerli bir e-posta adresi giriniz"),
-  subject: z.string().min(1, "Lütfen bir konu seçiniz"),
-  message: z.string().min(10, "Mesajınız en az 10 karakter olmalıdır"),
+// Şema t() ile kurulur — hata mesajları aktif dile göre
+const buildContactSchema = (t) => z.object({
+  name: z.string().min(2, t('contact.val_name_min')),
+  email: z.string().email(t('contact.val_email')),
+  subject: z.string().min(1, t('contact.val_subject')),
+  message: z.string().min(10, t('contact.val_message_min')),
 });
 
 // --- MODAL (TOPLANTI TALEBİ) — gerçek talep gönderir (mesaj API + admin e-posta) ---
 const MeetingModal = ({ isOpen, onClose }) => {
+    const { t } = useTranslation();
     const [form, setForm] = useState({ name: '', email: '', date: '', time: '10:00', note: '' });
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (!isOpen) return;
+        const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [isOpen, onClose]);
 
     if (!isOpen) return null;
 
@@ -34,7 +43,7 @@ const MeetingModal = ({ isOpen, onClose }) => {
     const submit = async (e) => {
         e.preventDefault();
         if (!form.name.trim() || !form.email.trim() || !form.date) {
-            toast.error('Lütfen ad, e-posta ve tarih girin.');
+            toast.error(t('contact.modal_validation'));
             return;
         }
         setLoading(true);
@@ -42,15 +51,15 @@ const MeetingModal = ({ isOpen, onClose }) => {
             await api.post('/messages', {
                 name: form.name,
                 email: form.email,
-                subject: 'Toplantı Talebi',
+                subject: t('contact.modal_title'),
                 message:
-                    `Toplantı talebi\nTarih: ${form.date} ${form.time}` +
-                    (form.note ? `\n\nNot: ${form.note}` : '')
+                    `${t('contact.modal_title')}\n${t('contact.modal_date')}: ${form.date} ${form.time}` +
+                    (form.note ? `\n\n${t('contact.modal_note')}: ${form.note}` : '')
             });
-            toast.success('Toplantı talebiniz alındı! En kısa sürede dönüş yapılacak.');
+            toast.success(t('contact.modal_success'));
             onClose();
         } catch (err) {
-            toast.error(err.friendlyMessage || 'Talep gönderilemedi. Tekrar deneyin.');
+            toast.error(err.friendlyMessage || t('contact.modal_error'));
         } finally {
             setLoading(false);
         }
@@ -59,40 +68,40 @@ const MeetingModal = ({ isOpen, onClose }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm"></motion.div>
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#1f2937] border border-slate-700 w-full max-w-lg rounded-2xl p-8 relative z-50 shadow-2xl">
-                <button onClick={onClose} aria-label="Kapat" className="absolute top-4 right-4 text-gray-400 hover:text-white"><FaTimes size={20} /></button>
+            <motion.div role="dialog" aria-modal="true" aria-label={t('contact.modal_title')} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-[#1f2937] border border-slate-700 w-full max-w-lg rounded-2xl p-8 relative z-50 shadow-2xl">
+                <button onClick={onClose} aria-label={t('common.close')} className="absolute top-4 right-4 text-gray-400 hover:text-white"><FaTimes size={20} /></button>
                 <div className="text-center mb-6">
                     <div className="w-16 h-16 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><FaCalendarAlt /></div>
-                    <h3 className="text-2xl font-bold text-white">Toplantı Talebi</h3>
-                    <p className="text-gray-400 text-sm mt-2">Projeniz için 30 dakikalık ücretsiz ön görüşme.</p>
+                    <h3 className="text-2xl font-bold text-white">{t('contact.modal_title')}</h3>
+                    <p className="text-gray-400 text-sm mt-2">{t('contact.modal_subtitle')}</p>
                 </div>
                 <form className="space-y-4" onSubmit={submit}>
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="mt-name" className="text-xs font-bold text-gray-500 uppercase">Ad Soyad</label>
-                            <input id="mt-name" type="text" value={form.name} onChange={update('name')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
+                            <label htmlFor="mt-name" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_name')}</label>
+                            <input id="mt-name" type="text" autoFocus value={form.name} onChange={update('name')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
                         </div>
                         <div>
-                            <label htmlFor="mt-email" className="text-xs font-bold text-gray-500 uppercase">E-posta</label>
+                            <label htmlFor="mt-email" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_email')}</label>
                             <input id="mt-email" type="email" value={form.email} onChange={update('email')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
                         </div>
                         <div>
-                            <label htmlFor="mt-date" className="text-xs font-bold text-gray-500 uppercase">Tarih</label>
+                            <label htmlFor="mt-date" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_date')}</label>
                             <input id="mt-date" type="date" value={form.date} onChange={update('date')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
                         </div>
                         <div>
-                            <label htmlFor="mt-time" className="text-xs font-bold text-gray-500 uppercase">Saat</label>
+                            <label htmlFor="mt-time" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_time')}</label>
                             <select id="mt-time" value={form.time} onChange={update('time')} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500">
                                 <option>10:00</option><option>11:00</option><option>14:00</option><option>16:00</option>
                             </select>
                         </div>
                     </div>
                     <div>
-                        <label htmlFor="mt-note" className="text-xs font-bold text-gray-500 uppercase">Not (opsiyonel)</label>
+                        <label htmlFor="mt-note" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_note')}</label>
                         <textarea id="mt-note" rows="2" value={form.note} onChange={update('note')} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500 resize-none" />
                     </div>
                     <button type="submit" disabled={loading} className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-colors disabled:opacity-50">
-                        {loading ? 'Gönderiliyor...' : 'Talep Gönder'}
+                        {loading ? t('contact.modal_sending') : t('contact.modal_submit')}
                     </button>
                 </form>
             </motion.div>
@@ -102,6 +111,7 @@ const MeetingModal = ({ isOpen, onClose }) => {
 
 // --- MALİYET HESAPLAYICI ---
 const CostEstimator = () => {
+    const { t } = useTranslation();
     const [type, setType] = useState(1);
     const [pages, setPages] = useState(5);
     const [features, setFeatures] = useState({ admin: false, seo: false, design: false });
@@ -117,30 +127,30 @@ const CostEstimator = () => {
         <div className="bg-[#1f2937] border border-slate-700 rounded-2xl p-6 mt-6">
             <div className="flex items-center gap-2 mb-4 border-b border-slate-700 pb-2">
                 <FaCalculator className="text-green-400" />
-                <h3 className="text-white font-bold">Hızlı Fiyat Hesaplayıcı</h3>
+                <h3 className="text-white font-bold">{t('contact.cost_title')}</h3>
             </div>
             <div className="space-y-4">
                 <div>
-                    <label className="text-xs text-gray-400 uppercase font-bold">Proje Tipi</label>
+                    <label className="text-xs text-gray-400 uppercase font-bold">{t('contact.est_type')}</label>
                     <div className="grid grid-cols-3 gap-2 mt-1">
-                        {['Landing', 'Kurumsal', 'E-Ticaret'].map((label, i) => (
-                            <button key={i} onClick={() => setType(i + 1)} className={`text-xs py-2 rounded border ${type === i + 1 ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-800 border-slate-700 text-gray-400'}`}>{label}</button>
+                        {[t('contact.est_landing'), t('contact.est_corporate'), t('contact.est_ecommerce')].map((label, i) => (
+                            <button key={label} onClick={() => setType(i + 1)} className={`text-xs py-2 rounded border ${type === i + 1 ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-800 border-slate-700 text-gray-400'}`}>{label}</button>
                         ))}
                     </div>
                 </div>
                 <div>
-                    <label className="text-xs text-gray-400 uppercase font-bold flex justify-between">Sayfa Sayısı: <span className="text-white">{pages}</span></label>
+                    <label className="text-xs text-gray-400 uppercase font-bold flex justify-between">{t('contact.est_pages')}: <span className="text-white">{pages}</span></label>
                     <input type="range" min="1" max="20" value={pages} onChange={(e) => setPages(e.target.value)} className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer mt-1 accent-blue-500" />
                 </div>
                 <div className="flex flex-wrap gap-2">
                     {Object.keys(features).map(f => (
                         <button key={f} onClick={() => setFeatures({ ...features, [f]: !features[f] })} className={`text-xs px-3 py-1 rounded-full border ${features[f] ? 'bg-green-500/20 border-green-500 text-green-400' : 'bg-slate-800 border-slate-700 text-gray-500'}`}>
-                            {f === 'admin' ? '+ Admin' : f === 'seo' ? '+ SEO' : '+ Tasarım'}
+                            {f === 'admin' ? t('contact.est_admin') : f === 'seo' ? t('contact.est_seo') : t('contact.est_design')}
                         </button>
                     ))}
                 </div>
                 <div className="bg-black/30 p-4 rounded-xl text-center mt-2 border border-slate-700 border-dashed">
-                    <p className="text-gray-500 text-xs mb-1">Tahmini Bütçe Aralığı</p>
+                    <p className="text-gray-500 text-xs mb-1">{t('contact.cost_range')}</p>
                     <p className="text-2xl font-bold text-white">${calculateCost()} - ${calculateCost() + 500}</p>
                 </div>
             </div>
@@ -154,11 +164,13 @@ const Contact = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
 
+    const contactSchema = useMemo(() => buildContactSchema(t), [t]);
+
     const {
         register,
         handleSubmit,
         setValue,
-        watch,
+        control,
         reset,
         formState: { errors, isSubmitting }
     } = useForm({
@@ -171,7 +183,7 @@ const Contact = () => {
         }
     });
 
-    const watchSubject = watch('subject');
+    const watchSubject = useWatch({ control, name: 'subject' });
 
     useEffect(() => {
         const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })), 60000);
@@ -247,14 +259,14 @@ const Contact = () => {
                                 <div className="flex items-center gap-4 group/item">
                                     <div className="w-12 h-12 rounded-xl bg-green-500/10 flex items-center justify-center text-green-400 text-xl"><FaPhone /></div>
                                     <div>
-                                        <span className="block text-xs text-gray-500 font-bold uppercase tracking-wider">Telefon</span>
+                                        <span className="block text-xs text-gray-500 font-bold uppercase tracking-wider">{t('contact.phone')}</span>
                                         <a href="tel:+905537102461" className="text-white hover:text-green-400 transition-colors font-medium">+90 553 710 24 61</a>
                                         <a href="https://wa.me/905537102461" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="ml-3 inline-flex items-center gap-1 text-green-500 hover:text-green-400 text-sm"><FaWhatsapp /> WhatsApp</a>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4 group/item">
                                     <div className="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-xl"><FaMapMarkerAlt /></div>
-                                    <div><span className="block text-xs text-gray-500 font-bold uppercase tracking-wider">Lokasyon</span><span className="text-white font-medium">İstanbul, Türkiye (Remote)</span></div>
+                                    <div><span className="block text-xs text-gray-500 font-bold uppercase tracking-wider">{t('contact.location')}</span><span className="text-white font-medium">{t('contact.location_value')}</span></div>
                                 </div>
                             </div>
                             <div className="mt-8 pt-8 border-t border-slate-800 flex gap-4">
@@ -281,22 +293,22 @@ const Contact = () => {
                         <div className="grid grid-cols-2 gap-4">
                             <div className="bg-[#1f2937] border border-slate-700 p-4 rounded-xl flex flex-col items-center justify-center text-center">
                                 <FaBolt className="text-yellow-400 text-xl mb-2" />
-                                <span className="text-2xl font-bold text-white">&lt; 2 Saat</span>
-                                <span className="text-[10px] text-gray-400 uppercase font-bold">Ort. Yanıt Süresi</span>
+                                <span className="text-2xl font-bold text-white">{t('contact.response_value')}</span>
+                                <span className="text-[10px] text-gray-400 uppercase font-bold">{t('contact.response_time')}</span>
                             </div>
                             <div className="bg-[#1f2937] border border-slate-700 p-4 rounded-xl flex flex-col items-center justify-center text-center">
                                 <FaClock className="text-blue-400 text-xl mb-2" />
                                 <span className="text-2xl font-bold text-white">{currentTime}</span>
-                                <span className="text-[10px] text-gray-400 uppercase font-bold">Yerel Saat (GMT+3)</span>
+                                <span className="text-[10px] text-gray-400 uppercase font-bold">{t('contact.local_time')}</span>
                             </div>
                         </div>
 
                         {/* 3. CTA: Toplantı */}
                         <div className="bg-gradient-to-r from-blue-900/40 to-slate-900 border border-blue-500/30 rounded-2xl p-6 text-center">
                             <FaUserTie className="text-3xl text-blue-400 mx-auto mb-3" />
-                            <h3 className="text-white font-bold mb-2">Yüz Yüze Görüşelim?</h3>
-                            <p className="text-sm text-gray-400 mb-4">Projenizi detaylandırmak için 30 dakikalık bir görüşme.</p>
-                            <button onClick={() => setIsModalOpen(true)} className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20">Toplantı Talep Et</button>
+                            <h3 className="text-white font-bold mb-2">{t('contact.meeting_title')}</h3>
+                            <p className="text-sm text-gray-400 mb-4">{t('contact.meeting_desc')}</p>
+                            <button onClick={() => setIsModalOpen(true)} className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20">{t('contact.meeting_request_btn')}</button>
                         </div>
 
                         {/* 4. MALİYET HESAPLAYICI */}
@@ -304,7 +316,7 @@ const Contact = () => {
 
                         {/* 5. YENİ: İLETİŞİM TOOL STACK (İşbirliği Araçları) */}
                         <div className="bg-[#1f2937] border border-slate-700 rounded-2xl p-6">
-                            <h4 className="text-xs font-bold text-gray-500 uppercase mb-4 text-center">İş Birliği Araçlarım</h4>
+                            <h4 className="text-xs font-bold text-gray-500 uppercase mb-4 text-center">{t('contact.collab_tools')}</h4>
                             <div className="flex justify-between items-center px-2">
                                 <div className="text-center group"><FaSlack className="text-2xl text-gray-400 group-hover:text-white transition-colors mb-1 mx-auto" /><span className="text-[10px] text-gray-600">Slack</span></div>
                                 <div className="text-center group"><SiJira className="text-2xl text-gray-400 group-hover:text-blue-400 transition-colors mb-1 mx-auto" /><span className="text-[10px] text-gray-600">Jira</span></div>
@@ -333,28 +345,28 @@ const Contact = () => {
                                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.name')}</label>
-                                            <input type="text" {...register('name')} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder={t('contact.name')} />
+                                            <label htmlFor="contact-name" className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.name')}</label>
+                                            <input id="contact-name" type="text" {...register('name')} aria-invalid={!!errors.name} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder={t('contact.name')} />
                                             {errors.name && <p className="text-red-400 text-xs mt-1 ml-1">{errors.name.message}</p>}
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.email')}</label>
-                                            <input type="email" {...register('email')} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder="ornek@email.com" />
+                                            <label htmlFor="contact-email" className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.email')}</label>
+                                            <input id="contact-email" type="email" {...register('email')} aria-invalid={!!errors.email} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all" placeholder="ornek@email.com" />
                                             {errors.email && <p className="text-red-400 text-xs mt-1 ml-1">{errors.email.message}</p>}
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.subject')}</label>
-                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                        <span id="contact-subject-label" className="block text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.subject')}</span>
+                                        <div role="group" aria-labelledby="contact-subject-label" className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                                             {[t('contact.subject_offer'), t('contact.subject_freelance'), t('contact.subject_job'), t('contact.subject_other')].map(opt => (
-                                                <button type="button" key={opt} onClick={() => setValue('subject', opt)} className={`py-2 text-xs font-bold rounded-lg border transition-all ${watchSubject === opt ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-[#1f2937] border-slate-700 text-gray-400 hover:border-gray-500'}`}>{opt}</button>
+                                                <button type="button" key={opt} aria-pressed={watchSubject === opt} onClick={() => setValue('subject', opt)} className={`py-2 text-xs font-bold rounded-lg border transition-all ${watchSubject === opt ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-[#1f2937] border-slate-700 text-gray-400 hover:border-gray-500'}`}>{opt}</button>
                                             ))}
                                         </div>
                                         {errors.subject && <p className="text-red-400 text-xs mt-1 ml-1">{errors.subject.message}</p>}
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.message')}</label>
-                                        <textarea rows="6" {...register('message')} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all resize-none" placeholder={t('contact.form_placeholder')}></textarea>
+                                        <label htmlFor="contact-message" className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.message')}</label>
+                                        <textarea id="contact-message" rows="6" {...register('message')} aria-invalid={!!errors.message} className="w-full bg-[#1f2937] border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 focus:bg-slate-900 outline-none transition-all resize-none" placeholder={t('contact.form_placeholder')}></textarea>
                                         {errors.message && <p className="text-red-400 text-xs mt-1 ml-1">{errors.message.message}</p>}
                                     </div>
                                     <button type="submit" disabled={isSubmitting} className="w-full py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-1">{isSubmitting ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : <><FaPaperPlane /> {t('contact.send')}</>}</button>
@@ -373,10 +385,10 @@ const Contact = () => {
                             </div>
                             <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6 flex flex-col justify-center relative">
                                 <FaQuoteRight className="absolute top-4 right-4 text-slate-700 text-4xl" />
-                                <p className="text-gray-300 text-sm italic mb-4 z-10">"Sadece çalışan kod değil; güvenli, ölçeklenebilir ve gerçekten değer üreten sistemler kurarım. Production'a giden her satırı sahiplenirim."</p>
+                                <p className="text-gray-300 text-sm italic mb-4 z-10">"{t('contact.quote_text')}"</p>
                                 <div className="flex items-center gap-3">
                                     <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xs">EZ</div>
-                                    <div><h5 className="text-white text-xs font-bold">Eyüp Zeki Salihoğlu</h5><p className="text-[10px] text-gray-500">Full-Stack AI Engineer</p></div>
+                                    <div><h5 className="text-white text-xs font-bold">Eyüp Zeki Salihoğlu</h5><p className="text-[10px] text-gray-500">{t('contact.quote_role')}</p></div>
                                 </div>
                             </div>
                         </div>
@@ -400,26 +412,26 @@ const Contact = () => {
                                 <table className="w-full text-sm text-left text-gray-400">
                                     <thead className="text-xs text-gray-500 uppercase bg-slate-800/50">
                                         <tr>
-                                            <th className="px-6 py-3 rounded-l-lg">Öncelik</th>
-                                            <th className="px-6 py-3">İlk Yanıt</th>
-                                            <th className="px-6 py-3 rounded-r-lg">Çözüm Hedefi</th>
+                                            <th className="px-6 py-3 rounded-l-lg">{t('contact.sla_col_priority')}</th>
+                                            <th className="px-6 py-3">{t('contact.sla_col_first')}</th>
+                                            <th className="px-6 py-3 rounded-r-lg">{t('contact.sla_col_resolution')}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr className="border-b border-slate-800 hover:bg-slate-800/30">
-                                            <td className="px-6 py-4 font-bold text-red-400 flex items-center gap-2"><div className="w-2 h-2 bg-red-500 rounded-full"></div> Kritik</td>
-                                            <td className="px-6 py-4">1 Saat</td>
-                                            <td className="px-6 py-4">4 Saat</td>
+                                            <td className="px-6 py-4 font-bold text-red-400 flex items-center gap-2"><div className="w-2 h-2 bg-red-500 rounded-full"></div> {t('contact.sla_critical')}</td>
+                                            <td className="px-6 py-4">{t('contact.sla_critical_first')}</td>
+                                            <td className="px-6 py-4">{t('contact.sla_critical_res')}</td>
                                         </tr>
                                         <tr className="border-b border-slate-800 hover:bg-slate-800/30">
-                                            <td className="px-6 py-4 font-bold text-yellow-400 flex items-center gap-2"><div className="w-2 h-2 bg-yellow-500 rounded-full"></div> Yüksek</td>
-                                            <td className="px-6 py-4">4 Saat</td>
-                                            <td className="px-6 py-4">24 Saat</td>
+                                            <td className="px-6 py-4 font-bold text-yellow-400 flex items-center gap-2"><div className="w-2 h-2 bg-yellow-500 rounded-full"></div> {t('contact.sla_high')}</td>
+                                            <td className="px-6 py-4">{t('contact.sla_high_first')}</td>
+                                            <td className="px-6 py-4">{t('contact.sla_high_res')}</td>
                                         </tr>
                                         <tr className="hover:bg-slate-800/30">
-                                            <td className="px-6 py-4 font-bold text-blue-400 flex items-center gap-2"><div className="w-2 h-2 bg-blue-500 rounded-full"></div> Normal</td>
-                                            <td className="px-6 py-4">24 Saat</td>
-                                            <td className="px-6 py-4">3 İş Günü</td>
+                                            <td className="px-6 py-4 font-bold text-blue-400 flex items-center gap-2"><div className="w-2 h-2 bg-blue-500 rounded-full"></div> {t('contact.sla_normal')}</td>
+                                            <td className="px-6 py-4">{t('contact.sla_normal_first')}</td>
+                                            <td className="px-6 py-4">{t('contact.sla_normal_res')}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -435,29 +447,29 @@ const Contact = () => {
                             <div className="space-y-4">
                                 <details className="group p-4 border border-slate-800 rounded-xl bg-slate-900/30 open:bg-slate-900/80 transition-all">
                                     <summary className="flex cursor-pointer items-center justify-between font-bold text-gray-300 group-hover:text-white">
-                                        Fatura kesiyor musunuz?
+                                        {t('contact.faq_q1')}
                                         <span className="transition group-open:rotate-180 text-blue-500"><FaBolt /></span>
                                     </summary>
                                     <div className="mt-3 text-sm text-gray-400 pl-4 border-l-2 border-blue-500">
-                                        Evet, tüm freelance çalışmalarım için resmi olarak fatura kesiyorum.
+                                        {t('contact.faq_a1')}
                                     </div>
                                 </details>
                                 <details className="group p-4 border border-slate-800 rounded-xl bg-slate-900/30 open:bg-slate-900/80 transition-all">
                                     <summary className="flex cursor-pointer items-center justify-between font-bold text-gray-300 group-hover:text-white">
-                                        Proje sonrası destek veriyor musunuz?
+                                        {t('contact.faq_q2')}
                                         <span className="transition group-open:rotate-180 text-blue-500"><FaBolt /></span>
                                     </summary>
                                     <div className="mt-3 text-sm text-gray-400 pl-4 border-l-2 border-blue-500">
-                                        Kesinlikle. Teslimat sonrası 1 ay ücretsiz "Bug-Fix" desteği sağlıyorum. Sonrası için bakım anlaşması yapabiliriz.
+                                        {t('contact.faq_a2')}
                                     </div>
                                 </details>
                                 <details className="group p-4 border border-slate-800 rounded-xl bg-slate-900/30 open:bg-slate-900/80 transition-all">
                                     <summary className="flex cursor-pointer items-center justify-between font-bold text-gray-300 group-hover:text-white">
-                                        Ödeme yöntemleri neler?
+                                        {t('contact.faq_q3')}
                                         <span className="transition group-open:rotate-180 text-blue-500"><FaBolt /></span>
                                     </summary>
                                     <div className="mt-3 text-sm text-gray-400 pl-4 border-l-2 border-blue-500">
-                                        Yasal şartlara bağlı olup tüm ödeme sistemlerine açığım.
+                                        {t('contact.faq_a3')}
                                     </div>
                                 </details>
                             </div>

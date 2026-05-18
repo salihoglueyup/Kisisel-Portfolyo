@@ -6,6 +6,7 @@ import { useBlog } from '../../hooks/queries/useBlogs';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { formatDate } from '../../utils/formatDate';
 
 const BlogDetails = () => {
     const { t } = useTranslation();
@@ -55,14 +56,14 @@ const BlogDetails = () => {
                 <div className="flex flex-wrap items-center gap-4 text-sm text-blue-400 font-mono font-bold mb-6">
                     <span className="bg-blue-500/10 px-3 py-1 rounded-full">{blog.category}</span>
                     <span className="text-gray-500 flex items-center gap-2"><FaClock /> {blog.readTime}</span>
-                    <span className="text-gray-500 flex items-center gap-2"><FaCalendarAlt /> {new Date(blog.createdAt).toLocaleDateString('tr-TR')}</span>
+                    <span className="text-gray-500 flex items-center gap-2"><FaCalendarAlt /> {formatDate(blog.createdAt)}</span>
                 </div>
 
                 <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">{blog.title}</h1>
 
                 {blog.image && (
                     <div className="w-full h-64 md:h-96 rounded-2xl overflow-hidden mb-10 border border-slate-800">
-                        <img src={blog.image} alt={blog.title} className="w-full h-full object-cover" />
+                        <img src={blog.image} alt={blog.title} decoding="async" className="w-full h-full object-cover" />
                     </div>
                 )}
 
