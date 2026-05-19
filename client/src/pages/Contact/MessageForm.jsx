@@ -99,7 +99,7 @@ const MessageForm = () => {
                         <span id="contact-subject-label" className="block text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.subject')}</span>
                         <div role="group" aria-labelledby="contact-subject-label" className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                             {SUBJECTS.map((s) => (
-                                <button type="button" key={s.key} aria-pressed={watchSubject === s.key} onClick={() => setValue('subject', s.key)} className={`py-2 text-xs font-bold rounded-lg border transition-all ${watchSubject === s.key ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-surface-raised border-slate-700 text-gray-400 hover:border-gray-500'}`}>{t(s.i18n)}</button>
+                                <button type="button" key={s.key} aria-pressed={watchSubject === s.key} onClick={() => setValue('subject', s.key)} className={`py-2 text-xs font-bold rounded-xl border transition-all ${watchSubject === s.key ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-surface-raised border-slate-700 text-gray-400 hover:border-gray-500'}`}>{t(s.i18n)}</button>
                             ))}
                         </div>
                         {errors.subject && <p className="text-red-400 text-xs mt-1 ml-1">{errors.subject.message}</p>}

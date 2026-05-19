@@ -5,6 +5,7 @@ import {
 } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
 import { useTranslation } from 'react-i18next';
+import StatusBadge from '../../components/common/StatusBadge';
 import LocalClock from './LocalClock';
 import MessageForm from './MessageForm';
 import ServiceTabs from './ServiceTabs';
@@ -38,9 +39,8 @@ const Contact = () => {
 
                 {/* HEADER */}
                 <div className="text-center mb-16">
-                    <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="inline-block px-3 py-1 mb-4 border border-green-500/30 rounded-full bg-green-500/10 text-green-400 text-xs font-mono">
-                        <span className="w-2 h-2 inline-block bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                        {t('contact.status_available')}
+                    <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="inline-block mb-4">
+                        <StatusBadge color="green" dot="pulse">{t('contact.status_available')}</StatusBadge>
                     </motion.div>
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
                         {t('contact.hero_title_1')} <br />
