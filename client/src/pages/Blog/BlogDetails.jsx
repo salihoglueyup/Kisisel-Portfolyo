@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { FaArrowLeft, FaClock, FaCalendarAlt, FaLinkedin, FaTwitter, FaLink } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import SEO from '../../components/common/SEO';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useBlog } from '../../hooks/queries/useBlogs';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
@@ -26,7 +27,7 @@ const BlogDetails = () => {
 
     if (loading) return (
         <div className="min-h-screen bg-base pt-32 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            <LoadingSpinner size="lg" />
         </div>
     );
 

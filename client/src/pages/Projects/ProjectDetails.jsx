@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCode, FaDatabase, FaServer, FaLayerGroup, FaCalendarAlt, FaCheckCircle } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useProject } from '../../hooks/queries/useProjects';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +14,7 @@ const ProjectDetails = () => {
     const { data: project, isLoading: loading } = useProject(id);
     const [activeTab, setActiveTab] = useState('overview');
 
-    if (loading) return <div className="min-h-screen bg-base flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div></div>;
+    if (loading) return <div className="min-h-screen bg-base flex items-center justify-center"><LoadingSpinner size="lg" /></div>;
     if (!project) return <div className="min-h-screen bg-base flex items-center justify-center text-white">{t('projectDetails.not_found')}</div>;
 
     // Teknik mimari verisi (DB'den veya fallback)

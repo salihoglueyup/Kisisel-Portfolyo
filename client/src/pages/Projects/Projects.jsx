@@ -165,7 +165,7 @@ const Projects = () => {
 
                 {/* PROJE GRID/LIST */}
                 {loading ? (
-                    <div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div></div>
+                    <div className="flex justify-center items-center h-64"><LoadingSpinner size="lg" /></div>
                 ) : error ? (
                     <div className="text-center py-12 bg-red-500/10 border border-red-500/20 rounded-2xl"><p className="text-red-400">{error}</p></div>
                 ) : (
