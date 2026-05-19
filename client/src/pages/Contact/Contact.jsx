@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import api from '../../api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm, useWatch } from 'react-hook-form';
@@ -34,17 +34,48 @@ const SUBJECTS = [
   { key: 'other',     i18n: 'contact.subject_other',     value: 'Diğer' },
 ];
 
+// Alt bölüm sekmeleri (a11y: roving tabindex + ok tuşu navigasyonu)
+const TABS = [
+  { key: 'collab',    i18n: 'contact.tab_collab' },
+  { key: 'freelance', i18n: 'contact.tab_freelance' },
+];
+
 // --- MODAL (TOPLANTI TALEBİ) — gerçek talep gönderir (mesaj API + admin e-posta) ---
 const MeetingModal = ({ isOpen, onClose }) => {
     const { t } = useTranslation();
     const [form, setForm] = useState({ name: '', email: '', date: '', time: '10:00', note: '' });
     const [loading, setLoading] = useState(false);
+    const dialogRef = useRef(null);
+    const triggerRef = useRef(null); // modal açılmadan önce odakta olan öğe
 
     useEffect(() => {
         if (!isOpen) return;
-        const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+        triggerRef.current = document.activeElement;
+        const dialog = dialogRef.current;
+        const getFocusables = () => dialog
+            ? Array.from(dialog.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+            : [];
+
+        const onKey = (e) => {
+            if (e.key === 'Escape') { onClose(); return; }
+            if (e.key !== 'Tab') return;
+            // Odak tuzağı: Tab sırası dialog içinde döner
+            const els = getFocusables();
+            if (!els.length) return;
+            const first = els[0];
+            const last = els[els.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        };
+
         window.addEventListener('keydown', onKey);
-        return () => window.removeEventListener('keydown', onKey);
+        return () => {
+            window.removeEventListener('keydown', onKey);
+            // Kapanışta odağı tetikleyici öğeye iade et
+            if (triggerRef.current && typeof triggerRef.current.focus === 'function') {
+                triggerRef.current.focus();
+            }
+        };
     }, [isOpen, onClose]);
 
     if (!isOpen) return null;
@@ -82,7 +113,7 @@ const MeetingModal = ({ isOpen, onClose }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm"></motion.div>
-            <motion.div role="dialog" aria-modal="true" aria-label={t('contact.modal_title')} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-surface-raised border border-slate-700 w-full max-w-lg rounded-2xl p-8 relative z-50 shadow-2xl">
+            <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-label={t('contact.modal_title')} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-surface-raised border border-slate-700 w-full max-w-lg rounded-2xl p-8 relative z-50 shadow-2xl">
                 <button onClick={onClose} aria-label={t('common.close')} className="absolute top-4 right-4 text-gray-400 hover:text-white"><FaTimes size={20} /></button>
                 <div className="text-center mb-6">
                     <div className="w-16 h-16 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><FaCalendarAlt /></div>
@@ -220,6 +251,17 @@ const Contact = () => {
             setStatus(null);
             toast.error(err?.friendlyMessage || t('contact.error'));
         }
+    };
+
+    // Sekme bar: Sol/Sağ ok ile sekme değiştir ve odağı taşı
+    const onTabKey = (e) => {
+        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+        e.preventDefault();
+        const idx = TABS.findIndex((tb) => tb.key === contactTab);
+        const dir = e.key === 'ArrowRight' ? 1 : -1;
+        const next = TABS[(idx + dir + TABS.length) % TABS.length];
+        setContactTab(next.key);
+        document.getElementById(`tab-${next.key}`)?.focus();
     };
 
     return (
@@ -401,27 +443,26 @@ const Contact = () => {
 
                     {/* Sekme bar */}
                     <div role="tablist" aria-label={t('contact.standards_title')} className="flex justify-center gap-2 mb-10">
-                        <button
-                            role="tab"
-                            aria-selected={contactTab === 'collab'}
-                            onClick={() => setContactTab('collab')}
-                            className={`px-5 py-2 rounded-lg text-sm font-bold border transition-all ${contactTab === 'collab' ? 'bg-blue-600 border-blue-500 text-white' : 'bg-surface-raised border-slate-700 text-gray-400 hover:border-gray-500'}`}
-                        >
-                            {t('contact.tab_collab')}
-                        </button>
-                        <button
-                            role="tab"
-                            aria-selected={contactTab === 'freelance'}
-                            onClick={() => setContactTab('freelance')}
-                            className={`px-5 py-2 rounded-lg text-sm font-bold border transition-all ${contactTab === 'freelance' ? 'bg-blue-600 border-blue-500 text-white' : 'bg-surface-raised border-slate-700 text-gray-400 hover:border-gray-500'}`}
-                        >
-                            {t('contact.tab_freelance')}
-                        </button>
+                        {TABS.map((tb) => (
+                            <button
+                                key={tb.key}
+                                id={`tab-${tb.key}`}
+                                role="tab"
+                                aria-selected={contactTab === tb.key}
+                                aria-controls={`panel-${tb.key}`}
+                                tabIndex={contactTab === tb.key ? 0 : -1}
+                                onKeyDown={onTabKey}
+                                onClick={() => setContactTab(tb.key)}
+                                className={`px-5 py-2 rounded-lg text-sm font-bold border transition-all ${contactTab === tb.key ? 'bg-blue-600 border-blue-500 text-white' : 'bg-surface-raised border-slate-700 text-gray-400 hover:border-gray-500'}`}
+                            >
+                                {t(tb.i18n)}
+                            </button>
+                        ))}
                     </div>
 
                     {/* İŞ BİRLİĞİ sekmesi — her iki kitle için nötr varsayılan */}
                     {contactTab === 'collab' && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                        <div id="panel-collab" role="tabpanel" aria-labelledby="tab-collab" tabIndex={0} className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                             <div className="bg-gradient-to-r from-blue-900/40 to-slate-900 border border-blue-500/30 rounded-2xl p-8 text-center flex flex-col justify-center">
                                 <FaUserTie className="text-3xl text-blue-400 mx-auto mb-3" />
                                 <h3 className="text-white font-bold mb-2">{t('contact.meeting_title')}</h3>
@@ -442,7 +483,7 @@ const Contact = () => {
 
                     {/* FREELANCE sekmesi — maliyet + SLA + FAQ */}
                     {contactTab === 'freelance' && (
-                    <div className="space-y-10">
+                    <div id="panel-freelance" role="tabpanel" aria-labelledby="tab-freelance" tabIndex={0} className="space-y-10">
                     <div className="max-w-md mx-auto"><CostEstimator /></div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
 
@@ -491,7 +532,7 @@ const Contact = () => {
                             </div>
                             <div className="space-y-4">
                                 <details className="group p-4 border border-slate-800 rounded-xl bg-slate-900/30 open:bg-slate-900/80 transition-all">
-                                    <summary className="flex cursor-pointer items-center justify-between font-bold text-gray-300 group-hover:text-white">
+                                    <summary className="flex cursor-pointer items-center justify-between font-bold text-gray-300 group-hover:text-white list-none [&::-webkit-details-marker]:hidden">
                                         {t('contact.faq_q1')}
                                         <span className="transition group-open:rotate-180 text-blue-500"><FaBolt /></span>
                                     </summary>
@@ -500,7 +541,7 @@ const Contact = () => {
                                     </div>
                                 </details>
                                 <details className="group p-4 border border-slate-800 rounded-xl bg-slate-900/30 open:bg-slate-900/80 transition-all">
-                                    <summary className="flex cursor-pointer items-center justify-between font-bold text-gray-300 group-hover:text-white">
+                                    <summary className="flex cursor-pointer items-center justify-between font-bold text-gray-300 group-hover:text-white list-none [&::-webkit-details-marker]:hidden">
                                         {t('contact.faq_q2')}
                                         <span className="transition group-open:rotate-180 text-blue-500"><FaBolt /></span>
                                     </summary>
@@ -509,7 +550,7 @@ const Contact = () => {
                                     </div>
                                 </details>
                                 <details className="group p-4 border border-slate-800 rounded-xl bg-slate-900/30 open:bg-slate-900/80 transition-all">
-                                    <summary className="flex cursor-pointer items-center justify-between font-bold text-gray-300 group-hover:text-white">
+                                    <summary className="flex cursor-pointer items-center justify-between font-bold text-gray-300 group-hover:text-white list-none [&::-webkit-details-marker]:hidden">
                                         {t('contact.faq_q3')}
                                         <span className="transition group-open:rotate-180 text-blue-500"><FaBolt /></span>
                                     </summary>
