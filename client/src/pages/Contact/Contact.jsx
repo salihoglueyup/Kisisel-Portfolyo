@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import api from '../../api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm, useWatch } from 'react-hook-form';
@@ -7,13 +7,16 @@ import * as z from 'zod';
 import toast from 'react-hot-toast';
 import {
     FaPaperPlane, FaEnvelope, FaMapMarkerAlt, FaGithub, FaLinkedin, FaPhone, FaWhatsapp,
-    FaClock, FaCheckCircle, FaCalendarAlt, FaUserTie, FaTimes,
-    FaBolt, FaCalculator, FaGlobeAmericas, FaQuoteRight,
-    FaSlack, FaTrello, FaVideo, FaFileInvoice, FaShieldAlt, FaQuestionCircle
+    FaCheckCircle, FaUserTie,
+    FaBolt, FaGlobeAmericas, FaQuoteRight,
+    FaSlack, FaVideo, FaShieldAlt, FaQuestionCircle
 } from 'react-icons/fa';
-import { SiJira, SiNotion, SiZoom } from 'react-icons/si';
+import { SiJira, SiNotion } from 'react-icons/si';
 import SEO from '../../components/common/SEO';
 import { useTranslation } from 'react-i18next';
+import MeetingModal from './MeetingModal';
+import CostEstimator from './CostEstimator';
+import LocalClock from './LocalClock';
 
 // Şema t() ile kurulur — hata mesajları aktif dile göre
 const buildContactSchema = (t) => z.object({
@@ -40,175 +43,13 @@ const TABS = [
   { key: 'freelance', i18n: 'contact.tab_freelance' },
 ];
 
-// --- MODAL (TOPLANTI TALEBİ) — gerçek talep gönderir (mesaj API + admin e-posta) ---
-const MeetingModal = ({ isOpen, onClose }) => {
-    const { t } = useTranslation();
-    const [form, setForm] = useState({ name: '', email: '', date: '', time: '10:00', note: '' });
-    const [loading, setLoading] = useState(false);
-    const dialogRef = useRef(null);
-    const triggerRef = useRef(null); // modal açılmadan önce odakta olan öğe
-
-    useEffect(() => {
-        if (!isOpen) return;
-        triggerRef.current = document.activeElement;
-        const dialog = dialogRef.current;
-        const getFocusables = () => dialog
-            ? Array.from(dialog.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'))
-            : [];
-
-        const onKey = (e) => {
-            if (e.key === 'Escape') { onClose(); return; }
-            if (e.key !== 'Tab') return;
-            // Odak tuzağı: Tab sırası dialog içinde döner
-            const els = getFocusables();
-            if (!els.length) return;
-            const first = els[0];
-            const last = els[els.length - 1];
-            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-        };
-
-        window.addEventListener('keydown', onKey);
-        return () => {
-            window.removeEventListener('keydown', onKey);
-            // Kapanışta odağı tetikleyici öğeye iade et
-            if (triggerRef.current && typeof triggerRef.current.focus === 'function') {
-                triggerRef.current.focus();
-            }
-        };
-    }, [isOpen, onClose]);
-
-    if (!isOpen) return null;
-
-    // Geçmiş tarih seçilemesin (YYYY-MM-DD)
-    const todayStr = new Date().toISOString().slice(0, 10);
-
-    const update = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
-
-    const submit = async (e) => {
-        e.preventDefault();
-        if (!form.name.trim() || !form.email.trim() || !form.date) {
-            toast.error(t('contact.modal_validation'));
-            return;
-        }
-        setLoading(true);
-        try {
-            await api.post('/messages', {
-                name: form.name,
-                email: form.email,
-                subject: t('contact.modal_title'),
-                message:
-                    `${t('contact.modal_title')}\n${t('contact.modal_date')}: ${form.date} ${form.time}` +
-                    (form.note ? `\n\n${t('contact.modal_note')}: ${form.note}` : '')
-            });
-            toast.success(t('contact.modal_success'));
-            onClose();
-        } catch (err) {
-            toast.error(err.friendlyMessage || t('contact.modal_error'));
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-black/80 backdrop-blur-sm"></motion.div>
-            <motion.div ref={dialogRef} role="dialog" aria-modal="true" aria-label={t('contact.modal_title')} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-surface-raised border border-slate-700 w-full max-w-lg rounded-2xl p-8 relative z-50 shadow-2xl">
-                <button onClick={onClose} aria-label={t('common.close')} className="absolute top-4 right-4 text-gray-400 hover:text-white"><FaTimes size={20} /></button>
-                <div className="text-center mb-6">
-                    <div className="w-16 h-16 bg-blue-600/20 text-blue-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><FaCalendarAlt /></div>
-                    <h3 className="text-2xl font-bold text-white">{t('contact.modal_title')}</h3>
-                    <p className="text-gray-400 text-sm mt-2">{t('contact.modal_subtitle')}</p>
-                </div>
-                <form className="space-y-4" onSubmit={submit}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label htmlFor="mt-name" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_name')}</label>
-                            <input id="mt-name" type="text" autoFocus value={form.name} onChange={update('name')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
-                        </div>
-                        <div>
-                            <label htmlFor="mt-email" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_email')}</label>
-                            <input id="mt-email" type="email" value={form.email} onChange={update('email')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
-                        </div>
-                        <div>
-                            <label htmlFor="mt-date" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_date')}</label>
-                            <input id="mt-date" type="date" min={todayStr} value={form.date} onChange={update('date')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
-                        </div>
-                        <div>
-                            <label htmlFor="mt-time" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_time')}</label>
-                            <select id="mt-time" value={form.time} onChange={update('time')} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500">
-                                <option>10:00</option><option>11:00</option><option>14:00</option><option>16:00</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div>
-                        <label htmlFor="mt-note" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_note')}</label>
-                        <textarea id="mt-note" rows="2" value={form.note} onChange={update('note')} className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500 resize-none" />
-                    </div>
-                    <button type="submit" disabled={loading} className="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-colors disabled:opacity-50">
-                        {loading ? t('contact.modal_sending') : t('contact.modal_submit')}
-                    </button>
-                </form>
-            </motion.div>
-        </div>
-    );
-};
-
-// --- MALİYET HESAPLAYICI ---
-const CostEstimator = () => {
-    const { t } = useTranslation();
-    const [type, setType] = useState(1);
-    const [pages, setPages] = useState(5);
-    const [features, setFeatures] = useState({ admin: false, seo: false, design: false });
-
-    const calculateCost = () => {
-        let base = type === 1 ? 500 : type === 2 ? 1200 : 2500;
-        let pageCost = pages * 50;
-        let featureCost = (features.admin ? 400 : 0) + (features.seo ? 200 : 0) + (features.design ? 300 : 0);
-        return base + pageCost + featureCost;
-    };
-
-    return (
-        <div className="bg-surface-raised border border-slate-700 rounded-2xl p-6 mt-6">
-            <div className="flex items-center gap-2 mb-4 border-b border-slate-700 pb-2">
-                <FaCalculator className="text-green-400" />
-                <h3 className="text-white font-bold">{t('contact.cost_title')}</h3>
-            </div>
-            <div className="space-y-4">
-                <div>
-                    <label className="text-xs text-gray-400 uppercase font-bold">{t('contact.est_type')}</label>
-                    <div className="grid grid-cols-3 gap-2 mt-1">
-                        {[t('contact.est_landing'), t('contact.est_corporate'), t('contact.est_ecommerce')].map((label, i) => (
-                            <button key={label} onClick={() => setType(i + 1)} className={`text-xs py-2 rounded border ${type === i + 1 ? 'bg-blue-600 border-blue-500 text-white' : 'bg-slate-800 border-slate-700 text-gray-400'}`}>{label}</button>
-                        ))}
-                    </div>
-                </div>
-                <div>
-                    <label className="text-xs text-gray-400 uppercase font-bold flex justify-between">{t('contact.est_pages')}: <span className="text-white">{pages}</span></label>
-                    <input type="range" min="1" max="20" value={pages} onChange={(e) => setPages(e.target.value)} className="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer mt-1 accent-blue-500" />
-                </div>
-                <div className="flex flex-wrap gap-2">
-                    {Object.keys(features).map(f => (
-                        <button key={f} onClick={() => setFeatures({ ...features, [f]: !features[f] })} className={`text-xs px-3 py-1 rounded-full border ${features[f] ? 'bg-green-500/20 border-green-500 text-green-400' : 'bg-slate-800 border-slate-700 text-gray-500'}`}>
-                            {f === 'admin' ? t('contact.est_admin') : f === 'seo' ? t('contact.est_seo') : t('contact.est_design')}
-                        </button>
-                    ))}
-                </div>
-                <div className="bg-black/30 p-4 rounded-xl text-center mt-2 border border-slate-700 border-dashed">
-                    <p className="text-gray-500 text-xs mb-1">{t('contact.cost_range')}</p>
-                    <p className="text-2xl font-bold text-white">${calculateCost()} - ${calculateCost() + 500}</p>
-                </div>
-            </div>
-        </div>
-    );
-};
+// MeetingModal / CostEstimator / LocalClock → ./ alt bileşenlerine taşındı
 
 const Contact = () => {
     const { t } = useTranslation();
     const [status, setStatus] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [contactTab, setContactTab] = useState('collab'); // 'collab' | 'freelance'
-    const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }));
 
     const contactSchema = useMemo(() => buildContactSchema(t), [t]);
 
@@ -230,11 +71,6 @@ const Contact = () => {
     });
 
     const watchSubject = useWatch({ control, name: 'subject' });
-
-    useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })), 60000);
-        return () => clearInterval(timer);
-    }, []);
 
     const onSubmit = async (data) => {
         setStatus('loading');
@@ -360,11 +196,7 @@ const Contact = () => {
                                 <span className="text-2xl font-bold text-white">{t('contact.response_value')}</span>
                                 <span className="text-[10px] text-gray-400 uppercase font-bold">{t('contact.response_time')}</span>
                             </div>
-                            <div className="bg-surface-raised border border-slate-700 p-4 rounded-xl flex flex-col items-center justify-center text-center">
-                                <FaClock className="text-blue-400 text-xl mb-2" />
-                                <span className="text-2xl font-bold text-white">{currentTime}</span>
-                                <span className="text-[10px] text-gray-400 uppercase font-bold">{t('contact.local_time')}</span>
-                            </div>
+                            <LocalClock />
                         </div>
 
                     </motion.div>
