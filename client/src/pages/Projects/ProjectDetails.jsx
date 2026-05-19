@@ -99,7 +99,7 @@ const ProjectDetails = () => {
 
                         <div className="flex gap-4">
                             {project.links?.github && (
-                                <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-[#1f2937] text-white rounded-lg flex items-center gap-2 hover:bg-[#374151] transition-all border border-slate-700">
+                                <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-surface-raised text-white rounded-lg flex items-center gap-2 hover:bg-gray-700 transition-all border border-slate-700">
                                     <FaGithub /> {t('projectDetails.source_code')}
                                 </a>
                             )}
