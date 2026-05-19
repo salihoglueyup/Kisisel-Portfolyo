@@ -234,7 +234,7 @@ const Contact = () => {
                         <span className="w-2 h-2 inline-block bg-green-500 rounded-full mr-2 animate-pulse"></span>
                         {t('contact.status_available')}
                     </motion.div>
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
                         {t('contact.hero_title_1')} <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">{t('contact.hero_title_2')}</span>
                     </h1>

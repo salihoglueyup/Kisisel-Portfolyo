@@ -93,7 +93,7 @@ const Projects = () => {
                     <StatusBadge color="purple" icon={<FaCode className="animate-pulse" />} className="mb-4">
                         PORTFOLIO_V2_BUILD
                     </StatusBadge>
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
                         {t('projects.title')}
                     </h1>
                     <p className="text-gray-400 max-w-2xl mx-auto text-lg">
@@ -129,7 +129,7 @@ const Projects = () => {
                                     <div><span className="block text-2xl font-bold text-white truncate">{featuredProject.category || featuredProject.tags?.[0]}</span><span className="text-xs text-gray-500">{t('projects.f_architecture')}</span></div>
                                 </div>
 
-                                <Link to={`/projects/${featuredProject._id}`} className="w-max px-8 py-3 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition-colors flex items-center gap-2">
+                                <Link to={`/projects/${featuredProject._id}`} className="w-max px-8 py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors flex items-center gap-2">
                                     {t('projects.case_study')} <FaArrowRight />
                                 </Link>
                             </div>

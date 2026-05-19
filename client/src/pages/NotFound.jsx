@@ -29,7 +29,7 @@ const NotFound = () => {
 
                 <Link
                     to="/"
-                    className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold transition-all shadow-lg shadow-blue-600/20 inline-block"
+                    className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 inline-block"
                 >
                     {t('notfound.back_home')}
                 </Link>

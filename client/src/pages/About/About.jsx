@@ -225,7 +225,7 @@ const About = () => {
                                 IBM AI4Future · İleri Siber Güvenlik (Kabul)
                             </StatusBadge>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
                             {t('about.hero_title_1')} <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
                                 {t('about.hero_title_2')}

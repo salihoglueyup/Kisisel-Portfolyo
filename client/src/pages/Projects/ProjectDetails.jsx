@@ -105,7 +105,7 @@ const ProjectDetails = () => {
                                 </a>
                             )}
                             {project.links?.live && (
-                                <a href={project.links.live} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-blue-600 text-white rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20">
+                                <a href={project.links.live} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-blue-600 text-white rounded-xl flex items-center gap-2 hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20">
                                     <FaExternalLinkAlt /> {t('projectDetails.live_demo')}
                                 </a>
                             )}

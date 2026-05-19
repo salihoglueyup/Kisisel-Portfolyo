@@ -71,7 +71,7 @@ const BlogDetails = () => {
                     <span className="text-gray-500 flex items-center gap-2"><FaCalendarAlt /> {formatDate(blog.createdAt)}</span>
                 </div>
 
-                <h1 className="text-4xl md:text-5xl font-bold text-white mb-8 leading-tight">{blog.title}</h1>
+                <h1 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">{blog.title}</h1>
 
                 {blog.image && (
                     <div className="w-full h-64 md:h-96 rounded-2xl overflow-hidden mb-10 border border-slate-800">

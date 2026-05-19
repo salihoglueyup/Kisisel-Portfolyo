@@ -94,7 +94,7 @@ const Home = () => {
                             SYSTEM ONLINE
                         </StatusBadge>
 
-                        <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
+                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
                             {t('home.hero_line1')} <br/>
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">{t('home.hero_line2')}</span><br/>
                             {t('home.hero_line3')}
@@ -114,7 +114,7 @@ const Home = () => {
                         </p>
 
                         <div className="flex gap-4">
-                            <Link to="/projects" className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
+                            <Link to="/projects" className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-all shadow-lg shadow-blue-600/20">
                                 {t('home.btn_projects')}
                             </Link>
                             <a href="https://github.com/salihoglueyup" target="_blank" rel="noopener noreferrer" className="px-8 py-3 border border-slate-700 text-gray-300 rounded-lg font-medium hover:bg-slate-800 transition-all flex items-center gap-2">

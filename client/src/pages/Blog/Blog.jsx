@@ -81,7 +81,7 @@ const Blog = () => {
                     <StatusBadge color="blue" icon={<FaRegNewspaper />} className="mb-4">
                         DEV_BLOG_V1
                     </StatusBadge>
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
                         {t('blog.title')} <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">{t('blog.subtitle')}</span>
                     </h1>
