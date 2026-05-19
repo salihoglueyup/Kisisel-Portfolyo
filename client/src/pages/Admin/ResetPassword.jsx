@@ -49,11 +49,11 @@ const ResetPassword = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0B1120] flex items-center justify-center px-6">
+        <div className="min-h-screen bg-base flex items-center justify-center px-6">
             <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="bg-[#111827] border border-slate-800 p-8 rounded-2xl w-full max-w-md shadow-2xl relative overflow-hidden"
+                className="bg-surface border border-slate-800 p-8 rounded-2xl w-full max-w-md shadow-2xl relative overflow-hidden"
             >
                 <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-600 to-purple-600"></div>
 
@@ -76,7 +76,7 @@ const ResetPassword = () => {
                                 placeholder="Yeni Şifre"
                                 aria-label="Yeni Şifre"
                                 {...register('password')}
-                                className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition-all"
+                                className="w-full bg-base border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition-all"
                             />
                         </div>
                         {errors.password && <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>}
@@ -90,7 +90,7 @@ const ResetPassword = () => {
                                 placeholder="Yeni Şifre (Tekrar)"
                                 aria-label="Yeni Şifre (Tekrar)"
                                 {...register('confirm')}
-                                className="w-full bg-[#0B1120] border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition-all"
+                                className="w-full bg-base border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white focus:border-blue-500 outline-none transition-all"
                             />
                         </div>
                         {errors.confirm && <p className="text-red-400 text-xs mt-1">{errors.confirm.message}</p>}

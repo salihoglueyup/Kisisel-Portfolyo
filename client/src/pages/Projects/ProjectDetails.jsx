@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FaGithub, FaExternalLinkAlt, FaArrowLeft, FaCode, FaDatabase, FaServer, FaLayerGroup, FaCalendarAlt, FaCheckCircle } from 'react-icons/fa';
 import SEO from '../../components/common/SEO';
+import LoadingSpinner from '../../components/common/LoadingSpinner';
 import { useProject } from '../../hooks/queries/useProjects';
 import { useTranslation } from 'react-i18next';
 
@@ -13,7 +14,7 @@ const ProjectDetails = () => {
     const { data: project, isLoading: loading } = useProject(id);
     const [activeTab, setActiveTab] = useState('overview');
 
-    if (loading) return <div className="min-h-screen bg-base flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div></div>;
+    if (loading) return <div className="min-h-screen bg-base flex items-center justify-center"><LoadingSpinner size="lg" /></div>;
     if (!project) return <div className="min-h-screen bg-base flex items-center justify-center text-white">{t('projectDetails.not_found')}</div>;
 
     // Teknik mimari verisi (DB'den veya fallback)
@@ -99,12 +100,12 @@ const ProjectDetails = () => {
 
                         <div className="flex gap-4">
                             {project.links?.github && (
-                                <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-[#1f2937] text-white rounded-lg flex items-center gap-2 hover:bg-[#374151] transition-all border border-slate-700">
+                                <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-surface-raised text-white rounded-lg flex items-center gap-2 hover:bg-gray-700 transition-all border border-slate-700">
                                     <FaGithub /> {t('projectDetails.source_code')}
                                 </a>
                             )}
                             {project.links?.live && (
-                                <a href={project.links.live} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-blue-600 text-white rounded-lg flex items-center gap-2 hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20">
+                                <a href={project.links.live} target="_blank" rel="noopener noreferrer" className="px-6 py-3 bg-blue-600 text-white rounded-xl flex items-center gap-2 hover:bg-blue-500 transition-all shadow-lg shadow-blue-600/20">
                                     <FaExternalLinkAlt /> {t('projectDetails.live_demo')}
                                 </a>
                             )}

@@ -26,7 +26,7 @@ const ProfileInfoForm = ({ profile }) => {
     };
 
     return (
-        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-8">
+        <div className="bg-surface border border-slate-800 rounded-2xl p-8">
             <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
                 <FaUserCog className="text-blue-400" /> Profil Bilgileri
             </h3>
@@ -70,7 +70,7 @@ const PasswordChangeForm = () => {
     };
 
     return (
-        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-8">
+        <div className="bg-surface border border-slate-800 rounded-2xl p-8">
             <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
                 <FaKey className="text-yellow-400" /> Şifre Değiştir
             </h3>
@@ -97,7 +97,7 @@ const ProfileTab = ({ profile }) => {
 
     return (
         <div className="max-w-2xl">
-            <div className="flex items-center gap-2 mb-8 bg-[#111827] p-4 rounded-xl border border-slate-800">
+            <div className="flex items-center gap-2 mb-8 bg-surface p-4 rounded-xl border border-slate-800">
                 <FaUserCog className="text-purple-500" />
                 <h2 className="text-xl font-bold text-white">Hesap Yönetimi</h2>
             </div>

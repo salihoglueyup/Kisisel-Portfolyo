@@ -105,8 +105,8 @@ const techs = [
 const TechTicker = () => {
     return (
         <div className="w-full bg-slate-800/50 border-y border-slate-700 py-6 overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-24 h-full bg-gradient-to-r from-[#0B1120] to-transparent z-10 pointer-events-none" />
-            <div className="absolute top-0 right-0 w-24 h-full bg-gradient-to-l from-[#0B1120] to-transparent z-10 pointer-events-none" />
+            <div className="absolute top-0 left-0 w-24 h-full bg-gradient-to-r from-base to-transparent z-10 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-24 h-full bg-gradient-to-l from-base to-transparent z-10 pointer-events-none" />
 
             <motion.div
                 className="flex space-x-16 whitespace-nowrap"

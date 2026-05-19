@@ -13,6 +13,8 @@ import {
 import { VscVscode } from "react-icons/vsc";
 import profilFoto from '../../assets/profil.jpeg';
 import SEO from '../../components/common/SEO';
+import StatusBadge from '../../components/common/StatusBadge';
+import CtaSection from '../../components/common/CtaSection';
 import { useTranslation } from 'react-i18next';
 
 const softwareTools = [
@@ -171,7 +173,7 @@ const About = () => {
     ];
 
     return (
-        <div className="min-h-screen bg-[#0B1120] text-gray-300 font-sans pt-24 pb-20 px-6 overflow-x-hidden">
+        <div className="min-h-screen bg-base text-gray-300 font-sans pt-24 pb-20 px-6 overflow-x-hidden">
             <SEO
                 title="Hakkımda"
                 description="Eyüp Zeki Salihoğlu - Yönetim Bilişim Sistemleri öğrencisi, Full Stack Developer. Kariyer geçmişi, yetenekler ve eğitim."
@@ -203,29 +205,27 @@ const About = () => {
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center mb-24">
                     <motion.div className="md:col-span-4 relative group" variants={itemVariants}>
                         <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-75 transition duration-1000"></div>
-                        <div className="relative bg-[#111827] border border-slate-800 rounded-2xl overflow-hidden aspect-square shadow-2xl">
+                        <div className="relative bg-surface border border-slate-800 rounded-2xl overflow-hidden aspect-square shadow-2xl">
                             <img
                                 src={profilFoto}
                                 alt="Eyüp Zeki Salihoğlu profil fotoğrafı"
                                 className="w-full h-full object-cover"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#111827]/60 to-transparent"></div>
+                            <div className="absolute inset-0 bg-gradient-to-t from-surface/60 to-transparent"></div>
                         </div>
                     </motion.div>
 
 
                     <motion.div className="md:col-span-8" variants={itemVariants}>
                         <div className="flex flex-wrap gap-3 mb-6">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 border border-blue-500/20 rounded-full bg-blue-500/5 text-blue-400 text-xs font-mono">
-                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                            <StatusBadge color="blue" dot="pulse">
                                 {t('about.open_for_work')}
-                            </div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 border border-cyan-500/30 rounded-full bg-cyan-500/10 text-cyan-300 text-xs font-mono">
-                                <FaShieldAlt className="text-cyan-400" />
+                            </StatusBadge>
+                            <StatusBadge color="cyan" icon={<FaShieldAlt className="text-cyan-400" />}>
                                 IBM AI4Future · İleri Siber Güvenlik (Kabul)
-                            </div>
+                            </StatusBadge>
                         </div>
-                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
                             {t('about.hero_title_1')} <br />
                             <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
                                 {t('about.hero_title_2')}
@@ -236,10 +236,10 @@ const About = () => {
                         </p>
 
                         <div className="flex flex-wrap gap-4 mt-8">
-                            <div className="flex items-center gap-2 px-4 py-2 bg-[#1e293b] rounded-lg border border-slate-700 text-sm hover:border-blue-500 transition-colors">
+                            <div className="flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-lg border border-slate-700 text-sm hover:border-blue-500 transition-colors">
                                 <FaCoffee className="text-yellow-500"/> {t('about.badge_solver')}
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2 bg-[#1e293b] rounded-lg border border-slate-700 text-sm hover:border-purple-500 transition-colors">
+                            <div className="flex items-center gap-2 px-4 py-2 bg-slate-800 rounded-lg border border-slate-700 text-sm hover:border-purple-500 transition-colors">
                                 <FaGamepad className="text-purple-500"/> {t('about.badge_tech')}
                             </div>
                         </div>
@@ -267,7 +267,7 @@ const About = () => {
                     </div>
 
                     <div className="lg:col-span-5">
-                        <div className="bg-[#111827] border border-slate-800 rounded-2xl p-8 relative overflow-hidden">
+                        <div className="bg-surface border border-slate-800 rounded-2xl p-8 relative overflow-hidden">
                             <FaQuoteLeft className="absolute top-4 right-4 text-4xl text-slate-800" />
                             <h3 className="text-xl font-bold text-white mb-6">{t('about.principles_title')}</h3>
                             <div className="space-y-4">
@@ -307,10 +307,10 @@ const About = () => {
                     <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-slate-800">
                         {timeline.map((item, index) => (
                             <div key={index} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group">
-                                <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[#0B1120] bg-slate-800 group-hover:bg-blue-600 transition-colors shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                                <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-base bg-slate-800 group-hover:bg-blue-600 transition-colors shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
                                     <span className="text-gray-400 group-hover:text-white text-sm">{item.icon}</span>
                                 </div>
-                                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-[#111827] p-6 rounded-xl border border-slate-800 hover:border-blue-500/50 transition-all shadow-sm hover:shadow-md hover:shadow-blue-900/10">
+                                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-surface p-6 rounded-xl border border-slate-800 hover:border-blue-500/50 transition-all shadow-sm hover:shadow-md hover:shadow-blue-900/10">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="font-bold text-white">{item.title}</div>
                                         <time className="font-mono text-xs text-blue-400 bg-blue-400/10 px-2 py-1 rounded">{item.year}</time>
@@ -330,7 +330,7 @@ const About = () => {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {experience.map((exp, idx) => (
-                            <div key={idx} className="bg-[#111827] border border-slate-800 rounded-xl p-6 hover:border-blue-500/40 transition-all">
+                            <div key={idx} className="bg-surface border border-slate-800 rounded-xl p-6 hover:border-blue-500/40 transition-all">
                                 <div className="flex items-start justify-between mb-1 gap-3">
                                     <h3 className="text-white font-bold">{exp.company}</h3>
                                     <time className="font-mono text-[11px] text-blue-400 bg-blue-400/10 px-2 py-1 rounded shrink-0">{exp.date}</time>
@@ -359,7 +359,7 @@ const About = () => {
                     </div>
 
                     {/* Öne çıkan: IBM AI4Future (program kabulü) */}
-                    <div className="mb-8 bg-gradient-to-r from-cyan-900/30 to-[#111827] border border-cyan-500/40 rounded-2xl p-6 flex items-center gap-5">
+                    <div className="mb-8 bg-gradient-to-r from-cyan-900/30 to-surface border border-cyan-500/40 rounded-2xl p-6 flex items-center gap-5">
                         <div className="text-3xl text-cyan-300 shrink-0"><FaShieldAlt /></div>
                         <div className="flex-1">
                             <div className="flex items-center gap-2 flex-wrap">
@@ -381,7 +381,7 @@ const About = () => {
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                                     {grp.items.map((cert, idx) => (
-                                        <div key={idx} className="bg-[#111827] border border-slate-800 rounded-xl p-4 hover:border-yellow-500/40 transition-colors">
+                                        <div key={idx} className="bg-surface border border-slate-800 rounded-xl p-4 hover:border-yellow-500/40 transition-colors">
                                             <h4 className="text-white font-bold text-sm mb-1">{cert.title}</h4>
                                             <p className="text-xs text-gray-500">{cert.issuer} • {cert.date}</p>
                                         </div>
@@ -399,7 +399,7 @@ const About = () => {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {leadership.map((lead, idx) => (
-                            <div key={idx} className="p-6 bg-[#111827] border border-slate-800 rounded-xl hover:border-purple-500/40 transition-colors">
+                            <div key={idx} className="p-6 bg-surface border border-slate-800 rounded-xl hover:border-purple-500/40 transition-colors">
                                 <div className="flex items-start gap-3 mb-3">
                                     <div className="text-xl shrink-0">{lead.icon}</div>
                                     <div className="flex-1">
@@ -423,7 +423,7 @@ const About = () => {
                     </h2>
 
                     {/* Öne çıkan: AI / ML (kimliğin merkezi) */}
-                    <div className="mb-6 bg-gradient-to-br from-purple-900/25 to-[#111827] border border-purple-500/30 rounded-2xl p-6">
+                    <div className="mb-6 bg-gradient-to-br from-purple-900/25 to-surface border border-purple-500/30 rounded-2xl p-6">
                         <div className="flex items-center gap-3 mb-4">
                             <span className="text-2xl text-purple-300">{aiCategory.icon}</span>
                             <h3 className={`text-lg font-bold ${aiCategory.titleColor}`}>{aiCategory.group}</h3>
@@ -439,7 +439,7 @@ const About = () => {
                     {/* Diğer 4 kategori — 2×2 */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
                         {techCategories.map((cat, idx) => (
-                            <div key={idx} className="bg-[#111827] border border-slate-800 rounded-xl p-6 hover:border-slate-700 transition-colors">
+                            <div key={idx} className="bg-surface border border-slate-800 rounded-xl p-6 hover:border-slate-700 transition-colors">
                                 <div className="flex items-center gap-3 mb-4">
                                     <span className={`text-xl ${cat.titleColor}`}>{cat.icon}</span>
                                     <h3 className={`text-sm font-bold uppercase tracking-wider ${cat.titleColor}`}>{cat.group}</h3>
@@ -455,7 +455,7 @@ const About = () => {
                     </div>
 
                     {/* Geliştirme Ortamı — Software & Tools (kompakt) */}
-                    <div className="bg-[#111827] border border-slate-800 rounded-2xl p-6">
+                    <div className="bg-surface border border-slate-800 rounded-2xl p-6">
                         <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
                             <FaLaptopCode className="text-blue-400"/> {t('about.software')}
                         </h3>
@@ -470,32 +470,26 @@ const About = () => {
                 </motion.div>
 
                 {/* CV İNDİRME (CTA) */}
-                <motion.div variants={itemVariants} className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-3xl p-12 text-center relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-
-                    <div className="relative z-10">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">{t('about.cv_title')}</h2>
-                        <p className="text-gray-300 text-lg max-w-2xl mx-auto mb-8">
-                            {t('about.cv_desc')}
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row justify-center gap-4">
-                            <a
-                                href="/cv.pdf"
-                                download="EyupZekiSalihoglu_CV.pdf"
-                                className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-white/20"
-                            >
-                                <FaFilePdf className="text-red-600" /> {t('about.cv_download')}
-                            </a>
-                            <a
-                                href="/contact"
-                                className="px-8 py-4 bg-slate-800/50 text-white font-bold rounded-xl border border-slate-600 hover:bg-slate-800 transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
-                            >
-                                {t('about.cv_contact')}
-                            </a>
-                        </div>
+                <CtaSection
+                    title={t('about.cv_title')}
+                    description={t('about.cv_desc')}
+                >
+                    <div className="flex flex-col sm:flex-row justify-center gap-4">
+                        <a
+                            href="/cv.pdf"
+                            download="EyupZekiSalihoglu_CV.pdf"
+                            className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-white/20"
+                        >
+                            <FaFilePdf className="text-red-600" /> {t('about.cv_download')}
+                        </a>
+                        <a
+                            href="/contact"
+                            className="px-8 py-4 bg-slate-800/50 text-white font-bold rounded-xl border border-slate-600 hover:bg-slate-800 transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
+                        >
+                            {t('about.cv_contact')}
+                        </a>
                     </div>
-                </motion.div>
+                </CtaSection>
 
             </motion.div>
         </div>

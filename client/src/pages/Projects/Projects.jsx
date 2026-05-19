@@ -8,6 +8,7 @@ import ProjectCard from '../../components/project/ProjectCard';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import SEO from '../../components/common/SEO';
+import StatusBadge from '../../components/common/StatusBadge';
 import { PROJECT_FILTERS } from '../../constants/projects';
 import { useTranslation } from 'react-i18next';
 
@@ -89,10 +90,10 @@ const Projects = () => {
 
                 {/* HEADER */}
                 <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 border border-purple-500/30 rounded-full bg-purple-500/10 text-purple-400 text-xs font-mono">
-                        <FaCode className="animate-pulse" /> PORTFOLIO_V2_BUILD
-                    </div>
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+                    <StatusBadge color="purple" icon={<FaCode className="animate-pulse" />} className="mb-4">
+                        PORTFOLIO_V2_BUILD
+                    </StatusBadge>
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 leading-tight">
                         {t('projects.title')}
                     </h1>
                     <p className="text-gray-400 max-w-2xl mx-auto text-lg">
@@ -128,7 +129,7 @@ const Projects = () => {
                                     <div><span className="block text-2xl font-bold text-white truncate">{featuredProject.category || featuredProject.tags?.[0]}</span><span className="text-xs text-gray-500">{t('projects.f_architecture')}</span></div>
                                 </div>
 
-                                <Link to={`/projects/${featuredProject._id}`} className="w-max px-8 py-3 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition-colors flex items-center gap-2">
+                                <Link to={`/projects/${featuredProject._id}`} className="w-max px-8 py-3 bg-white text-black rounded-xl font-bold hover:bg-gray-200 transition-colors flex items-center gap-2">
                                     {t('projects.case_study')} <FaArrowRight />
                                 </Link>
                             </div>
@@ -165,7 +166,7 @@ const Projects = () => {
 
                 {/* PROJE GRID/LIST */}
                 {loading ? (
-                    <div className="flex justify-center items-center h-64"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div></div>
+                    <div className="flex justify-center items-center h-64"><LoadingSpinner size="lg" /></div>
                 ) : error ? (
                     <div className="text-center py-12 bg-red-500/10 border border-red-500/20 rounded-2xl"><p className="text-red-400">{error}</p></div>
                 ) : (

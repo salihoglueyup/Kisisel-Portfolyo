@@ -42,7 +42,7 @@ const AdminDashboard = () => {
     const unreadCount = messages.filter(m => !m.isRead).length;
 
     return (
-        <div className="min-h-screen bg-[#0B1120] pt-24 px-4 md:px-8 flex flex-col md:flex-row gap-8">
+        <div className="min-h-screen bg-base pt-24 px-4 md:px-8 flex flex-col md:flex-row gap-8">
             <AdminSidebar
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}

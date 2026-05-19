@@ -19,7 +19,7 @@ const ProjectCard = ({ project }) => {
             layout
             variants={itemVariants}
             whileHover={{ y: -5 }}
-            className="bg-[#111827] border border-slate-800 rounded-xl overflow-hidden flex flex-col h-full hover:border-blue-500/50 transition-all group relative shadow-lg shadow-black/20"
+            className="bg-surface border border-slate-800 rounded-xl overflow-hidden flex flex-col h-full hover:border-blue-500/50 transition-all group relative shadow-lg shadow-black/20"
         >
             <Link to={`/projects/${project._id}`} className="absolute inset-0 z-10" />
 

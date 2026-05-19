@@ -8,7 +8,7 @@ const NotFound = () => {
     const { t } = useTranslation();
 
     return (
-        <div className="min-h-screen bg-[#0B1120] flex items-center justify-center px-6 text-center">
+        <div className="min-h-screen bg-base flex items-center justify-center px-6 text-center">
             <SEO title="404 - Sayfa Bulunamadı" />
             <div className="max-w-lg">
                 <motion.div
@@ -29,7 +29,7 @@ const NotFound = () => {
 
                 <Link
                     to="/"
-                    className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold transition-all shadow-lg shadow-blue-600/20 inline-block"
+                    className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 inline-block"
                 >
                     {t('notfound.back_home')}
                 </Link>
