@@ -37,6 +37,12 @@ const adminUserSchema = new mongoose.Schema({
     lockUntil: {
         type: Date
     },
+    // Oturum geçersizleştirme — şifre değişimi/sıfırlamada artar.
+    // Refresh/access token payload'undaki sürüm bununla eşleşmezse token reddedilir.
+    tokenVersion: {
+        type: Number,
+        default: 0
+    },
     // Şifre sıfırlama (token DB'de hash'li tutulur, ham token sadece e-postada)
     resetPasswordToken: {
         type: String,

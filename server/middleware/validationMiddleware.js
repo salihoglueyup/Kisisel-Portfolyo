@@ -42,6 +42,18 @@ const validateLogin = [
     handleValidationErrors
 ];
 
+const validateUpdateProfile = [
+    body('email')
+        .optional()
+        .isEmail().withMessage('Geçerli bir email adresi giriniz')
+        .normalizeEmail(),
+    body('displayName')
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 50 }).withMessage('İsim 2-50 karakter arasında olmalıdır'),
+    handleValidationErrors
+];
+
 const validatePasswordChange = [
     body('currentPassword')
         .notEmpty().withMessage('Mevcut şifre gereklidir'),
@@ -126,6 +138,7 @@ const validateMessage = [
 module.exports = {
     validateRegister,
     validateLogin,
+    validateUpdateProfile,
     validatePasswordChange,
     validateForgotPassword,
     validateResetPassword,
