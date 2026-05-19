@@ -11,6 +11,7 @@ import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import SEO from '../../components/common/SEO';
 import StatusBadge from '../../components/common/StatusBadge';
+import CtaSection from '../../components/common/CtaSection';
 import NewsletterForm from '../../components/common/NewsletterForm';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/formatDate';
@@ -287,17 +288,14 @@ const Blog = () => {
                 </div>
 
                 {/* NEWSLETTER (Mobil için de görünür) */}
-                <div className="mt-24 bg-gradient-to-r from-slate-900 to-slate-800 border border-slate-700 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden">
-                    <div className="absolute -top-24 -left-24 w-64 h-64 bg-blue-600/20 rounded-full blur-[100px]"></div>
-                    <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-purple-600/20 rounded-full blur-[100px]"></div>
-
-                    <div className="relative z-10 max-w-2xl mx-auto">
-                        <FaHashtag className="text-4xl text-gray-600 mx-auto mb-4" />
-                        <h2 className="text-3xl font-bold text-white mb-4">{t('blog.community_title')}</h2>
-                        <p className="text-gray-400 mb-8">{t('blog.community_desc')}</p>
-                        <NewsletterForm variant="inline" />
-                    </div>
-                </div>
+                <CtaSection
+                    className="mt-24"
+                    icon={<FaHashtag />}
+                    title={t('blog.community_title')}
+                    description={t('blog.community_desc')}
+                >
+                    <NewsletterForm variant="inline" />
+                </CtaSection>
 
             </div>
         </div>

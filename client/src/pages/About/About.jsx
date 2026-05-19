@@ -14,6 +14,7 @@ import { VscVscode } from "react-icons/vsc";
 import profilFoto from '../../assets/profil.jpeg';
 import SEO from '../../components/common/SEO';
 import StatusBadge from '../../components/common/StatusBadge';
+import CtaSection from '../../components/common/CtaSection';
 import { useTranslation } from 'react-i18next';
 
 const softwareTools = [
@@ -469,32 +470,26 @@ const About = () => {
                 </motion.div>
 
                 {/* CV İNDİRME (CTA) */}
-                <motion.div variants={itemVariants} className="bg-gradient-to-r from-blue-900/40 to-purple-900/40 border border-blue-500/30 rounded-3xl p-12 text-center relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-
-                    <div className="relative z-10">
-                        <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">{t('about.cv_title')}</h2>
-                        <p className="text-gray-300 text-lg max-w-2xl mx-auto mb-8">
-                            {t('about.cv_desc')}
-                        </p>
-
-                        <div className="flex flex-col sm:flex-row justify-center gap-4">
-                            <a
-                                href="/cv.pdf"
-                                download="EyupZekiSalihoglu_CV.pdf"
-                                className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-white/20"
-                            >
-                                <FaFilePdf className="text-red-600" /> {t('about.cv_download')}
-                            </a>
-                            <a
-                                href="/contact"
-                                className="px-8 py-4 bg-slate-800/50 text-white font-bold rounded-xl border border-slate-600 hover:bg-slate-800 transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
-                            >
-                                {t('about.cv_contact')}
-                            </a>
-                        </div>
+                <CtaSection
+                    title={t('about.cv_title')}
+                    description={t('about.cv_desc')}
+                >
+                    <div className="flex flex-col sm:flex-row justify-center gap-4">
+                        <a
+                            href="/cv.pdf"
+                            download="EyupZekiSalihoglu_CV.pdf"
+                            className="px-8 py-4 bg-white text-black font-bold rounded-xl hover:bg-gray-200 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-white/20"
+                        >
+                            <FaFilePdf className="text-red-600" /> {t('about.cv_download')}
+                        </a>
+                        <a
+                            href="/contact"
+                            className="px-8 py-4 bg-slate-800/50 text-white font-bold rounded-xl border border-slate-600 hover:bg-slate-800 transition-all flex items-center justify-center gap-2 backdrop-blur-sm"
+                        >
+                            {t('about.cv_contact')}
+                        </a>
                     </div>
-                </motion.div>
+                </CtaSection>
 
             </motion.div>
         </div>

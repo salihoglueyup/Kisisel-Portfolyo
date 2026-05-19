@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEO from '../../components/common/SEO';
 import StatusBadge from '../../components/common/StatusBadge';
+import CtaSection from '../../components/common/CtaSection';
 import { useProjects } from '../../hooks/queries/useProjects';
 
 // Bileşen Importları
@@ -254,27 +255,22 @@ const Home = () => {
                     </details>
 
                     {/* İletişim CTA */}
-                    <div className="w-full">
-                        <div className="bg-gradient-to-r from-blue-900/40 to-slate-900 border border-blue-500/30 rounded-xl p-8 text-center relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/10 rounded-full blur-3xl -z-10"></div>
-                            <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-600/10 rounded-full blur-3xl -z-10"></div>
-
-                            <FaPaperPlane className="text-4xl text-blue-400 mx-auto mb-4" />
-                            <h3 className="text-2xl font-bold text-white mb-2">{t('home.cta_title')}</h3>
-                            <p className="text-gray-400 max-w-xl mx-auto mb-8">
-                                {t('home.cta_desc')}
-                            </p>
-
-                            <div className="flex justify-center gap-4">
-                                <Link to="/contact" className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-medium transition-all shadow-lg shadow-blue-600/20">
-                                    {t('home.cta_contact')}
-                                </Link>
-                                <a href="https://linkedin.com/in/eyupzekisalihoglu" target="_blank" rel="noopener noreferrer" className="px-8 py-3 bg-slate-800 hover:bg-slate-700 text-gray-300 rounded-full font-medium transition-all border border-slate-700 flex items-center gap-2">
-                                    {t('home.cta_linkedin')}
-                                </a>
-                            </div>
+                    <CtaSection
+                        className="w-full"
+                        icon={<FaPaperPlane />}
+                        titleAs="h3"
+                        title={t('home.cta_title')}
+                        description={t('home.cta_desc')}
+                    >
+                        <div className="flex flex-col sm:flex-row justify-center gap-4">
+                            <Link to="/contact" className="px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-all shadow-lg shadow-blue-600/20">
+                                {t('home.cta_contact')}
+                            </Link>
+                            <a href="https://linkedin.com/in/eyupzekisalihoglu" target="_blank" rel="noopener noreferrer" className="px-8 py-3 bg-slate-800 hover:bg-slate-700 text-gray-300 rounded-xl font-medium transition-all border border-slate-700 flex items-center justify-center gap-2">
+                                {t('home.cta_linkedin')}
+                            </a>
                         </div>
-                    </div>
+                    </CtaSection>
 
                 </div>
             </section>
