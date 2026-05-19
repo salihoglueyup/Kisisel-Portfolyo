@@ -23,6 +23,17 @@ const buildContactSchema = (t) => z.object({
   message: z.string().min(10, t('contact.val_message_min')),
 });
 
+// Konu seçenekleri: form state'i stabil `key` tutar (dil değişince
+// seçim/karşılaştırma bozulmaz); `i18n` etiketi gösterimde çevrilir;
+// `value` ise gönderimde kullanılan sabit kanonik değerdir (DB/admin
+// içeriği kullanıcının diline göre değişmesin diye).
+const SUBJECTS = [
+  { key: 'offer',     i18n: 'contact.subject_offer',     value: 'Proje Teklifi' },
+  { key: 'freelance', i18n: 'contact.subject_freelance', value: 'Freelance' },
+  { key: 'job',       i18n: 'contact.subject_job',       value: 'İş Fırsatı' },
+  { key: 'other',     i18n: 'contact.subject_other',     value: 'Diğer' },
+];
+
 // --- MODAL (TOPLANTI TALEBİ) — gerçek talep gönderir (mesaj API + admin e-posta) ---
 const MeetingModal = ({ isOpen, onClose }) => {
     const { t } = useTranslation();
@@ -37,6 +48,9 @@ const MeetingModal = ({ isOpen, onClose }) => {
     }, [isOpen, onClose]);
 
     if (!isOpen) return null;
+
+    // Geçmiş tarih seçilemesin (YYYY-MM-DD)
+    const todayStr = new Date().toISOString().slice(0, 10);
 
     const update = (k) => (e) => setForm((p) => ({ ...p, [k]: e.target.value }));
 
@@ -76,7 +90,7 @@ const MeetingModal = ({ isOpen, onClose }) => {
                     <p className="text-gray-400 text-sm mt-2">{t('contact.modal_subtitle')}</p>
                 </div>
                 <form className="space-y-4" onSubmit={submit}>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <label htmlFor="mt-name" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_name')}</label>
                             <input id="mt-name" type="text" autoFocus value={form.name} onChange={update('name')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
@@ -87,7 +101,7 @@ const MeetingModal = ({ isOpen, onClose }) => {
                         </div>
                         <div>
                             <label htmlFor="mt-date" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_date')}</label>
-                            <input id="mt-date" type="date" value={form.date} onChange={update('date')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
+                            <input id="mt-date" type="date" min={todayStr} value={form.date} onChange={update('date')} required className="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white outline-none focus:border-blue-500" />
                         </div>
                         <div>
                             <label htmlFor="mt-time" className="text-xs font-bold text-gray-500 uppercase">{t('contact.modal_time')}</label>
@@ -179,7 +193,7 @@ const Contact = () => {
         defaultValues: {
             name: '',
             email: '',
-            subject: 'Proje Teklifi',
+            subject: 'offer',
             message: ''
         }
     });
@@ -194,11 +208,18 @@ const Contact = () => {
     const onSubmit = async (data) => {
         setStatus('loading');
         try {
-            await api.post('/messages', data);
+            // UI state'i stabil key tutar; gönderimde sabit kanonik değere çevir
+            const subject = SUBJECTS.find((s) => s.key === data.subject)?.value || data.subject;
+            await api.post('/messages', { ...data, subject });
             setStatus('success');
             reset();
             setTimeout(() => setStatus(null), 5000);
-        } catch { setStatus('error'); }
+        } catch (err) {
+            // Önceden 'error' set ediliyordu ama hiçbir yerde render edilmiyordu
+            // (sessiz başarısızlık). Modal ile tutarlı: friendlyMessage toast'ı.
+            setStatus(null);
+            toast.error(err?.friendlyMessage || t('contact.error'));
+        }
     };
 
     return (
@@ -337,8 +358,8 @@ const Contact = () => {
                                     <div className="space-y-2">
                                         <span id="contact-subject-label" className="block text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">{t('contact.subject')}</span>
                                         <div role="group" aria-labelledby="contact-subject-label" className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                                            {[t('contact.subject_offer'), t('contact.subject_freelance'), t('contact.subject_job'), t('contact.subject_other')].map(opt => (
-                                                <button type="button" key={opt} aria-pressed={watchSubject === opt} onClick={() => setValue('subject', opt)} className={`py-2 text-xs font-bold rounded-lg border transition-all ${watchSubject === opt ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-surface-raised border-slate-700 text-gray-400 hover:border-gray-500'}`}>{opt}</button>
+                                            {SUBJECTS.map((s) => (
+                                                <button type="button" key={s.key} aria-pressed={watchSubject === s.key} onClick={() => setValue('subject', s.key)} className={`py-2 text-xs font-bold rounded-lg border transition-all ${watchSubject === s.key ? 'bg-blue-600 border-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-surface-raised border-slate-700 text-gray-400 hover:border-gray-500'}`}>{t(s.i18n)}</button>
                                             ))}
                                         </div>
                                         {errors.subject && <p className="text-red-400 text-xs mt-1 ml-1">{errors.subject.message}</p>}
