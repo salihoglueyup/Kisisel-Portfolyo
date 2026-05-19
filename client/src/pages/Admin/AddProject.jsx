@@ -174,7 +174,7 @@ const AddProject = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#0B1120] pt-28 pb-20 px-6">
+        <div className="min-h-screen bg-base pt-28 pb-20 px-6">
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
 
                 {/* SOL: FORM ALANI */}
@@ -193,7 +193,7 @@ const AddProject = () => {
                                 <input
                                     type="text" name="title" required
                                     value={formData.title} onChange={handleChange}
-                                    className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
+                                    className="w-full bg-surface-raised border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
                                     placeholder="Örn: E-Ticaret Dashboard"
                                 />
                             </div>
@@ -202,7 +202,7 @@ const AddProject = () => {
                                 <select
                                     name="category"
                                     value={formData.category} onChange={handleChange}
-                                    className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
+                                    className="w-full bg-surface-raised border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
                                 >
                                     {PROJECT_CATEGORIES.map(cat => (
                                         <option key={cat} value={cat}>{cat}</option>
@@ -218,7 +218,7 @@ const AddProject = () => {
                                 <input
                                     type="text" name="role"
                                     value={formData.role} onChange={handleChange}
-                                    className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none"
+                                    className="w-full bg-surface-raised border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none"
                                     placeholder="Full Stack Dev"
                                 />
                             </div>
@@ -227,7 +227,7 @@ const AddProject = () => {
                                 <select
                                     name="status"
                                     value={formData.status} onChange={handleChange}
-                                    className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none"
+                                    className="w-full bg-surface-raised border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none"
                                 >
                                     <option>Tamamlandı</option>
                                     <option>Devam Ediyor</option>
@@ -240,13 +240,13 @@ const AddProject = () => {
                                 <input
                                     type="date" name="date"
                                     value={formData.date} onChange={handleChange}
-                                    className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none"
+                                    className="w-full bg-surface-raised border border-slate-700 rounded-lg px-3 py-2 text-white text-sm focus:border-blue-500 outline-none"
                                 />
                             </div>
                         </div>
 
                         {/* 3. TEKNİK MİMARİ GİRİŞİ */}
-                        <div className="bg-[#111827] p-6 rounded-xl border border-slate-800 space-y-4">
+                        <div className="bg-surface p-6 rounded-xl border border-slate-800 space-y-4">
                             <h3 className="text-white font-bold text-sm border-b border-slate-700 pb-2 mb-4 flex items-center gap-2">
                                 <FaServer className="text-green-500" /> Teknik Mimari (Teknolojiler)
                             </h3>
@@ -264,13 +264,13 @@ const AddProject = () => {
                             <textarea
                                 name="featuresInput" rows="4"
                                 value={formData.featuresInput} onChange={handleChange}
-                                className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
+                                className="w-full bg-surface-raised border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
                                 placeholder={"- Kullanıcı Giriş Sistemi\n- Admin Paneli\n- Gerçek Zamanlı Bildirimler"}
                             ></textarea>
                         </div>
 
                         {/* 4.5 ZORLUKLAR & ÇÖZÜMLER */}
-                        <div className="bg-[#111827] p-6 rounded-xl border border-slate-800 space-y-4">
+                        <div className="bg-surface p-6 rounded-xl border border-slate-800 space-y-4">
                             <div className="flex items-center justify-between border-b border-slate-700 pb-2">
                                 <h3 className="text-white font-bold text-sm flex items-center gap-2">
                                     <FaInfoCircle className="text-red-400" /> Zorluklar & Çözümler
@@ -331,7 +331,7 @@ const AddProject = () => {
                                         type="text" name="image"
                                         value={formData.image && !formData.image.startsWith('data:') ? formData.image : ''}
                                         onChange={handleChange}
-                                        className="w-full bg-[#1f2937] border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-white text-xs focus:border-blue-500 outline-none"
+                                        className="w-full bg-surface-raised border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-white text-xs focus:border-blue-500 outline-none"
                                         placeholder="veya resim bağlantısı yapıştır..."
                                     />
                                 </div>
@@ -344,13 +344,13 @@ const AddProject = () => {
                             <textarea
                                 name="description" required rows="4"
                                 value={formData.description} onChange={handleChange}
-                                className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
+                                className="w-full bg-surface-raised border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
                                 placeholder="Proje hikayesi, amacı ve sonuçları..."
                             ></textarea>
                         </div>
 
                         {/* 7. Metrikler */}
-                        <div className="bg-[#111827] p-6 rounded-xl border border-slate-800 space-y-4">
+                        <div className="bg-surface p-6 rounded-xl border border-slate-800 space-y-4">
                             <h3 className="text-white font-bold text-sm border-b border-slate-700 pb-2 mb-4 flex justify-between">
                                 <span>Proje Metrikleri</span>
                                 <span className="text-xs text-gray-500 font-normal">Manuel giriş.</span>
@@ -394,7 +394,7 @@ const AddProject = () => {
                                 <input
                                     type="text" name="links.github"
                                     value={formData.links.github} onChange={handleChange}
-                                    className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
+                                    className="w-full bg-surface-raised border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
                                 />
                             </div>
                             <div className="space-y-2">
@@ -402,7 +402,7 @@ const AddProject = () => {
                                 <input
                                     type="text" name="links.live"
                                     value={formData.links.live} onChange={handleChange}
-                                    className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
+                                    className="w-full bg-surface-raised border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
                                 />
                             </div>
                         </div>
@@ -422,7 +422,7 @@ const AddProject = () => {
                                 value={formData.tagInput} onChange={(e) => setFormData({ ...formData, tagInput: e.target.value })}
                                 onKeyDown={handleTagKeyDown}
                                 placeholder="React, MongoDB yazıp Enter'a bas..."
-                                className="w-full bg-[#1f2937] border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
+                                className="w-full bg-surface-raised border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-blue-500 outline-none"
                             />
                         </div>
 

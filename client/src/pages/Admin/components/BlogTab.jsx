@@ -82,7 +82,7 @@ const BlogTab = ({ blogs }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* SOL: BLOG LİSTESİ */}
             <div className="lg:col-span-2">
-                <div className="flex justify-between items-center mb-6 bg-[#111827] p-4 rounded-xl border border-slate-800">
+                <div className="flex justify-between items-center mb-6 bg-surface p-4 rounded-xl border border-slate-800">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2"><FaPenNib className="text-pink-500" /> Blog Yazıları</h2>
                     <button onClick={resetForm} className="bg-pink-600 hover:bg-pink-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg shadow-pink-600/20 transition-all">
                         <FaPlus /> Yeni Yazı
@@ -90,7 +90,7 @@ const BlogTab = ({ blogs }) => {
                 </div>
                 <div className="space-y-3">
                     {blogs.map((blog) => (
-                        <div key={blog._id} className="bg-[#111827] border border-slate-800 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center gap-4 hover:border-pink-500/50 transition-all group">
+                        <div key={blog._id} className="bg-surface border border-slate-800 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center gap-4 hover:border-pink-500/50 transition-all group">
                             {blog.image ? (
                                 <img src={blog.image} loading="lazy" decoding="async" className="w-16 h-16 rounded-lg object-cover bg-slate-900" alt="cover" />
                             ) : (
@@ -110,13 +110,13 @@ const BlogTab = ({ blogs }) => {
                             </div>
                         </div>
                     ))}
-                    {blogs.length === 0 && <div className="text-gray-500 text-center py-12 bg-[#111827] rounded-xl border border-slate-800 border-dashed">Henüz makale yok.</div>}
+                    {blogs.length === 0 && <div className="text-gray-500 text-center py-12 bg-surface rounded-xl border border-slate-800 border-dashed">Henüz makale yok.</div>}
                 </div>
             </div>
 
             {/* SAĞ: BLOG FORMU */}
             <div className="lg:col-span-1">
-                <div className={`bg-[#111827] border p-6 rounded-xl sticky top-28 ${isEditing ? 'border-pink-500/50 shadow-2xl shadow-pink-900/20' : 'border-slate-700'}`}>
+                <div className={`bg-surface border p-6 rounded-xl sticky top-28 ${isEditing ? 'border-pink-500/50 shadow-2xl shadow-pink-900/20' : 'border-slate-700'}`}>
                     <div className="flex justify-between items-center mb-4 border-b border-slate-600 pb-2">
                         <h3 className="text-lg font-bold text-white">
                             {isEditing ? 'Makaleyi Düzenle' : 'Yeni Makale Yaz'}

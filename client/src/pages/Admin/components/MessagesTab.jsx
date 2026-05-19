@@ -25,13 +25,13 @@ const MessagesTab = ({ messages }) => {
 
     return (
         <div>
-            <div className="flex justify-between items-center mb-6 bg-[#111827] p-4 rounded-xl border border-slate-800">
+            <div className="flex justify-between items-center mb-6 bg-surface p-4 rounded-xl border border-slate-800">
                 <h2 className="text-xl font-bold text-white flex items-center gap-2"><FaEnvelope className="text-green-500" /> Gelen Kutusu</h2>
                 <span className="bg-slate-800 text-gray-400 px-3 py-1 rounded-full text-xs font-bold">{messages.length} Mesaj</span>
             </div>
             <div className="grid gap-4">
                 {messages.length > 0 ? messages.map((msg) => (
-                    <div key={msg._id} className={`bg-[#111827] border p-6 rounded-xl transition-all ${msg.isRead ? 'border-slate-800 opacity-70' : 'border-green-500/30'}`}>
+                    <div key={msg._id} className={`bg-surface border p-6 rounded-xl transition-all ${msg.isRead ? 'border-slate-800 opacity-70' : 'border-green-500/30'}`}>
                         <div className="flex justify-between mb-2">
                             <div className="flex items-center gap-2">
                                 {!msg.isRead && <FaCircle className="text-green-500 text-[8px]" />}
@@ -56,7 +56,7 @@ const MessagesTab = ({ messages }) => {
                         <p className="text-gray-400 text-sm">{msg.message}</p>
                     </div>
                 )) : (
-                    <div className="bg-[#111827] border border-slate-800 p-12 rounded-xl text-center text-gray-500 flex flex-col items-center">
+                    <div className="bg-surface border border-slate-800 p-12 rounded-xl text-center text-gray-500 flex flex-col items-center">
                         <div className="w-20 h-20 bg-slate-800 rounded-full flex items-center justify-center mb-4 text-4xl opacity-50">📭</div>
                         <p>Gelen kutusu boş.</p>
                     </div>

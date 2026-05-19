@@ -9,7 +9,7 @@ const AdminSidebar = ({ activeTab, setActiveTab, profile, unreadCount, handleLog
     ];
 
     return (
-        <div className="w-full md:w-64 bg-[#111827] border border-slate-800 rounded-2xl p-6 h-fit md:fixed md:left-6 md:top-24 md:h-[calc(100vh-8rem)] flex flex-col shadow-xl z-10">
+        <div className="w-full md:w-64 bg-surface border border-slate-800 rounded-2xl p-6 h-fit md:fixed md:left-6 md:top-24 md:h-[calc(100vh-8rem)] flex flex-col shadow-xl z-10">
             <h2 className="text-white font-bold text-xl mb-2 flex items-center gap-2">
                 <span className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></span> YBS Admin
             </h2>

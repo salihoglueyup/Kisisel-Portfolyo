@@ -75,7 +75,7 @@ const ProjectTab = ({ projects }) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* SOL: LİSTE */}
             <div className="lg:col-span-2">
-                <div className="flex justify-between items-center mb-6 bg-[#111827] p-4 rounded-xl border border-slate-800">
+                <div className="flex justify-between items-center mb-6 bg-surface p-4 rounded-xl border border-slate-800">
                     <h2 className="text-xl font-bold text-white flex items-center gap-2"><FaProjectDiagram className="text-blue-500" /> Tüm Projeler</h2>
                     <button onClick={() => navigate('/admin/add-project')} className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 shadow-lg shadow-blue-600/20 transition-all">
                         <FaPlus /> Yeni Ekle
@@ -84,7 +84,7 @@ const ProjectTab = ({ projects }) => {
 
                 <div className="space-y-3">
                     {projects.map((project) => (
-                        <div key={project._id} className="bg-[#111827] border border-slate-800 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center gap-4 hover:border-blue-500/50 transition-all group">
+                        <div key={project._id} className="bg-surface border border-slate-800 p-4 rounded-xl flex flex-col sm:flex-row sm:items-center gap-4 hover:border-blue-500/50 transition-all group">
                             <img src={project.image || '/no-image.svg'} loading="lazy" decoding="async" className="w-16 h-16 rounded-lg object-cover bg-slate-900" alt="cover" onError={(e) => { e.target.style.display='none'; }} />
                             <div className="flex-1">
                                 <h4 className="text-white font-bold">{project.title}</h4>
@@ -100,14 +100,14 @@ const ProjectTab = ({ projects }) => {
                             </div>
                         </div>
                     ))}
-                    {projects.length === 0 && <div className="text-gray-500 text-center py-12 bg-[#111827] rounded-xl border border-slate-800 border-dashed">Henüz proje eklenmemiş.</div>}
+                    {projects.length === 0 && <div className="text-gray-500 text-center py-12 bg-surface rounded-xl border border-slate-800 border-dashed">Henüz proje eklenmemiş.</div>}
                 </div>
             </div>
 
             {/* SAĞ: HIZLI DÜZENLEME */}
             <div className="lg:col-span-1">
                 {isEditing ? (
-                    <div className="bg-[#111827] border border-blue-500/50 p-6 rounded-xl sticky top-28 shadow-2xl shadow-blue-900/20">
+                    <div className="bg-surface border border-blue-500/50 p-6 rounded-xl sticky top-28 shadow-2xl shadow-blue-900/20">
                         <div className="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
                             <h3 className="text-lg font-bold text-white">Projeyi Düzenle</h3>
                             <button onClick={() => setIsEditing(false)} className="text-gray-500 hover:text-white"><FaTimes /></button>
@@ -123,7 +123,7 @@ const ProjectTab = ({ projects }) => {
                         </form>
                     </div>
                 ) : (
-                    <div className="bg-[#111827] border border-slate-800 p-6 rounded-xl text-center text-gray-500 sticky top-28 border-dashed">
+                    <div className="bg-surface border border-slate-800 p-6 rounded-xl text-center text-gray-500 sticky top-28 border-dashed">
                         <FaEdit className="text-4xl mx-auto mb-2 opacity-20" />
                         <p className="text-sm">Düzenlemek için soldaki listeden kalem ikonuna tıkla.</p>
                     </div>
