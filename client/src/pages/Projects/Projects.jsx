@@ -8,6 +8,7 @@ import ProjectCard from '../../components/project/ProjectCard';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import SEO from '../../components/common/SEO';
+import StatusBadge from '../../components/common/StatusBadge';
 import { PROJECT_FILTERS } from '../../constants/projects';
 import { useTranslation } from 'react-i18next';
 
@@ -89,9 +90,9 @@ const Projects = () => {
 
                 {/* HEADER */}
                 <div className="text-center mb-12">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 border border-purple-500/30 rounded-full bg-purple-500/10 text-purple-400 text-xs font-mono">
-                        <FaCode className="animate-pulse" /> PORTFOLIO_V2_BUILD
-                    </div>
+                    <StatusBadge color="purple" icon={<FaCode className="animate-pulse" />} className="mb-4">
+                        PORTFOLIO_V2_BUILD
+                    </StatusBadge>
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
                         {t('projects.title')}
                     </h1>

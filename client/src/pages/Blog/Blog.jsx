@@ -10,6 +10,7 @@ import {
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorMessage from '../../components/common/ErrorMessage';
 import SEO from '../../components/common/SEO';
+import StatusBadge from '../../components/common/StatusBadge';
 import NewsletterForm from '../../components/common/NewsletterForm';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../utils/formatDate';
@@ -76,9 +77,9 @@ const Blog = () => {
 
                 {/* HEADER */}
                 <div className="text-center mb-16">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 border border-blue-500/30 rounded-full bg-blue-500/10 text-blue-400 text-xs font-mono">
-                        <FaRegNewspaper /> DEV_BLOG_V1
-                    </div>
+                    <StatusBadge color="blue" icon={<FaRegNewspaper />} className="mb-4">
+                        DEV_BLOG_V1
+                    </StatusBadge>
                     <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
                         {t('blog.title')} <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">{t('blog.subtitle')}</span>

@@ -5,6 +5,7 @@ import { FaGithub, FaServer, FaNetworkWired, FaCodeBranch, FaBook, FaPaperPlane,
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SEO from '../../components/common/SEO';
+import StatusBadge from '../../components/common/StatusBadge';
 import { useProjects } from '../../hooks/queries/useProjects';
 
 // Bileşen Importları
@@ -88,13 +89,9 @@ const Home = () => {
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.8 }}
                     >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 border border-blue-500/20 rounded-full bg-blue-500/5 text-blue-400 text-xs font-mono">
-                            <span className="relative flex h-2 w-2">
-                              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                              <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                            </span>
+                        <StatusBadge color="blue" dot="ping" className="mb-6">
                             SYSTEM ONLINE
-                        </div>
+                        </StatusBadge>
 
                         <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
                             {t('home.hero_line1')} <br/>

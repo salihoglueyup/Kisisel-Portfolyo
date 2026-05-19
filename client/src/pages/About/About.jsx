@@ -13,6 +13,7 @@ import {
 import { VscVscode } from "react-icons/vsc";
 import profilFoto from '../../assets/profil.jpeg';
 import SEO from '../../components/common/SEO';
+import StatusBadge from '../../components/common/StatusBadge';
 import { useTranslation } from 'react-i18next';
 
 const softwareTools = [
@@ -216,14 +217,12 @@ const About = () => {
 
                     <motion.div className="md:col-span-8" variants={itemVariants}>
                         <div className="flex flex-wrap gap-3 mb-6">
-                            <div className="inline-flex items-center gap-2 px-3 py-1 border border-blue-500/20 rounded-full bg-blue-500/5 text-blue-400 text-xs font-mono">
-                                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                            <StatusBadge color="blue" dot="pulse">
                                 {t('about.open_for_work')}
-                            </div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 border border-cyan-500/30 rounded-full bg-cyan-500/10 text-cyan-300 text-xs font-mono">
-                                <FaShieldAlt className="text-cyan-400" />
+                            </StatusBadge>
+                            <StatusBadge color="cyan" icon={<FaShieldAlt className="text-cyan-400" />}>
                                 IBM AI4Future · İleri Siber Güvenlik (Kabul)
-                            </div>
+                            </StatusBadge>
                         </div>
                         <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
                             {t('about.hero_title_1')} <br />
