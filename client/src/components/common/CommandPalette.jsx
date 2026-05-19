@@ -132,7 +132,7 @@ const CommandPalette = () => {
                                             className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-slate-800/80 hover:text-white text-slate-300 transition-colors group text-left"
                                         >
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-[#1f2937] group-hover:text-white transition-colors">
+                                                <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 group-hover:bg-surface-raised group-hover:text-white transition-colors">
                                                     {item.icon}
                                                 </div>
                                                 <span className="font-medium group-hover:text-blue-400 transition-colors">{item.title}</span>

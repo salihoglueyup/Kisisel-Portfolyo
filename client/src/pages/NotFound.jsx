@@ -8,7 +8,7 @@ const NotFound = () => {
     const { t } = useTranslation();
 
     return (
-        <div className="min-h-screen bg-[#0B1120] flex items-center justify-center px-6 text-center">
+        <div className="min-h-screen bg-base flex items-center justify-center px-6 text-center">
             <SEO title="404 - Sayfa Bulunamadı" />
             <div className="max-w-lg">
                 <motion.div
